@@ -10,7 +10,8 @@ const HOURS_PER_WEEK = 40;
 const WEEKS_PER_MONTH = 4.33;
 const WEEKS_PER_YEAR = 52;
 const AVG_BILLABLE_RATE = 125; // Shop rate per hour
-const WARRANTY_LEAKAGE_RATE = 0.08; // 8% of warranty claims typically rejected
+const WARRANTY_WORK_SHARE = 0.25; // 25% of jobs are warranty/recall
+const WARRANTY_APPROVAL_BUMP = 0.05; // 5% improvement in warranty approval rate
 
 export default function ROICalculator() {
   const [activeTab, setActiveTab] = useState<CalculatorTab>('technician');
@@ -36,8 +37,9 @@ export default function ROICalculator() {
   const currentCapacity = numTechnicians * HOURS_PER_WEEK * WEEKS_PER_YEAR;
   const additionalCapacity = currentCapacity * (efficiencyGain / 100);
   const revenueFromCapacity = additionalCapacity * AVG_BILLABLE_RATE;
-  const avgWarrantyWork = currentCapacity * 0.15; // 15% is warranty work
-  const warrantyRecovery = avgWarrantyWork * AVG_BILLABLE_RATE * WARRANTY_LEAKAGE_RATE * 0.6; // Recover 60% of leakage
+  const warrantyHours = currentCapacity * WARRANTY_WORK_SHARE;
+  const warrantyRevenue = warrantyHours * AVG_BILLABLE_RATE;
+  const warrantyRecovery = warrantyRevenue * WARRANTY_APPROVAL_BUMP;
   const totalAnnualUnlocked = revenueFromCapacity + warrantyRecovery;
 
   return (
@@ -381,7 +383,7 @@ export default function ROICalculator() {
                   <div className="flex justify-between items-center p-4 rounded-xl bg-carbon-900/50">
                     <div className="flex items-center gap-3">
                       <Shield className="w-5 h-5 text-green-400" />
-                      <span className="text-carbon-200">Warranty recovery</span>
+                      <span className="text-carbon-200">Warranty recovery**</span>
                     </div>
                     <span className="text-green-400 font-bold">
                       +${Math.round(warrantyRecovery).toLocaleString()}
@@ -390,8 +392,9 @@ export default function ROICalculator() {
                 </div>
 
                 <p className="text-carbon-500 text-xs mt-6 text-center">
-                  * Based on ${AVG_BILLABLE_RATE}/hr shop rate and industry-standard warranty rejection
-                  rates.
+                  * Based on ${AVG_BILLABLE_RATE}/hr shop rate.
+                  <br />
+                  ** Assumes 5% bump in warranty approvals for a shop that does 25% warranty work volume.
                 </p>
               </>
             )}
