@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { trackContactFormSubmit } from '../lib/analytics';
+import { trackConversion } from '../lib/marketing-pixels';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -15,6 +17,14 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // [PostHog] Track form submission with role context (no PII sent)
+    trackContactFormSubmit({
+      role: formData.role,
+      hasPhone: !!formData.phone,
+      hasShopName: !!formData.shopName,
+    });
+    // Fire conversion events to all marketing pixels (Meta Lead, Google Ads, LinkedIn)
+    trackConversion('lead');
     // TODO: Wire up to actual form submission (e.g., Formspree, email API)
     setSubmitted(true);
   };

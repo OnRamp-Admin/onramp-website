@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Mic } from 'lucide-react';
+import { trackPageView } from './lib/analytics';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
@@ -13,13 +14,17 @@ import TechniciansPage from './pages/TechniciansPage';
 import ManagersPage from './pages/ManagersPage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import ContactPage from './pages/ContactPage';
+import PricingPage from './pages/PricingPage';
 
 // Set to false to disable the coming soon redirect and show the full site
-const COMING_SOON = true;
+const COMING_SOON = false;
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    trackPageView(pathname);
+  }, [pathname]);
   return null;
 }
 
@@ -79,6 +84,7 @@ function App() {
         <Route path="/technicians" element={<TechniciansPage />} />
         <Route path="/managers" element={<ManagersPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
       <Footer />

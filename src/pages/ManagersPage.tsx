@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
-  Building2, TrendingUp, Shield, DollarSign, Users, Check,
-  ClipboardCheck, FileCheck, AlertTriangle, Target, Zap, Crown, Infinity,
+  Building2, TrendingUp, Shield, DollarSign, Users,
+  ClipboardCheck, FileCheck, AlertTriangle, Target, ArrowRight,
 } from 'lucide-react';
 
 // Manager ROI constants
@@ -10,7 +10,7 @@ const HOURS_PER_WEEK = 40;
 const WEEKS_PER_YEAR = 52;
 const AVG_BILLABLE_RATE = 125;
 const WARRANTY_WORK_SHARE = 0.25;
-const WARRANTY_APPROVAL_BUMP = 0.05;
+const WARRANTY_APPROVAL_BUMP = 0.04;
 
 const benefits = [
   {
@@ -59,51 +59,6 @@ const warrantyFeatures = [
   },
 ];
 
-const features = [
-  'Voice-guided repair assistance',
-  'Hands-free Flic button control',
-  'AI-generated RO narratives',
-  'Real-time spec & TSB lookup',
-  'Step-by-step job coaching',
-  'OEM warranty documentation',
-  'Multi-vehicle support',
-  'Cloud job history & analytics',
-];
-
-const tiers = [
-  {
-    name: 'Basic',
-    price: 39,
-    hours: '3',
-    hoursLabel: 'Voice AI hours / mo',
-    perSeat: true,
-    description: 'For shops testing the waters with voice-first repairs.',
-    icon: Zap,
-    highlight: false,
-  },
-  {
-    name: 'Pro',
-    price: 99,
-    hours: '10',
-    hoursLabel: 'Voice AI hours / mo',
-    perSeat: true,
-    description: 'The standard for professional service departments.',
-    icon: Crown,
-    highlight: true,
-    badge: 'Most Popular',
-  },
-  {
-    name: 'Unlimited',
-    price: 199,
-    originalPrice: 249,
-    hours: 'Unlimited',
-    hoursLabel: 'Voice AI hours / mo',
-    perSeat: true,
-    description: 'For high-volume departments that never want to think about limits.',
-    icon: Infinity,
-    highlight: false,
-  },
-];
 
 export default function ManagersPage() {
   const [efficiencyGain, setEfficiencyGain] = useState(12);
@@ -368,93 +323,62 @@ export default function ManagersPage() {
               <p className="text-carbon-500 text-xs mt-6 text-center">
                 * Based on ${AVG_BILLABLE_RATE}/hr shop rate.
                 <br />
-                ** Assumes 5% bump in warranty approvals for a shop that does 25% warranty work volume.
+                ** Assumes 4% warranty approval rate improvement on 25% warranty work volume.
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Pricing CTA */}
       <section className="py-20 px-4 bg-gradient-to-b from-carbon-950 to-carbon-900">
-        <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center p-10 md:p-16 rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-safety-500/30">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-safety-500/10 border border-safety-500/30 mb-6">
+              <Building2 className="w-4 h-4 text-safety-400" />
+              <span className="text-sm font-semibold text-safety-400 tracking-wider uppercase">
+                Service Center Pricing
+              </span>
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Plans for Your{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">Team</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              Per-seat pricing. Every plan includes the full feature set—the only difference is Voice AI hours.
+            <p className="text-carbon-300 text-lg max-w-2xl mx-auto mb-4">
+              Choose the number of technician seats and a usage level.
+              The pool of Voice AI hours is shared across your entire team.
             </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            {tiers.map((tier, index) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative p-8 rounded-2xl transition-all duration-300 ${
-                  tier.highlight
-                    ? 'bg-gradient-to-b from-safety-500/10 to-carbon-800/80 border-2 border-safety-500/40 scale-[1.02]'
-                    : 'bg-carbon-800/50 border border-carbon-700/50 hover:border-safety-500/30'
-                }`}
-              >
-                {tier.badge && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-safety-500 to-safety-600 text-white text-sm font-semibold shadow-lg shadow-safety-500/30">
-                      {tier.badge}
-                    </span>
-                  </div>
-                )}
-                <div className={`inline-flex p-3 rounded-xl mb-4 ${tier.highlight ? 'bg-safety-500/10 text-safety-400' : 'bg-electric-500/10 text-electric-400'}`}>
-                  <tier.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-white font-bold text-2xl mb-2">{tier.name}</h3>
-                <div className="flex items-baseline gap-1 mb-1">
-                  {tier.originalPrice && <span className="text-carbon-500 text-lg line-through mr-1">${tier.originalPrice}</span>}
-                  <span className="text-4xl font-bold text-white">${tier.price}</span>
-                  <span className="text-carbon-400">/mo per seat</span>
-                </div>
-                <div className={`text-sm font-semibold mb-4 ${tier.highlight ? 'text-safety-400' : 'text-electric-400'}`}>
-                  {tier.hours} {tier.hoursLabel}
-                </div>
-                <p className="text-carbon-400 text-sm mb-6">{tier.description}</p>
-                <a href="/contact" className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  tier.highlight
-                    ? 'bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white shadow-lg shadow-safety-500/20'
-                    : 'bg-carbon-700/50 hover:bg-carbon-600/50 text-white border border-carbon-600/50 hover:border-carbon-500/50'
-                }`}>
-                  Contact Sales
-                </a>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Feature list */}
-          <div className="max-w-3xl mx-auto">
-            <h3 className="text-center text-white font-bold text-xl mb-8">Every seat includes all features</h3>
-            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-              {features.map((feature) => (
-                <div key={feature} className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-safety-500/20 flex items-center justify-center">
-                    <Check className="w-3 h-3 text-safety-400" />
-                  </div>
-                  <span className="text-carbon-200">{feature}</span>
+            <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+              {[
+                { label: 'Basic', detail: '3 hrs/tech/mo', price: '$39/seat' },
+                { label: 'Pro', detail: '10 hrs/tech/mo', price: '$99/seat' },
+                { label: 'Unlimited', detail: 'Unlimited hrs', price: '$199/seat' },
+              ].map((t) => (
+                <div key={t.label} className="p-3 rounded-xl bg-carbon-900/50 border border-carbon-700/30 text-center">
+                  <div className="text-white font-semibold text-sm">{t.label}</div>
+                  <div className="text-safety-400 text-xs font-medium">{t.detail}</div>
+                  <div className="text-carbon-400 text-xs mt-1">{t.price}</div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Bottom CTA */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-16 text-center">
-            <p className="text-carbon-300 text-lg mb-6">
-              Need a custom plan for a multi-location group?{' '}
-              <a href="/contact" className="text-safety-400 hover:text-safety-300 font-semibold underline underline-offset-4 transition-colors">
-                Talk to our team
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="/pricing"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/pricing#service-center';
+                }}
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety"
+              >
+                Build Your Shop Plan
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
+              <a href="/contact" className="text-safety-400 hover:text-safety-300 font-semibold underline underline-offset-4 transition-colors">
+                Or talk to our team
+              </a>
+            </div>
+            <p className="text-carbon-500 text-sm mt-6">
+              Multi-location groups — contact us for volume pricing.
             </p>
           </motion.div>
         </div>

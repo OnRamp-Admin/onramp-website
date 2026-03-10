@@ -7,6 +7,7 @@ const navLinks = [
   { label: 'For Technicians', path: '/technicians' },
   { label: 'For Service Managers', path: '/managers' },
   { label: 'How It Works', path: '/how-it-works' },
+  { label: 'Pricing', path: '/pricing' },
   { label: 'Contact', path: '/contact' },
 ];
 

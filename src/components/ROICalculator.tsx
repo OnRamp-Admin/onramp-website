@@ -1,36 +1,41 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Wrench, Building2, DollarSign, Clock, Users, TrendingUp, Calculator, Zap, Shield } from 'lucide-react';
+import { trackCalculatorTabSwitch, trackCalculatorValues } from '../lib/analytics';
 
 type CalculatorTab = 'technician' | 'manager';
 
 // Constants for calculations
-const FLAT_RATE_AVG = 28; // Average flat rate per hour
+const FLAT_RATE_DEFAULT = 35; // Default flat rate per hour
 const HOURS_PER_WEEK = 40;
 const WEEKS_PER_MONTH = 4.33;
 const WEEKS_PER_YEAR = 52;
 const AVG_BILLABLE_RATE = 125; // Shop rate per hour
 const WARRANTY_WORK_SHARE = 0.25; // 25% of jobs are warranty/recall
-const WARRANTY_APPROVAL_BUMP = 0.05; // 5% improvement in warranty approval rate
 
 export default function ROICalculator() {
   const [activeTab, setActiveTab] = useState<CalculatorTab>('technician');
 
   // Technician calculator state
-  const [prepTimeSaved, setPrepTimeSaved] = useState(10);
-  const [docTimeSaved, setDocTimeSaved] = useState(8);
+  const [terminalVisits, setTerminalVisits] = useState(15);
+  const [docMinutes, setDocMinutes] = useState(30);
+  const [hourlyRate, setHourlyRate] = useState(FLAT_RATE_DEFAULT);
 
   // Manager calculator state
   const [efficiencyGain, setEfficiencyGain] = useState(12);
+  const [warrantyBump, setWarrantyBump] = useState(4);
   const [numTechnicians, setNumTechnicians] = useState(4);
 
-  // Technician calculations
-  const totalMinutesSavedPerJob = prepTimeSaved + docTimeSaved;
-  const avgJobsPerDay = 4;
-  const dailyMinutesSaved = totalMinutesSavedPerJob * avgJobsPerDay;
+  // [PostHog] Track calculator values 2s after last slider change (debounced)
+  const trackTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hasInteractedRef = useRef(false);
+
+  // Technician calculations — terminal visits × 4 min avg + doc writing time
+  const MINUTES_PER_TERMINAL_VISIT = 4;
+  const dailyMinutesSaved = (terminalVisits * MINUTES_PER_TERMINAL_VISIT) + docMinutes;
   const weeklyHoursSaved = (dailyMinutesSaved * 5) / 60;
   const additionalBillableHoursWeekly = weeklyHoursSaved * 0.8; // 80% can be converted to billable
-  const monthlyIncomeBoost = additionalBillableHoursWeekly * FLAT_RATE_AVG * WEEKS_PER_MONTH;
+  const monthlyIncomeBoost = additionalBillableHoursWeekly * hourlyRate * WEEKS_PER_MONTH;
   const yearlyIncomeBoost = monthlyIncomeBoost * 12;
 
   // Manager calculations
@@ -39,8 +44,34 @@ export default function ROICalculator() {
   const revenueFromCapacity = additionalCapacity * AVG_BILLABLE_RATE;
   const warrantyHours = currentCapacity * WARRANTY_WORK_SHARE;
   const warrantyRevenue = warrantyHours * AVG_BILLABLE_RATE;
-  const warrantyRecovery = warrantyRevenue * WARRANTY_APPROVAL_BUMP;
+  const warrantyRecovery = warrantyRevenue * (warrantyBump / 100);
   const totalAnnualUnlocked = revenueFromCapacity + warrantyRecovery;
+
+  // [PostHog] Debounced tracking — captures final slider values 2s after last change
+  useEffect(() => {
+    if (!hasInteractedRef.current) {
+      hasInteractedRef.current = true;
+      return; // Skip initial render
+    }
+    clearTimeout(trackTimerRef.current);
+    trackTimerRef.current = setTimeout(() => {
+      if (activeTab === 'technician') {
+        trackCalculatorValues({
+          tab: 'technician',
+          values: { terminalVisits, docMinutes, hourlyRate },
+          result: Math.round(monthlyIncomeBoost),
+        });
+      } else {
+        trackCalculatorValues({
+          tab: 'manager',
+          values: { efficiencyGain, warrantyBump, numTechnicians },
+          result: Math.round(totalAnnualUnlocked),
+        });
+      }
+    }, 2000);
+    return () => clearTimeout(trackTimerRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [terminalVisits, docMinutes, hourlyRate, efficiencyGain, warrantyBump, numTechnicians]);
 
   return (
     <section id="roi-calculator" className="relative py-24 px-4 carbon-fiber-bg overflow-hidden">
@@ -81,7 +112,7 @@ export default function ROICalculator() {
         >
           <div className="inline-flex p-1.5 rounded-xl bg-carbon-800/80 border border-carbon-700/50">
             <button
-              onClick={() => setActiveTab('technician')}
+              onClick={() => { setActiveTab('technician'); trackCalculatorTabSwitch('technician'); }}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
                 activeTab === 'technician'
                   ? 'bg-electric-500 text-white shadow-lg shadow-electric-500/30'
@@ -92,7 +123,7 @@ export default function ROICalculator() {
               <span>I'm a Technician</span>
             </button>
             <button
-              onClick={() => setActiveTab('manager')}
+              onClick={() => { setActiveTab('manager'); trackCalculatorTabSwitch('manager'); }}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
                 activeTab === 'manager'
                   ? 'bg-safety-500 text-white shadow-lg shadow-safety-500/30'
@@ -127,28 +158,28 @@ export default function ROICalculator() {
                   </div>
                 </div>
 
-                {/* Prep Time Slider */}
+                {/* Terminal Visits Slider */}
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
-                      Minutes saved per job
+                      How many times a day do you visit your terminal for diagnosis or repair info?
                       <span className="block text-carbon-500 text-sm font-normal">
-                        (Avoiding PC/reference lookups)
+                        (We assume ~4 min per visit)
                       </span>
                     </label>
-                    <span className="text-electric-400 font-bold text-2xl">{prepTimeSaved}m</span>
+                    <span className="text-electric-400 font-bold text-2xl shrink-0">{terminalVisits}x</span>
                   </div>
                   <input
                     type="range"
-                    min="0"
+                    min="5"
                     max="30"
-                    value={prepTimeSaved}
-                    onChange={(e) => setPrepTimeSaved(Number(e.target.value))}
+                    value={terminalVisits}
+                    onChange={(e) => setTerminalVisits(Number(e.target.value))}
                     className="w-full"
                   />
                   <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                    <span>0 min</span>
-                    <span>30 min</span>
+                    <span>5x</span>
+                    <span>30x</span>
                   </div>
                 </div>
 
@@ -156,24 +187,43 @@ export default function ROICalculator() {
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
-                      Minutes saved on documentation
-                      <span className="block text-carbon-500 text-sm font-normal">
-                        (RO writing & story time)
-                      </span>
+                      How much time do you spend on average writing reports and documentation?
                     </label>
-                    <span className="text-electric-400 font-bold text-2xl">{docTimeSaved}m</span>
+                    <span className="text-electric-400 font-bold text-2xl shrink-0">{docMinutes}m/day</span>
                   </div>
                   <input
                     type="range"
-                    min="0"
-                    max="20"
-                    value={docTimeSaved}
-                    onChange={(e) => setDocTimeSaved(Number(e.target.value))}
+                    min="5"
+                    max="60"
+                    value={docMinutes}
+                    onChange={(e) => setDocMinutes(Number(e.target.value))}
                     className="w-full"
                   />
                   <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                    <span>0 min</span>
-                    <span>20 min</span>
+                    <span>5 min</span>
+                    <span>60 min</span>
+                  </div>
+                </div>
+
+                {/* Hourly Rate Slider */}
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-carbon-200 font-medium">
+                      Your hourly flat rate
+                    </label>
+                    <span className="text-electric-400 font-bold text-2xl shrink-0">${hourlyRate}/hr</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="60"
+                    value={hourlyRate}
+                    onChange={(e) => setHourlyRate(Number(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                    <span>$20/hr</span>
+                    <span>$60/hr</span>
                   </div>
                 </div>
 
@@ -231,6 +281,34 @@ export default function ROICalculator() {
                   </div>
                 </div>
 
+                {/* Warranty Recovery Slider */}
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-carbon-200 font-medium">
+                      Warranty recovery from improved documentation
+                      <span className="block text-carbon-500 text-sm font-normal">
+                        (Approval rate improvement)
+                      </span>
+                    </label>
+                    <span className="text-green-400 font-bold text-2xl">{warrantyBump}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="15"
+                    value={warrantyBump}
+                    onChange={(e) => setWarrantyBump(Number(e.target.value))}
+                    className="w-full"
+                    style={{
+                      background: `linear-gradient(to right, var(--color-green-600), var(--color-green-400))`,
+                    }}
+                  />
+                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                    <span>1%</span>
+                    <span>15%</span>
+                  </div>
+                </div>
+
                 {/* Technicians Slider */}
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-3">
@@ -242,7 +320,7 @@ export default function ROICalculator() {
                   <input
                     type="range"
                     min="1"
-                    max="20"
+                    max="100"
                     value={numTechnicians}
                     onChange={(e) => setNumTechnicians(Number(e.target.value))}
                     className="w-full"
@@ -252,7 +330,7 @@ export default function ROICalculator() {
                   />
                   <div className="flex justify-between text-carbon-500 text-xs mt-1">
                     <span>1 tech</span>
-                    <span>20 techs</span>
+                    <span>100 techs</span>
                   </div>
                 </div>
 
@@ -295,7 +373,7 @@ export default function ROICalculator() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Your Take-Home Boost</h3>
-                    <p className="text-carbon-400 text-sm">Based on ${FLAT_RATE_AVG}/hr flat rate</p>
+                    <p className="text-carbon-400 text-sm">Based on ${hourlyRate}/hr flat rate</p>
                   </div>
                 </div>
 
@@ -338,7 +416,7 @@ export default function ROICalculator() {
                 </div>
 
                 <p className="text-carbon-500 text-xs mt-6 text-center">
-                  * Based on 4 jobs/day, 5 days/week. Actual results vary by shop and workload.
+                  * Based on 5 days/week. Actual results vary by shop and workload.
                 </p>
               </>
             ) : (
@@ -392,9 +470,7 @@ export default function ROICalculator() {
                 </div>
 
                 <p className="text-carbon-500 text-xs mt-6 text-center">
-                  * Based on ${AVG_BILLABLE_RATE}/hr shop rate.
-                  <br />
-                  ** Assumes 5% bump in warranty approvals for a shop that does 25% warranty work volume.
+                  * Based on ${AVG_BILLABLE_RATE}/hr shop rate, 25% warranty work volume.
                 </p>
               </>
             )}
