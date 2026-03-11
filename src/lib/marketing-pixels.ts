@@ -61,26 +61,14 @@ function initMetaPixel() {
 // ─── Google Ads Tag (gtag.js) ───────────────────────────────────────────────
 
 function initGoogleAds() {
-  const adsId = import.meta.env.VITE_GOOGLE_ADS_ID;
-  if (!adsId) {
-    console.debug('[Marketing] Google Ads: VITE_GOOGLE_ADS_ID not set — skipped');
-    return;
+  // Google Ads gtag.js is loaded statically in index.html for verification.
+  // This function just confirms it's present. Conversion events use window.gtag
+  // which is already set up by the inline script.
+  if (typeof window.gtag === 'function') {
+    console.debug('[Marketing] Google Ads Tag: already loaded via index.html');
+  } else {
+    console.debug('[Marketing] Google Ads: gtag not found — check index.html');
   }
-
-  // Load gtag.js dynamically
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${adsId}`;
-  document.head.appendChild(script);
-
-  // Initialize dataLayer and gtag function
-  const dataLayer: unknown[] = window.dataLayer = window.dataLayer || [];
-  window.gtag = function (...args: unknown[]) {
-    dataLayer.push(args);
-  };
-  window.gtag('js', new Date());
-  window.gtag('config', adsId);
-  console.debug(`[Marketing] Google Ads Tag initialized: ${adsId}`);
 }
 
 // ─── LinkedIn Insight Tag ───────────────────────────────────────────────────
