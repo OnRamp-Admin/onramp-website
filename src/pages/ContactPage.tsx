@@ -490,92 +490,92 @@ export default function ContactPage() {
                       {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
                     </div>
 
-                    {/* Shop Name with Google Places Autocomplete */}
-                    <div className="relative" ref={suggestionsRef}>
-                      <label className="block text-carbon-200 text-sm font-medium mb-2">Shop / Dealership</label>
-                      {shopSelected ? (
-                        // Selected state: show shop name + address with clear button
-                        <div className="relative">
-                          <div className={`${inputClasses} pr-10 cursor-default`}>
-                            <div className="flex items-center gap-2">
-                              <Building2 className="w-4 h-4 text-electric-400 flex-shrink-0" />
-                              <div className="min-w-0">
-                                <div className="text-white text-sm font-medium truncate">{formData.shopName}</div>
-                                <div className="text-carbon-400 text-xs truncate">{formData.shopAddress}</div>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={clearShopSelection}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-500 hover:text-white transition-colors"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        // Search state: input with search icon
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-500" />
-                          <input
-                            type="text"
-                            value={formData.shopName}
-                            onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
-                            onFocus={() => {
-                              if (suggestions.length > 0) setShowSuggestions(true);
-                            }}
-                            className={`${inputClasses} pl-10`}
-                            placeholder="Search by name (e.g., BMW)"
-                          />
-                        </div>
-                      )}
-
-                      {/* Suggestions Dropdown */}
-                      {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute z-20 w-full mt-1 rounded-xl bg-carbon-800 border border-carbon-700/50 shadow-2xl max-h-64 overflow-y-auto">
-                          <div className="px-3 py-2 text-xs font-semibold text-carbon-400 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
-                            Service Centers Near You
-                          </div>
-                          {suggestions.map((place, idx) => (
-                            <button
-                              key={`place-${idx}`}
-                              type="button"
-                              onClick={() => selectPlace(place)}
-                              className="w-full text-left px-4 py-3 hover:bg-carbon-700/50 border-b border-carbon-700/20 last:border-b-0 last:rounded-b-xl transition-colors"
-                            >
-                              <div className="text-white text-sm font-medium">{place.name}</div>
-                              <div className="text-carbon-400 text-xs mt-0.5">{place.formattedAddress}</div>
-                            </button>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowSuggestions(false);
-                              // Let them keep typing manually
-                            }}
-                            className="w-full text-left px-4 py-2.5 text-carbon-500 hover:text-carbon-300 text-xs border-t border-carbon-700/30 transition-colors"
-                          >
-                            Can't find your shop? Just type the name manually
-                          </button>
-                        </div>
-                      )}
+                    {/* Role */}
+                    <div>
+                      <label className="block text-carbon-200 text-sm font-medium mb-2">I am a...</label>
+                      <select
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        className={inputClasses}
+                      >
+                        <option value="" className="bg-carbon-900">Select your role</option>
+                        <option value="Technician" className="bg-carbon-900">Technician</option>
+                        <option value="Service Manager" className="bg-carbon-900">Service Manager</option>
+                        <option value="Shop Owner" className="bg-carbon-900">Shop Owner</option>
+                        <option value="Other" className="bg-carbon-900">Other</option>
+                      </select>
                     </div>
                   </div>
 
-                  {/* Role */}
-                  <div>
-                    <label className="block text-carbon-200 text-sm font-medium mb-2">I am a...</label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className={inputClasses}
-                    >
-                      <option value="" className="bg-carbon-900">Select your role</option>
-                      <option value="Technician" className="bg-carbon-900">Technician</option>
-                      <option value="Service Manager" className="bg-carbon-900">Service Manager</option>
-                      <option value="Shop Owner" className="bg-carbon-900">Shop Owner</option>
-                      <option value="Other" className="bg-carbon-900">Other</option>
-                    </select>
+                  {/* Shop Name with Google Places Autocomplete — full width row */}
+                  <div className="relative" ref={suggestionsRef}>
+                    <label className="block text-carbon-200 text-sm font-medium mb-2">Shop / Dealership</label>
+                    {shopSelected ? (
+                      // Selected state: show shop name + address with clear button
+                      <div className="relative">
+                        <div className={`${inputClasses} pr-10 cursor-default`}>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-electric-400 flex-shrink-0" />
+                            <div className="min-w-0">
+                              <div className="text-white text-sm font-medium">{formData.shopName}</div>
+                              <div className="text-carbon-400 text-xs">{formData.shopAddress}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearShopSelection}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-500 hover:text-white transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      // Search state: input with search icon
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-500" />
+                        <input
+                          type="text"
+                          value={formData.shopName}
+                          onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
+                          onFocus={() => {
+                            if (suggestions.length > 0) setShowSuggestions(true);
+                          }}
+                          className={`${inputClasses} pl-10`}
+                          placeholder="Search by name (e.g., BMW of Carlsbad)"
+                        />
+                      </div>
+                    )}
+
+                    {/* Suggestions Dropdown */}
+                    {showSuggestions && suggestions.length > 0 && (
+                      <div className="absolute z-20 w-full mt-1 rounded-xl bg-carbon-800 border border-carbon-700/50 shadow-2xl max-h-64 overflow-y-auto">
+                        <div className="px-3 py-2 text-xs font-semibold text-carbon-400 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
+                          Service Centers Near You
+                        </div>
+                        {suggestions.map((place, idx) => (
+                          <button
+                            key={`place-${idx}`}
+                            type="button"
+                            onClick={() => selectPlace(place)}
+                            className="w-full text-left px-4 py-3 hover:bg-carbon-700/50 border-b border-carbon-700/20 last:border-b-0 last:rounded-b-xl transition-colors"
+                          >
+                            <div className="text-white text-sm font-medium">{place.name}</div>
+                            <div className="text-carbon-400 text-xs mt-0.5">{place.formattedAddress}</div>
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowSuggestions(false);
+                            // Let them keep typing manually
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-carbon-500 hover:text-carbon-300 text-xs border-t border-carbon-700/30 transition-colors"
+                        >
+                          Can't find your shop? Just type the name manually
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Message */}
