@@ -1,7 +1,7 @@
 /**
  * Marketing Pixels & Retargeting Tags for OnRamp Marketing Website
  *
- * Initializes: Meta Pixel, Google Ads Tag, LinkedIn Insight Tag, RB2B
+ * Initializes: Meta Pixel, Google Ads Tag, LinkedIn Insight Tag, RB2B, Apollo
  * Each pixel gracefully no-ops if its env var is not set.
  *
  * ## When adding a new pixel:
@@ -21,6 +21,7 @@ declare global {
     _linkedin_partner_id?: string;
     _linkedin_data_partner_ids?: string[];
     lintrk?: (...args: unknown[]) => void;
+    trackingFunctions?: { onLoad: (config: { appId: string }) => void };
   }
 }
 
@@ -136,6 +137,28 @@ function initRB2B() {
   console.debug(`[Marketing] RB2B initialized: ${siteId}`);
 }
 
+// ─── Apollo Website Tracker ─────────────────────────────────────────────────
+
+function initApollo() {
+  const appId = import.meta.env.VITE_APOLLO_APP_ID;
+  if (!appId) {
+    console.debug('[Marketing] Apollo: VITE_APOLLO_APP_ID not set — skipped');
+    return;
+  }
+
+  const cacheBuster = Math.random().toString(36).substring(7);
+  const script = document.createElement('script');
+  script.src = `https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache=${cacheBuster}`;
+  script.async = true;
+  script.defer = true;
+  script.onload = function () {
+    window.trackingFunctions?.onLoad({ appId });
+  };
+  document.head.appendChild(script);
+
+  console.debug(`[Marketing] Apollo tracker initialized: ${appId}`);
+}
+
 // ─── Master Initialization ─────────────────────────────────────────────────
 
 /**
@@ -147,6 +170,7 @@ export function initMarketingPixels() {
   initGoogleAds();
   initLinkedIn();
   initRB2B();
+  initApollo();
 }
 
 // ─── Conversion Events ─────────────────────────────────────────────────────
