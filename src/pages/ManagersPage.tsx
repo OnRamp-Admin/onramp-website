@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Building2, TrendingUp, Shield, DollarSign, Users,
-  ClipboardCheck, FileCheck, AlertTriangle, Target, ArrowRight,
+  ClipboardCheck, FileCheck, AlertTriangle, Target, ArrowRight, Calculator,
 } from 'lucide-react';
+import { trackCalculatorValues } from '../lib/analytics';
 
 // Manager ROI constants
 const HOURS_PER_WEEK = 40;
 const WEEKS_PER_YEAR = 52;
 const AVG_BILLABLE_RATE = 125;
 const WARRANTY_WORK_SHARE = 0.25;
-const WARRANTY_APPROVAL_BUMP = 0.04;
 
 const benefits = [
   {
@@ -62,15 +62,38 @@ const warrantyFeatures = [
 
 export default function ManagersPage() {
   const [efficiencyGain, setEfficiencyGain] = useState(12);
+  const [warrantyBump, setWarrantyBump] = useState(4);
   const [numTechnicians, setNumTechnicians] = useState(4);
+
+  // [PostHog] Track calculator values 2s after last slider change (debounced)
+  const trackTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hasInteractedRef = useRef(false);
 
   const currentCapacity = numTechnicians * HOURS_PER_WEEK * WEEKS_PER_YEAR;
   const additionalCapacity = currentCapacity * (efficiencyGain / 100);
   const revenueFromCapacity = additionalCapacity * AVG_BILLABLE_RATE;
   const warrantyHours = currentCapacity * WARRANTY_WORK_SHARE;
   const warrantyRevenue = warrantyHours * AVG_BILLABLE_RATE;
-  const warrantyRecovery = warrantyRevenue * WARRANTY_APPROVAL_BUMP;
+  const warrantyRecovery = warrantyRevenue * (warrantyBump / 100);
   const totalAnnualUnlocked = revenueFromCapacity + warrantyRecovery;
+
+  // [PostHog] Debounced tracking
+  useEffect(() => {
+    if (!hasInteractedRef.current) {
+      hasInteractedRef.current = true;
+      return;
+    }
+    clearTimeout(trackTimerRef.current);
+    trackTimerRef.current = setTimeout(() => {
+      trackCalculatorValues({
+        tab: 'manager',
+        values: { efficiencyGain, warrantyBump, numTechnicians },
+        result: Math.round(totalAnnualUnlocked),
+      });
+    }, 2000);
+    return () => clearTimeout(trackTimerRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [efficiencyGain, warrantyBump, numTechnicians]);
 
   return (
     <div className="pt-16">
@@ -220,11 +243,23 @@ export default function ManagersPage() {
       {/* ROI Calculator */}
       <section className="py-20 px-4 carbon-fiber-bg relative overflow-hidden">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-safety-500/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-electric-500/10 rounded-full blur-[150px]" />
         <div className="max-w-5xl mx-auto relative">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-flex items-center gap-2 text-safety-400 text-sm font-semibold tracking-wider uppercase mb-4">
+              <Calculator className="w-4 h-4" />
+              ROI Engine
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Calculate Your{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">Hidden Revenue</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-electric-400">
+                Hidden Revenue
+              </span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
               See the revenue opportunity OnRamp unlocks for your service department.
@@ -232,8 +267,14 @@ export default function ManagersPage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Sliders */}
-            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
+            {/* Input Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 backdrop-blur-sm"
+            >
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-safety-500/20">
                   <TrendingUp className="w-6 h-6 text-safety-400" />
@@ -244,45 +285,112 @@ export default function ManagersPage() {
                 </div>
               </div>
 
+              {/* Efficiency Slider */}
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
                   <label className="text-carbon-200 font-medium">
                     Overall shop efficiency gain
-                    <span className="block text-carbon-500 text-sm font-normal">(Industry avg: 10-15%)</span>
+                    <span className="block text-carbon-500 text-sm font-normal">
+                      (Industry avg: 10-15%)
+                    </span>
                   </label>
                   <span className="text-safety-400 font-bold text-2xl">{efficiencyGain}%</span>
                 </div>
-                <input type="range" min="5" max="25" value={efficiencyGain} onChange={(e) => setEfficiencyGain(Number(e.target.value))} className="w-full" style={{ background: 'linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))' }} />
+                <input
+                  type="range"
+                  min="5"
+                  max="25"
+                  value={efficiencyGain}
+                  onChange={(e) => setEfficiencyGain(Number(e.target.value))}
+                  className="w-full"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
+                  }}
+                />
                 <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                  <span>5%</span><span>25%</span>
+                  <span>5%</span>
+                  <span>25%</span>
                 </div>
               </div>
 
+              {/* Warranty Recovery Slider */}
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
-                  <label className="text-carbon-200 font-medium">Number of technicians</label>
-                  <span className="text-safety-400 font-bold text-2xl">{numTechnicians}</span>
+                  <label className="text-carbon-200 font-medium">
+                    Warranty recovery from improved documentation
+                    <span className="block text-carbon-500 text-sm font-normal">
+                      (Approval rate improvement)
+                    </span>
+                  </label>
+                  <span className="text-green-400 font-bold text-2xl">{warrantyBump}%</span>
                 </div>
-                <input type="range" min="1" max="20" value={numTechnicians} onChange={(e) => setNumTechnicians(Number(e.target.value))} className="w-full" style={{ background: 'linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))' }} />
+                <input
+                  type="range"
+                  min="1"
+                  max="15"
+                  value={warrantyBump}
+                  onChange={(e) => setWarrantyBump(Number(e.target.value))}
+                  className="w-full"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-green-600), var(--color-green-400))`,
+                  }}
+                />
                 <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                  <span>1 tech</span><span>20 techs</span>
+                  <span>1%</span>
+                  <span>15%</span>
                 </div>
               </div>
 
+              {/* Technicians Slider */}
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-carbon-200 font-medium">
+                    Number of technicians
+                  </label>
+                  <span className="text-safety-400 font-bold text-2xl">{numTechnicians}</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={numTechnicians}
+                  onChange={(e) => setNumTechnicians(Number(e.target.value))}
+                  className="w-full"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
+                  }}
+                />
+                <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <span>1 tech</span>
+                  <span>100 techs</span>
+                </div>
+              </div>
+
+              {/* Summary Stats */}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                 <div>
                   <p className="text-carbon-500 text-sm">Current annual capacity</p>
-                  <p className="text-white font-bold text-xl">{currentCapacity.toLocaleString()} hrs</p>
+                  <p className="text-white font-bold text-xl">
+                    {currentCapacity.toLocaleString()} hrs
+                  </p>
                 </div>
                 <div>
                   <p className="text-carbon-500 text-sm">Found capacity</p>
-                  <p className="text-white font-bold text-xl">+{Math.round(additionalCapacity).toLocaleString()} hrs</p>
+                  <p className="text-white font-bold text-xl">
+                    +{Math.round(additionalCapacity).toLocaleString()} hrs
+                  </p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Results */}
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-safety-900/40 to-safety-950/40 border border-safety-500/30">
+            {/* Results Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-safety-900/40 to-safety-950/40 border border-safety-500/30 backdrop-blur-sm"
+            >
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2 rounded-lg bg-safety-500/20">
                   <DollarSign className="w-6 h-6 text-safety-400" />
@@ -293,8 +401,14 @@ export default function ManagersPage() {
                 </div>
               </div>
 
+              {/* Big Number */}
               <div className="text-center py-8">
-                <motion.div key={totalAnnualUnlocked} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-2">
+                <motion.div
+                  key={totalAnnualUnlocked}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="mb-2"
+                >
                   <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-safety-300 to-safety-500">
                     ${Math.round(totalAnnualUnlocked).toLocaleString()}
                   </span>
@@ -303,30 +417,48 @@ export default function ManagersPage() {
                 <p className="text-carbon-400">Total revenue opportunity</p>
               </div>
 
+              {/* Breakdown */}
               <div className="space-y-4 mt-6">
                 <div className="flex justify-between items-center p-4 rounded-xl bg-carbon-900/50">
                   <div className="flex items-center gap-3">
                     <Users className="w-5 h-5 text-safety-400" />
                     <span className="text-carbon-200">From efficiency gains</span>
                   </div>
-                  <span className="text-safety-400 font-bold">+${Math.round(revenueFromCapacity).toLocaleString()}</span>
+                  <span className="text-safety-400 font-bold">
+                    +${Math.round(revenueFromCapacity).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-4 rounded-xl bg-carbon-900/50">
                   <div className="flex items-center gap-3">
                     <Shield className="w-5 h-5 text-green-400" />
                     <span className="text-carbon-200">Warranty recovery**</span>
                   </div>
-                  <span className="text-green-400 font-bold">+${Math.round(warrantyRecovery).toLocaleString()}</span>
+                  <span className="text-green-400 font-bold">
+                    +${Math.round(warrantyRecovery).toLocaleString()}
+                  </span>
                 </div>
               </div>
 
               <p className="text-carbon-500 text-xs mt-6 text-center">
-                * Based on ${AVG_BILLABLE_RATE}/hr shop rate.
-                <br />
-                ** Assumes 4% warranty approval rate improvement on 25% warranty work volume.
+                * Based on ${AVG_BILLABLE_RATE}/hr shop rate, 25% warranty work volume.
               </p>
             </motion.div>
           </div>
+
+          {/* Bottom Callout */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-carbon-300 text-lg mb-6">
+              These aren't hypothetical numbers. This is{' '}
+              <span className="text-white font-semibold">found capacity</span>—revenue that's already
+              walking out the door.
+            </p>
+          </motion.div>
         </div>
       </section>
 
