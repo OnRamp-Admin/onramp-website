@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Mic } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -44,10 +44,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-electric-500/20 to-safety-500/20 border border-electric-500/30">
-                <Mic className="w-6 h-6 text-electric-400" />
-              </div>
-              <span className="text-2xl font-bold text-white">OnRamp</span>
+              <span className="text-2xl">🧠</span>
+              <span className="text-2xl font-black text-white tracking-tight">ONRAMP</span>
             </div>
             <p className="text-carbon-400 max-w-sm mb-6">
               Voice-first AI for automotive technicians. Built for the shop floor, powered by Gemini AI.

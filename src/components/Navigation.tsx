@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const navLinks = [
   { label: 'For Technicians', path: '/technicians' },
@@ -20,10 +20,8 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group" onClick={() => setMobileOpen(false)}>
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-electric-500/20 to-safety-500/20 border border-electric-500/30 group-hover:border-electric-400/50 transition-colors">
-            <Mic className="w-5 h-5 text-electric-400" />
-          </div>
-          <span className="text-xl font-bold text-white">OnRamp</span>
+          <span className="text-xl">🧠</span>
+          <span className="text-xl font-black text-white tracking-tight">ONRAMP</span>
         </Link>
 
         {/* Desktop Links */}
