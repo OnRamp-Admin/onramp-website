@@ -1,30 +1,38 @@
 import { motion } from 'framer-motion';
-import { Mic, Wrench, FileCheck, ChevronDown } from 'lucide-react';
+import { Wrench, FileCheck, ChevronDown, Search, List } from 'lucide-react';
 
 const phases = [
   {
-    icon: Wrench,
-    label: 'PREPARE',
-    description: 'Pull specs, diagrams & TSBs',
+    icon: Search,
+    label: 'DIAGNOSE',
+    description: 'Pinpoint the problem with AI',
     color: 'text-electric-400',
     bgColor: 'bg-electric-500/10',
     borderColor: 'border-electric-500/30',
   },
   {
-    icon: Mic,
-    label: 'PERFORM',
-    description: 'Voice-guided diagnostics',
-    color: 'text-safety-400',
-    bgColor: 'bg-safety-500/10',
-    borderColor: 'border-safety-500/30',
+    icon: List,
+    label: 'PREPARE',
+    description: 'AI Procedural Briefing',
+    color: 'text-amber-400',
+    bgColor: 'bg-amber-500/10',
+    borderColor: 'border-amber-500/30',
+  },
+  {
+    icon: Wrench,
+    label: 'REPAIR',
+    description: 'AI Voice-Guided Repairs',
+    color: 'text-green-400',
+    bgColor: 'bg-green-500/10',
+    borderColor: 'border-green-500/30',
   },
   {
     icon: FileCheck,
-    label: 'WRAP-UP',
-    description: 'Auto-generate RO reports',
-    color: 'text-electric-400',
-    bgColor: 'bg-electric-500/10',
-    borderColor: 'border-electric-500/30',
+    label: 'CLOSE OUT',
+    description: 'AI-Generated RO Reports',
+    color: 'text-orange-400',
+    bgColor: 'bg-orange-500/10',
+    borderColor: 'border-orange-500/30',
   },
 ];
 
@@ -37,31 +45,19 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto text-center">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-carbon-800/80 border border-carbon-600/50 mb-8"
-        >
-          <span className="w-2 h-2 rounded-full bg-electric-400 animate-pulse" />
-          <span className="text-sm text-carbon-200">Powered by Gemini AI</span>
-        </motion.div>
-
         {/* Main Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+          className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mt-12 md:mt-16 mb-6 leading-tight"
         >
-          Your Voice.{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
-            Your Shop.
+            Wasted Time at the Terminal...
           </span>
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
-            Zero Paperwork.
+          <span className="text-4xl md:text-6xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
+            Terminated.
           </span>
         </motion.h1>
 
@@ -70,10 +66,11 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-xl md:text-2xl text-carbon-300 mb-12 max-w-3xl mx-auto"
+          className="text-base md:text-xl text-carbon-300 mb-12 max-w-3xl mx-auto"
         >
-          OnRamp is the voice-first AI assistant that keeps technicians at the vehicle—
-          not the service terminal. Speak your repairs into existence.
+          OnRamp is the first hands-free, <span className="text-white font-bold">AI voice assistant</span> helping technicians flag more hours.
+          Our AI helps you diagnose faster, execute complex procedures flawlessly,
+          and generate perfect RO reports instantly.
         </motion.p>
 
         {/* Phase Cards */}
@@ -81,7 +78,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12"
         >
           {phases.map((phase, index) => (
             <motion.div
@@ -90,19 +87,19 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.02, y: -4 }}
-              className={`relative p-6 rounded-2xl ${phase.bgColor} border ${phase.borderColor} backdrop-blur-sm`}
+              className={`relative p-4 md:p-5 rounded-2xl ${phase.bgColor} border ${phase.borderColor} backdrop-blur-sm`}
             >
-              <div className={`inline-flex p-3 rounded-xl ${phase.bgColor} mb-4`}>
-                <phase.icon className={`w-6 h-6 ${phase.color}`} />
+              <div className={`inline-flex p-2.5 rounded-xl ${phase.bgColor} mb-3`}>
+                <phase.icon className={`w-5 h-5 ${phase.color}`} />
               </div>
-              <h3 className={`text-lg font-bold ${phase.color} mb-2 tracking-wider`}>
+              <h3 className={`text-sm md:text-base font-bold ${phase.color} mb-1.5 tracking-wider`}>
                 {phase.label}
               </h3>
-              <p className="text-carbon-300 text-sm">{phase.description}</p>
+              <p className="text-carbon-300 text-xs md:text-sm">{phase.description}</p>
 
               {/* Connection Line */}
               {index < phases.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-carbon-600 to-carbon-700" />
+                <div className="hidden md:block absolute top-1/2 -right-2 w-4 h-0.5 bg-gradient-to-r from-carbon-600 to-carbon-700" />
               )}
             </motion.div>
           ))}
