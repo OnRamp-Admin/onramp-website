@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Mic, Brain, FileText, Volume2, ArrowRight, Car, Clipboard,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
+  Play, Pause, AlertCircle, ListChecks,
 } from 'lucide-react';
 import QuickStartDemo from '../components/QuickStartDemo';
 
@@ -42,53 +43,59 @@ const phases = [
     name: 'DIAGNOSE',
     icon: Search,
     color: 'electric',
-    title: 'Pinpoint the Problem',
+    title: 'Pinpoint the Problem — AI FAST!',
     description: 'Describe the symptoms and OnRamp helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
     details: [
       'Symptom-driven diagnostic flow guided by AI',
-      'Cross-references TSBs and known failures for your vehicle',
-      'Builds a diagnostic scratchpad as you test and observe',
-      'Confirms root cause before moving to repair',
+      "References TSBs ('95 - Today) & known failures",
+      'Builds thorough diagnostic notes as technician tests',
+      'Gets to the root cause in record time!',
     ],
+    audio: '/audio/diagnose-audio-sample.wav',
   },
   {
     name: 'PREPARE',
-    icon: Wrench,
+    icon: ListChecks,
     color: 'amber',
-    title: 'Pull Specs & Plan the Job',
-    description: 'OnRamp reads the repair order, identifies the vehicle, and pre-loads relevant TSBs, wiring diagrams, torque specs, and fluid capacities. The AI briefs you on the job before you touch a tool.',
+    title: 'Prepare to Perform.',
+    description: "OnRamp's AI organizes all the complex details of the job and briefs tech's so they can kill the clock. Never again get caught off guard by speciality tools, or replacement parts mid-job.",
     details: [
-      'Automatic VIN decode and vehicle identification',
-      'Pre-loaded TSBs and known issues for your vehicle',
-      'Torque specs, fluid capacities, and part numbers ready',
-      'Step-by-step procedure from OEM service manuals',
+      'Ingests OEM procedure documents for complex jobs',
+      'OR... generates procedure in many simpler cases',
+      'Extracts and summarizes project warnings and technical notes',
+      'Isolates tools and replacement parts lists',
+      'Technician reviews all pertinent info with AI before steps',
     ],
+    audio: '/audio/prepare-audio-sample.wav',
   },
   {
     name: 'REPAIR',
-    icon: Mic,
+    icon: Wrench,
     color: 'green',
     title: 'Voice-Guided Repairs',
     description: 'Work with your hands while OnRamp coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
-      'Hands-free voice interaction via Flic button',
-      'Real-time spec lookups mid-repair',
-      'Step-by-step progress tracking',
-      'Automatic note-taking from your narration',
+      "Step details, torque specs and 'heads-up' guidance in your ears when you need it!",
+      'Hands-free voice — Start/Stop with smart button',
+      'OnRamp tracks progress and keeps perfect notes',
+      'AI can open PDFs to the exact page/diagram you need',
+      'No more time-wasting trips to the terminal!',
     ],
+    audio: '/audio/perform-audio-sample.wav',
   },
   {
     name: 'CLOSE OUT',
     icon: FileCheck,
     color: 'orange',
-    title: 'Auto-Generate Documentation',
-    description: 'When the job is done, OnRamp compiles everything you said into a professional, warranty-ready RO report. Cause, Correction, Concern—structured automatically from your natural speech.',
+    title: 'AI-Generated RO Reports — Instantly.',
+    description: 'When the job is done, OnRamp compiles everything you said and did into a perfect, professional, warranty-worthy RO report. Complaint, Cause, Correction and Validation — structured automatically from your natural speech.',
     details: [
-      'Complete 3C documentation from voice notes',
-      'OEM-matched labor codes and operations',
+      'Complete 3C+V reports — written perfectly, instantly',
       'Pre-submission validation catches missing fields',
       'Ready for DMS upload or print',
+      'No wasted time at the terminal!',
     ],
+    audio: '/audio/Close-Out-Audio-SAmple.wav',
   },
 ];
 
@@ -109,6 +116,328 @@ const hardware = [
     description: 'Use your existing Bluetooth earbuds, headset, or shop speaker. OnRamp works with whatever audio setup you already have—no proprietary hardware required.',
   },
 ];
+
+// Shared audio ref so only one sample plays at a time
+let currentAudio: HTMLAudioElement | null = null;
+// Listeners that get called when currentAudio changes (so other instances can reset)
+const audioChangeListeners = new Set<() => void>();
+
+function useAudioPlayer(src: string) {
+  const [state, setState] = useState<'idle' | 'playing' | 'error'>('idle');
+  const [progress, setProgress] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const stopTracking = useCallback(() => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const updateProgress = useCallback(() => {
+    if (audioRef.current && audioRef.current.duration) {
+      setProgress(audioRef.current.currentTime / audioRef.current.duration);
+    }
+    rafRef.current = requestAnimationFrame(updateProgress);
+  }, []);
+
+  // Listen for other instances taking over playback
+  useEffect(() => {
+    const onAudioChange = () => {
+      if (currentAudio !== audioRef.current && state === 'playing') {
+        setState('idle');
+        setProgress(0);
+        stopTracking();
+      }
+    };
+    audioChangeListeners.add(onAudioChange);
+    return () => { audioChangeListeners.delete(onAudioChange); };
+  }, [state, stopTracking]);
+
+  const toggle = useCallback(() => {
+    if (state === 'error') return;
+
+    if (state === 'playing' && audioRef.current) {
+      audioRef.current.pause();
+      setState('idle');
+      stopTracking();
+      currentAudio = null;
+      return;
+    }
+
+    // Stop any other playing audio
+    if (currentAudio && currentAudio !== audioRef.current) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+      // Notify other instances
+      audioChangeListeners.forEach(fn => fn());
+    }
+
+    try {
+      if (!audioRef.current) {
+        audioRef.current = new Audio(src);
+        audioRef.current.addEventListener('ended', () => {
+          setState('idle');
+          setProgress(0);
+          stopTracking();
+          currentAudio = null;
+        });
+        audioRef.current.addEventListener('error', () => {
+          setState('error');
+          stopTracking();
+        });
+      }
+
+      audioRef.current.currentTime = 0;
+      const playPromise = audioRef.current.play();
+      if (playPromise) {
+        playPromise.then(() => {
+          setState('playing');
+          currentAudio = audioRef.current;
+          audioChangeListeners.forEach(fn => fn());
+          rafRef.current = requestAnimationFrame(updateProgress);
+        }).catch(() => {
+          setState('error');
+        });
+      }
+    } catch {
+      setState('error');
+    }
+  }, [state, src, updateProgress, stopTracking]);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        if (currentAudio === audioRef.current) currentAudio = null;
+      }
+      stopTracking();
+    };
+  }, [stopTracking]);
+
+  return { state, progress, toggle };
+}
+
+function AudioSamplePlayer({ accentColor, state, progress, toggle }: {
+  accentColor: string;
+  state: 'idle' | 'playing' | 'error';
+  progress: number;
+  toggle: () => void;
+}) {
+  if (state === 'error') {
+    return (
+      <div className="flex items-center gap-2 mt-6 p-3 rounded-lg bg-carbon-800/60 border border-carbon-700/50">
+        <AlertCircle className="w-4 h-4 text-carbon-400 flex-shrink-0" />
+        <span className="text-carbon-400 text-sm">
+          Your browser doesn't support audio playback.{' '}
+          <a href="/contact" className="underline hover:text-white transition-colors">Request a live demo</a> instead!
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      className="group flex items-center gap-3 mt-6 px-4 py-2.5 rounded-lg border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+      style={{
+        backgroundColor: state === 'playing' ? `${accentColor}15` : 'transparent',
+        borderColor: state === 'playing' ? `${accentColor}50` : '#3A3A38',
+      }}
+    >
+      <div
+        className="flex items-center justify-center rounded-full transition-colors"
+        style={{
+          width: 32,
+          height: 32,
+          backgroundColor: state === 'playing' ? `${accentColor}25` : `${accentColor}15`,
+        }}
+      >
+        {state === 'playing' ? (
+          <Pause size={14} style={{ color: accentColor }} />
+        ) : (
+          <Play size={14} style={{ color: accentColor, marginLeft: '2px' }} />
+        )}
+      </div>
+      <div className="flex flex-col items-start gap-1">
+        <span className="text-sm font-medium text-carbon-200">
+          {state === 'playing' ? 'Playing sample...' : 'Hear an example conversation'}
+        </span>
+        <div className="w-32 h-1 rounded-full bg-carbon-700/50 overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ backgroundColor: accentColor }}
+            animate={{ width: `${progress * 100}%` }}
+            transition={{ duration: 0.1 }}
+          />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function PhonePlayButton({ accentColor, state, progress, toggle }: {
+  accentColor: string;
+  state: 'idle' | 'playing' | 'error';
+  progress: number;
+  toggle: () => void;
+}) {
+  if (state === 'error') return null;
+
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); toggle(); }}
+      className="flex flex-col items-center gap-2 group"
+    >
+      {/* Play/Pause circle — 20% bigger (44→53) */}
+      <motion.div
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center justify-center rounded-full transition-colors"
+        style={{
+          width: 53,
+          height: 53,
+          backgroundColor: state === 'playing' ? `${accentColor}30` : `${accentColor}20`,
+          border: `2px solid ${accentColor}`,
+        }}
+      >
+        {state === 'playing' ? (
+          <Pause size={22} style={{ color: accentColor }} />
+        ) : (
+          <Play size={22} style={{ color: accentColor, marginLeft: '2px' }} />
+        )}
+      </motion.div>
+      {/* Label — doubled (9→18px) */}
+      <span style={{
+        color: state === 'playing' ? accentColor : '#888',
+        fontSize: '18px',
+        fontWeight: 600,
+        fontFamily: 'Inter, sans-serif',
+        letterSpacing: '0.05em',
+      }}>
+        {state === 'playing' ? 'PLAYING' : 'SAMPLE'}
+      </span>
+      {/* Progress bar — much wider */}
+      <div
+        className="overflow-hidden rounded-full"
+        style={{
+          width: '80%',
+          minWidth: 120,
+          height: 4,
+          backgroundColor: state === 'playing' ? `${accentColor}20` : '#333',
+        }}
+      >
+        <motion.div
+          className="h-full rounded-full"
+          style={{ backgroundColor: accentColor }}
+          animate={{ width: `${progress * 100}%` }}
+          transition={{ duration: 0.1 }}
+        />
+      </div>
+    </button>
+  );
+}
+
+const colorMap: Record<string, { badge: string; check: string; border: string; phoneBg: string; phoneAccent: string }> = {
+  electric: { badge: 'bg-electric-500/10 text-electric-400 border-electric-500/30', check: 'text-electric-400', border: 'border-electric-500/30', phoneBg: 'bg-electric-500/20', phoneAccent: '#4A90D9' },
+  amber: { badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30', check: 'text-yellow-400', border: 'border-yellow-500/30', phoneBg: 'bg-yellow-500/20', phoneAccent: '#EAB308' },
+  green: { badge: 'bg-green-500/10 text-green-400 border-green-500/30', check: 'text-green-400', border: 'border-green-500/30', phoneBg: 'bg-green-500/20', phoneAccent: '#22C55E' },
+  orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', check: 'text-orange-400', border: 'border-orange-500/30', phoneBg: 'bg-orange-500/20', phoneAccent: '#F97316' },
+};
+
+function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: number }) {
+  const colors = colorMap[phase.color];
+  const textOnRight = index % 2 === 1 || index === 3;
+  const { state, progress, toggle } = useAudioPlayer(phase.audio);
+
+  return (
+    <div
+      className={`flex flex-col ${textOnRight ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12 lg:gap-16`}
+    >
+      {/* Text content */}
+      <motion.div
+        initial={{ opacity: 0, x: textOnRight ? 40 : -40 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
+        className="w-full lg:w-1/2"
+      >
+        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold tracking-wider mb-4 ${colors.badge}`}>
+          <phase.icon className="w-4 h-4" />
+          {phase.name}
+        </div>
+        <h3 className="text-white font-bold text-2xl md:text-3xl mb-4">{phase.title}</h3>
+        <p className="text-carbon-300 text-lg mb-6">{phase.description}</p>
+        <div className="space-y-3">
+          {phase.details.map((detail) => (
+            <div key={detail} className="flex items-start gap-3">
+              <CheckCircle2 className={`w-5 h-5 mt-0.5 flex-shrink-0 ${colors.check}`} />
+              <span className="text-carbon-200">{detail}</span>
+            </div>
+          ))}
+        </div>
+        <AudioSamplePlayer accentColor={colors.phoneAccent} state={state} progress={progress} toggle={toggle} />
+      </motion.div>
+
+      {/* Phone mockup with play button */}
+      <motion.div
+        initial={{ opacity: 0, x: textOnRight ? -40 : 40 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.1 }}
+        className="w-full lg:w-1/2 flex justify-center"
+      >
+        <div className="relative mx-auto w-[220px] md:w-[260px]">
+          <div className={`absolute inset-0 ${colors.phoneBg} rounded-full blur-[80px] scale-75 opacity-50`} />
+          {/* Screen content inside frame — z-20 so it's clickable above the frame image */}
+          <div
+            className="absolute overflow-hidden z-20 flex flex-col"
+            style={{
+              left: '5.5%',
+              right: '5.5%',
+              top: '3%',
+              bottom: '3%',
+              borderRadius: '2rem',
+              backgroundColor: '#141410',
+            }}
+          >
+            {/* Top third: icon + phase name */}
+            <div className="flex flex-col items-center justify-center" style={{ flex: '1 1 0%', paddingTop: '25%' }}>
+              <phase.icon className="w-12 h-12 mb-3" style={{ color: colors.phoneAccent }} />
+              <span style={{
+                color: colors.phoneAccent,
+                fontSize: '20px',
+                fontWeight: 700,
+                fontFamily: 'Inter, sans-serif',
+                letterSpacing: '0.08em',
+              }}>
+                {phase.name}
+              </span>
+            </div>
+
+            {/* Bottom third: play button + "Listen" */}
+            <div className="flex flex-col items-center justify-center" style={{ flex: '1 1 0%', paddingBottom: '15%' }}>
+              <PhonePlayButton
+                accentColor={colors.phoneAccent}
+                state={state}
+                progress={progress}
+                toggle={toggle}
+              />
+            </div>
+          </div>
+          {/* Frame image — pointer-events-none so clicks pass through to screen content */}
+          <img
+            src="/apple-iphone-17-pro-max-2025-medium.png"
+            alt=""
+            className="relative z-10 w-full h-auto drop-shadow-2xl pointer-events-none"
+          />
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function HowItWorksPage() {
   const [activeStep, setActiveStep] = useState(0);
@@ -153,17 +482,126 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Quick Start */}
+      <section className="py-20 px-4 carbon-fiber-bg">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="w-full lg:w-1/2 text-center lg:text-left"
+            >
+              <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">Quick Start</span>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-8 leading-tight">
+                15 Seconds to<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Start a Repair.</span>
+              </h2>
+
+              <ol className="space-y-4 text-left max-w-lg mx-auto lg:mx-0 mb-8">
+                {[
+                  { num: '1', text: 'Enter the RO Number' },
+                  { num: '2', text: 'Snap the VIN' },
+                  { num: '3', text: 'Launch the Voice Session' },
+                ].map((step, i) => (
+                  <motion.li
+                    key={step.num}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    className="flex items-center gap-4"
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-electric-500/15 border border-electric-500/30 flex items-center justify-center">
+                      <span className="text-electric-400 text-sm font-bold">{step.num}</span>
+                    </div>
+                    <span className="text-carbon-200 text-lg">{step.text}</span>
+                  </motion.li>
+                ))}
+              </ol>
+
+              {/* "Put your headphones on" + accessories row */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8 max-w-lg mx-auto lg:mx-0"
+              >
+                <div className="leading-relaxed flex-shrink-0">
+                  <span className="text-carbon-300 text-lg">Put on your headphones<br className="hidden lg:block" /> and Smart Button!</span><br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 font-semibold text-xl md:text-2xl">
+                    ...you're hands-free from here!
+                  </span>
+                </div>
+                {/* Flic + AirPods centered together */}
+                <div className="flex items-center gap-1 lg:translate-x-8">
+                  <img
+                    src="/flic-button.png"
+                    alt="Flic Smart Button"
+                    className="w-22 md:w-28 h-auto drop-shadow-xl"
+                  />
+                  <img
+                    src="/airpods.png"
+                    alt="AirPods"
+                    className="w-32 md:w-40 h-auto drop-shadow-xl"
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Animated Phone Mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="w-full lg:w-1/2 flex justify-center"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-electric-500/20 rounded-full blur-[80px] scale-75 opacity-50" />
+                <div className="relative">
+                  <QuickStartDemo />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Four Phases */}
+      <section className="py-20 px-4 carbon-fiber-bg">
+        <div className="max-w-6xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+              Four Phases.{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
+            </h2>
+            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+              OnRamp adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
+            </p>
+          </motion.div>
+
+          <div className="space-y-20 md:space-y-28">
+            {phases.map((phase, index) => (
+              <PhaseSection key={phase.name} phase={phase} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* The Voice Loop */}
       <section className="py-20 px-4 bg-carbon-900/50">
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-            <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">The Voice Loop</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
-              Work Hands-Free.{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Document Everything.</span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              No More Typing. Just Tap-to-Talk.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 mt-2 inline-block">ONRAMP Documents Everything.</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              OnRamp listens, understands context, and writes your repair orders while you work. No typing. No terminal trips.
+            <p className="text-carbon-300 text-lg max-w-3xl mx-auto">
+              OnRamp listens, understands context, and writes your repair orders while you work.<br className="hidden md:block" /> No typing. No terminal trips.
             </p>
           </motion.div>
 
@@ -248,106 +686,6 @@ export default function HowItWorksPage() {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Quick Start */}
-      <section className="py-20 px-4 carbon-fiber-bg">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-            {/* Text */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="w-full lg:w-1/2"
-            >
-              <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">Quick Start</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
-                15 Seconds to{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Start a Repair.</span>
-              </h2>
-              <p className="text-carbon-300 text-lg leading-relaxed">
-                Enter the repair order, snap the VIN, and launch the Diagnose Voice Session. You're hands-free from here.
-              </p>
-            </motion.div>
-
-            {/* Animated Phone Mockup */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="w-full lg:w-1/2 flex justify-center"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-electric-500/20 rounded-full blur-[80px] scale-75 opacity-50" />
-                <div className="relative">
-                  <QuickStartDemo />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Three Phases */}
-      <section className="py-20 px-4 carbon-fiber-bg">
-        <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Four Phases.{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
-            </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              OnRamp adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
-            </p>
-          </motion.div>
-
-          <div className="space-y-8">
-            {phases.map((phase, index) => {
-              const colorMap: Record<string, { badge: string; icon: string; check: string; border: string }> = {
-                electric: { badge: 'bg-electric-500/10 text-electric-400 border-electric-500/30', icon: 'bg-electric-500/10 text-electric-400', check: 'text-electric-400', border: 'border-electric-500/30' },
-                amber: { badge: 'bg-amber-500/10 text-amber-400 border-amber-500/30', icon: 'bg-amber-500/10 text-amber-400', check: 'text-amber-400', border: 'border-amber-500/30' },
-                green: { badge: 'bg-green-500/10 text-green-400 border-green-500/30', icon: 'bg-green-500/10 text-green-400', check: 'text-green-400', border: 'border-green-500/30' },
-                orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', icon: 'bg-orange-500/10 text-orange-400', check: 'text-orange-400', border: 'border-orange-500/30' },
-              };
-              const colors = colorMap[phase.color];
-
-              return (
-                <motion.div
-                  key={phase.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`p-8 md:p-10 rounded-2xl bg-carbon-800/50 border ${colors.border}`}
-                >
-                  <div className="flex flex-col md:flex-row gap-8">
-                    <div className="flex-1">
-                      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold tracking-wider mb-4 ${colors.badge}`}>
-                        <phase.icon className="w-4 h-4" />
-                        {phase.name}
-                      </div>
-                      <h3 className="text-white font-bold text-2xl mb-4">{phase.title}</h3>
-                      <p className="text-carbon-300 text-lg">{phase.description}</p>
-                    </div>
-                    <div className="flex-1">
-                      <div className="space-y-3">
-                        {phase.details.map((detail) => (
-                          <div key={detail} className="flex items-start gap-3">
-                            <CheckCircle2 className={`w-5 h-5 mt-0.5 flex-shrink-0 ${colors.check}`} />
-                            <span className="text-carbon-200">{detail}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
         </div>
       </section>
 
