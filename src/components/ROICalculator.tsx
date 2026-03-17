@@ -162,7 +162,7 @@ export default function ROICalculator() {
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
-                      How many times a day do you visit your terminal for diagnosis or repair info?
+                      How many times a day do you go to your terminal for diagnosis, TSB's, parts, procedures and torques?
                       <span className="block text-carbon-500 text-sm font-normal">
                         (We assume ~4 min per visit)
                       </span>

@@ -3,8 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Check, Package, Zap, Crown, Infinity as InfinityIcon, ArrowRight, Clock, Users, Building2, User, TrendingUp,
+  Minus, Plus, MousePointerClick, HelpCircle, X,
 } from 'lucide-react';
 import { trackPricingTabSwitch, trackPricingConfigured } from '../lib/analytics';
+
+/* ------------------------------------------------------------------ */
+/*  App Checkout URL                                                    */
+/* ------------------------------------------------------------------ */
+
+const APP_URL = import.meta.env.VITE_APP_URL || 'https://app.onramp.com';
+
+function checkoutUrl(plan: string, seats = 1, type: 'individual' | 'shop' = 'individual') {
+  return `${APP_URL}/checkout?plan=${plan}&seats=${seats}&type=${type}`;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Shared Data                                                        */
@@ -17,7 +28,7 @@ const tierConfigs = [
     pricePerSeat: 39,
     hoursPerSeat: 3,
     additionalRate: 15,
-    description: 'For lighter workloads and shops testing the waters.',
+    description: 'For very light workloads or part-time technicians.',
     icon: Zap,
     highlight: false,
   },
@@ -39,7 +50,7 @@ const tierConfigs = [
     originalPricePerSeat: 249,
     hoursPerSeat: Infinity,
     additionalRate: 0,
-    description: 'For power users who never want to think about limits.',
+    description: 'For power users who want maximum productivity without restrictions.',
     icon: InfinityIcon,
     highlight: false,
   },
@@ -103,6 +114,13 @@ const tierColors = {
   },
 } as const;
 
+/* Flic button pricing per tier — full retail is $49.99 */
+const flicPricing: Record<string, { seatPrice: number; seatDiscount: string; extraPrice: number; extraDiscount: string }> = {
+  basic:     { seatPrice: 49.99, seatDiscount: '',         extraPrice: 49.99, extraDiscount: '' },
+  pro:       { seatPrice: 24.99, seatDiscount: '50% off',  extraPrice: 37.49, extraDiscount: '25% off' },
+  unlimited: { seatPrice: 0,     seatDiscount: 'FREE',     extraPrice: 24.99, extraDiscount: '50% off' },
+};
+
 /* ROI constants */
 const ROI_SHOP_RATE = 125;        // $/hr billable
 const ROI_HOURS_PER_WEEK = 40;
@@ -132,7 +150,7 @@ const featureCategories = [
       'Job tracking dashboard',
       'Job approval workflow',
       'Parts waiting / on-hold status',
-      'Job completion and wrap-up',
+      'Job completion and close out',
     ],
   },
   {
@@ -231,8 +249,9 @@ function StarterPack() {
                   transition={{ delay: 0.3 }}
                   className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
                 >
-                  Everything you need.{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
+                  Everything you need.
+                  <br />Three months.
+                  <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
                     One price.
                   </span>
                 </motion.h2>
@@ -245,8 +264,151 @@ function StarterPack() {
                   className="text-carbon-300 text-lg mb-8 max-w-xl"
                 >
                   Get the Flic hands-free button and 3 months of Pro-level access.
-                  Try voice-first repairs risk-free — if it doesn't change how you work,
-                  you've lost nothing.
+                  We're so confident AI voice-assisted repairs will change the way you work,
+                  we're giving you over 40% off to prove it.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                  className="flex flex-col sm:flex-row items-center gap-6 mb-8"
+                >
+                  <div className="space-y-3">
+                    {[
+                      'Flic wireless button included',
+                      '3 months of Pro plan (10 hrs/mo)',
+                      'All features unlocked from day one',
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-3 justify-center lg:justify-start">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-safety-500/20 flex items-center justify-center">
+                          <Check className="w-3 h-3 text-safety-400" />
+                        </div>
+                        <span className="text-carbon-200">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-col items-center flex-shrink-0 sm:ml-auto">
+                    <img
+                      src="/flic-button.png"
+                      alt="Flic wireless button"
+                      className="w-20 h-20 object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+                    />
+                    <span className="mt-2 text-safety-400 text-xs font-bold uppercase tracking-wider">
+                      Included
+                    </span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <a
+                    href={checkoutUrl('starter_kit')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety"
+                  >
+                    Get the Starter Pack
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </motion.div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
+                className="flex-shrink-0 w-full max-w-sm"
+              >
+                <div className="p-8 rounded-2xl bg-carbon-900/80 border border-safety-500/20 text-center flex flex-col items-center justify-center">
+                  <div className="text-5xl md:text-6xl text-carbon-500 line-through font-bold mb-3">$346</div>
+                  <div className="text-6xl md:text-7xl font-bold text-white mb-2">$199</div>
+                  <div className="text-carbon-400 mb-4">one-time to get started</div>
+                  <div className="inline-flex items-center px-6 py-2 rounded-full bg-safety-500/15 border border-safety-500/30 mb-6">
+                    <span className="text-lg font-bold text-safety-400">Save {Math.round((1 - 199/346) * 100)}%</span>
+                  </div>
+                  <div className="h-px w-full bg-carbon-700/50 my-4" />
+                  <p className="text-carbon-300 text-xs">
+                    After 90 days, defaults to $99/mo Pro plan. Cancel anytime.
+                    Limit one Starter Pack per technician.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Service Center Starter Pack                                        */
+/* ------------------------------------------------------------------ */
+
+function ServiceCenterStarterPack() {
+  const fullPrice = 1735; // 5×$99×3mo ($1,485) + 5×$49.99 Flic ($250)
+  const packPrice = 999;
+
+  return (
+    <section className="px-4 mb-20">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative overflow-hidden rounded-3xl border border-safety-500/30 bg-gradient-to-br from-carbon-800/80 via-carbon-800/60 to-safety-500/5"
+        >
+          <div className="absolute top-0 right-0 w-80 h-80 bg-safety-500/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-electric-500/10 rounded-full blur-[80px]" />
+
+          <div className="relative z-10 p-8 md:p-12 lg:p-16">
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+              <div className="flex-1 text-center lg:text-left">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-safety-500/15 border border-safety-500/30 mb-6"
+                >
+                  <Package className="w-4 h-4 text-safety-400" />
+                  <span className="text-sm font-semibold text-safety-400 tracking-wider uppercase">
+                    Service Center Starter Pack
+                  </span>
+                </motion.div>
+
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+                >
+                  Five technicians.<br />
+                  Three months.<br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
+                    One price.
+                  </span>
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 }}
+                  className="text-carbon-300 text-lg mb-8 max-w-xl"
+                >
+                  5 seats, 5 free Flic buttons, and 3 months of Pro-level access.
+                  We're so confident OnRamp will change the way your team works,
+                  we're giving you over 40% off to prove it for your first five technicians.
                 </motion.p>
 
                 <motion.div
@@ -257,8 +419,9 @@ function StarterPack() {
                   className="space-y-3 mb-8"
                 >
                   {[
-                    'Flic wireless button included',
-                    '3 months of Pro plan (10 hrs/mo)',
+                    '5 Flic wireless buttons included',
+                    '5 technician seats — full access',
+                    '150 pooled Voice AI hours (3 months)',
                     'All features unlocked from day one',
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3 justify-center lg:justify-start">
@@ -271,18 +434,48 @@ function StarterPack() {
                 </motion.div>
 
                 <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.55, type: 'spring', stiffness: 200 }}
+                  className="flex justify-center lg:justify-start mb-8"
+                >
+                  <div className="flex items-end gap-3">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="relative" style={{ transform: `rotate(${(i - 2) * 4}deg)` }}>
+                        <img
+                          src="/flic-button.png"
+                          alt="Flic wireless button"
+                          className="w-14 h-14 object-contain drop-shadow-lg"
+                        />
+                      </div>
+                    ))}
+                    <div className="ml-2 flex flex-col items-center self-center">
+                      <span className="text-safety-400 text-sm font-bold uppercase tracking-wider whitespace-nowrap">
+                        5 Included
+                      </span>
+                      <span className="text-safety-400/70 text-xs font-medium">
+                        ($250 value)
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.6 }}
                 >
-                  <Link
-                    to="/contact"
+                  <a
+                    href={checkoutUrl('sc_starter_kit', 5, 'shop')}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety"
                   >
-                    Get the Starter Pack
+                    Get the Service Center Starter Pack
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  </a>
                 </motion.div>
               </div>
 
@@ -293,36 +486,17 @@ function StarterPack() {
                 transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
                 className="flex-shrink-0 w-full max-w-sm"
               >
-                <div className="p-8 rounded-2xl bg-carbon-900/80 border border-safety-500/20 text-center">
-                  <div className="text-carbon-400 text-sm mb-2 line-through">$346 value</div>
-                  <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-6xl md:text-7xl font-bold text-white">$99</span>
+                <div className="p-8 rounded-2xl bg-carbon-900/80 border border-safety-500/20 text-center flex flex-col items-center justify-center">
+                  <div className="text-5xl md:text-6xl text-carbon-500 line-through font-bold mb-3">${fullPrice.toLocaleString()}</div>
+                  <div className="text-6xl md:text-7xl font-bold text-white mb-2">${packPrice}</div>
+                  <div className="text-carbon-400 mb-4">one-time to get started</div>
+                  <div className="inline-flex items-center px-6 py-2 rounded-full bg-safety-500/15 border border-safety-500/30 mb-6">
+                    <span className="text-lg font-bold text-safety-400">Save {Math.round((1 - packPrice / fullPrice) * 100)}%</span>
                   </div>
-                  <div className="text-carbon-400 mb-6">one-time to get started</div>
-                  <div className="h-px bg-carbon-700/50 mb-6" />
-                  <div className="space-y-4 text-left">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-electric-500/10 flex items-center justify-center">
-                        <Package className="w-4 h-4 text-electric-400" />
-                      </div>
-                      <div>
-                        <div className="text-white font-medium">Flic Button</div>
-                        <div className="text-carbon-400 text-sm">Wireless hands-free control</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-safety-500/10 flex items-center justify-center">
-                        <Crown className="w-4 h-4 text-safety-400" />
-                      </div>
-                      <div>
-                        <div className="text-white font-medium">3 Months Pro</div>
-                        <div className="text-carbon-400 text-sm">30 total Voice AI hours</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-px bg-carbon-700/50 my-6" />
-                  <p className="text-carbon-500 text-xs">
-                    After 90 days, continues at $99/mo Pro plan. Cancel anytime.
+                  <div className="h-px w-full bg-carbon-700/50 my-4" />
+                  <p className="text-carbon-300 text-xs">
+                    After 90 days, defaults to Pro plan at $99/seat/mo (5 seats = $495/mo). Cancel anytime.
+                    Limit one Starter Pack per service center at this discount.
                   </p>
                 </div>
               </motion.div>
@@ -404,14 +578,205 @@ function FeatureGrid() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Flic Button Info Modal                                             */
+/* ------------------------------------------------------------------ */
+
+function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-400 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Content */}
+          <div className="p-8 md:p-10">
+            <div className="flex flex-col items-center text-center mb-6">
+              <img
+                src="/flic-button.png"
+                alt="Flic 2 Smart Button"
+                className="w-28 h-28 object-contain mb-5"
+              />
+              <h3 className="text-2xl font-bold text-white mb-2">
+                The Key to Hands-Free
+              </h3>
+              <p className="text-carbon-300 text-sm">
+                The Flic 2 Smart Button is essential to hands-free operation with OnRamp.
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              {[
+                {
+                  title: 'Clips to your shirt',
+                  desc: 'Compact, lightweight design with a built-in clip. Stays put while you work under the hood.',
+                },
+                {
+                  title: 'Tap to Start / Stop AI Voice',
+                  desc: 'One press to start or stop your AI voice assistant. No swiping, no unlocking, no greasy screens.',
+                },
+                {
+                  title: 'Hands-free productivity is the key to speed',
+                  desc: 'Keep both hands on the job. Navigate steps, ask questions, and document repairs without putting down your tools.',
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-safety-500/20 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-safety-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">{item.title}</p>
+                    <p className="text-carbon-400 text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50">
+              <p className="text-carbon-300 text-xs text-center">
+                One-time purchase. Required for use. Discounts available depending on your plan level.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-400 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-8 md:p-10">
+            <div className="flex flex-col items-center text-center mb-6">
+              <img
+                src="/flic-button.png"
+                alt="Flic 2 Smart Button"
+                className="w-28 h-28 object-contain mb-5"
+              />
+              <h3 className="text-2xl font-bold text-white mb-2">
+                The Key to Hands-Free
+              </h3>
+              <p className="text-carbon-300 text-sm">
+                The Flic 2 Smart Button is essential to hands-free operation with OnRamp.
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              {[
+                {
+                  title: 'One per technician',
+                  desc: 'Each tech gets their own Flic button. Clips to a shirt or lanyard for instant access.',
+                },
+                {
+                  title: 'Tap to Start / Stop AI Voice',
+                  desc: 'One press to start or stop the AI voice assistant. No swiping, no unlocking, no greasy screens.',
+                },
+                {
+                  title: 'Keep your team productive',
+                  desc: 'Hands-free voice control means techs stay on the job. Less downtime, more billable hours.',
+                },
+                {
+                  title: 'Order spares',
+                  desc: 'Add extra buttons so you\'re never down if one gets lost or broken.',
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-safety-500/20 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-safety-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">{item.title}</p>
+                    <p className="text-carbon-400 text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50">
+              <p className="text-carbon-300 text-xs text-center">
+                One-time purchase. Flic button pricing varies by plan level — discounts applied automatically.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Individual Pricing Tab                                             */
 /* ------------------------------------------------------------------ */
 
 function IndividualPricing() {
+  const [selectedTier, setSelectedTier] = useState('pro');
+  const [flicModalOpen, setFlicModalOpen] = useState(false);
+
+  const badgeLabels: Record<string, string> = {
+    basic: 'Light Use',
+    pro: 'Most Popular',
+    unlimited: 'Best Value',
+  };
+
+  const ctaLabels: Record<string, string> = {
+    basic: 'Go Basic',
+    pro: 'Go Pro',
+    unlimited: 'Go Unlimited!',
+  };
+
   return (
     <>
-      <StarterPack />
-
       {/* Monthly Plans */}
       <section className="px-4 mb-8">
         <div className="max-w-6xl mx-auto">
@@ -431,102 +796,153 @@ function IndividualPricing() {
               </span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              Every plan includes the full feature set. The only difference is how many hours of Voice AI you need.
+              Every plan includes <span className="underline">every</span> feature.
+              <br />The only difference is how many hours of Voice AI are included.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {tierConfigs.map((tier, index) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative p-8 rounded-2xl transition-all duration-300 ${
-                  tier.highlight
-                    ? 'bg-gradient-to-b from-safety-500/10 to-carbon-800/80 border-2 border-safety-500/40 scale-[1.02]'
-                    : 'bg-carbon-800/50 border border-carbon-700/50 hover:border-electric-500/30'
-                }`}
-              >
-                {tier.badge && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-safety-500 to-safety-600 text-white text-sm font-semibold shadow-lg shadow-safety-500/30">
-                      {tier.badge}
-                    </span>
-                  </div>
-                )}
+            {tierConfigs.map((tier, index) => {
+              const isSelected = selectedTier === tier.key;
+              const tc = tierColors[tier.key];
 
-                <div className={`inline-flex p-3 rounded-xl mb-4 ${
-                  tier.highlight
-                    ? 'bg-safety-500/10 text-safety-400'
-                    : 'bg-electric-500/10 text-electric-400'
-                }`}>
-                  <tier.icon className="w-6 h-6" />
-                </div>
-
-                <h3 className="text-white font-bold text-2xl mb-2">{tier.name}</h3>
-
-                <div className="flex items-baseline gap-1 mb-1">
-                  {tier.originalPricePerSeat && (
-                    <span className="text-carbon-500 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
-                  )}
-                  <span className="text-4xl font-bold text-white">${tier.pricePerSeat}</span>
-                  <span className="text-carbon-400">/mo</span>
-                </div>
-
-                <div className={`text-sm font-semibold mb-4 ${
-                  tier.highlight ? 'text-safety-400' : 'text-electric-400'
-                }`}>
-                  {tier.hoursPerSeat === Infinity ? 'Unlimited' : tier.hoursPerSeat} Voice AI hours / mo
-                </div>
-
-                <p className="text-carbon-400 text-sm mb-6">{tier.description}</p>
-
-                <div className={`rounded-xl p-4 mb-6 ${
-                  tier.highlight
-                    ? 'bg-safety-500/5 border border-safety-500/20'
-                    : 'bg-carbon-700/30 border border-carbon-700/50'
-                }`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-4 h-4 text-carbon-400" />
-                    <span className="text-carbon-200 text-sm font-medium">Voice AI Usage</span>
-                  </div>
-                  <div className="text-carbon-300 text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span>Included hours</span>
-                      <span className="text-white font-semibold">
-                        {tier.hoursPerSeat === Infinity ? 'Unlimited' : `${tier.hoursPerSeat} hrs/mo`}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Additional hours</span>
-                      <span className="text-white font-semibold">
-                        {tier.additionalRate === 0 ? (
-                          <span className="text-green-400">$0 — included</span>
-                        ) : (
-                          `$${tier.additionalRate}/hr`
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  to="/contact"
-                  className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                    tier.highlight
-                      ? 'bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white shadow-lg shadow-safety-500/20'
-                      : 'bg-carbon-700/50 hover:bg-carbon-600/50 text-white border border-carbon-600/50 hover:border-carbon-500/50'
+              return (
+                <motion.div
+                  key={tier.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => setSelectedTier(tier.key)}
+                  className={`relative p-8 rounded-2xl transition-all duration-300 cursor-pointer ${
+                    isSelected
+                      ? `bg-gradient-to-b ${tc.gradient} to-carbon-800/80 border-2 ${tc.borderCard} scale-[1.02]`
+                      : 'bg-carbon-800/50 border border-carbon-700/50 hover:border-carbon-600/80'
                   }`}
                 >
-                  Get Started
-                </Link>
-              </motion.div>
-            ))}
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                      isSelected
+                        ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
+                        : 'bg-carbon-700/80 text-carbon-400 border border-carbon-600/50'
+                    }`}>
+                      {badgeLabels[tier.key]}
+                    </span>
+                  </div>
+
+                  <div className={`inline-flex p-3 rounded-xl mb-4 transition-colors duration-300 ${
+                    isSelected
+                      ? `${tc.bgSubtle} ${tc.text}`
+                      : 'bg-carbon-700/30 text-carbon-400'
+                  }`}>
+                    <tier.icon className="w-6 h-6" />
+                  </div>
+
+                  <h3 className="text-white font-bold text-2xl mb-2">{tier.name}</h3>
+
+                  <div className="flex items-baseline gap-1 mb-1">
+                    {tier.originalPricePerSeat && (
+                      <span className="text-carbon-500 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
+                    )}
+                    <span className="text-4xl font-bold text-white">${tier.pricePerSeat}</span>
+                    <span className="text-carbon-400">/mo</span>
+                  </div>
+
+                  <div className={`text-sm font-semibold mb-4 transition-colors duration-300 ${
+                    isSelected ? tc.text : 'text-carbon-500'
+                  }`}>
+                    {tier.hoursPerSeat === Infinity ? 'Unlimited' : tier.hoursPerSeat} Voice AI hours / mo
+                  </div>
+
+                  <p className="text-carbon-400 text-sm mb-6">{tier.description}</p>
+
+                  <div className={`rounded-xl p-4 mb-6 transition-colors duration-300 ${
+                    isSelected
+                      ? `${tc.saveBg} border ${tc.borderPill}`
+                      : 'bg-carbon-700/30 border border-carbon-700/50'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="w-4 h-4 text-carbon-400" />
+                      <span className="text-carbon-200 text-sm font-medium">Voice AI Usage</span>
+                    </div>
+                    <div className="text-carbon-300 text-sm space-y-1">
+                      <div className="flex justify-between">
+                        <span>Included hours</span>
+                        <span className="text-white font-semibold">
+                          {tier.hoursPerSeat === Infinity ? 'Unlimited' : `${tier.hoursPerSeat} hrs/mo`}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Additional hours</span>
+                        <span className="text-white font-semibold">
+                          {tier.additionalRate === 0 ? (
+                            <span className="text-green-400">$0 — included</span>
+                          ) : (
+                            `$${tier.additionalRate}/hr`
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={`relative rounded-xl p-4 mb-6 transition-colors duration-300 ${
+                    isSelected
+                      ? `${tc.saveBg} border ${tc.borderPill}`
+                      : 'bg-carbon-700/30 border border-carbon-700/50'
+                  }`}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setFlicModalOpen(true); }}
+                      className="absolute top-3 right-3 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
+                    <div className="flex items-center gap-4">
+                      <img
+                        src="/flic-button.png"
+                        alt="Flic wireless button"
+                        className="w-16 h-16 object-contain flex-shrink-0"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <MousePointerClick className="w-4 h-4 text-carbon-400" />
+                          <span className="text-carbon-200 text-sm font-medium">Flic Button</span>
+                        </div>
+                        {tier.key === 'unlimited' ? (
+                          <div className="text-green-400 font-bold text-lg">FREE</div>
+                        ) : tier.key === 'pro' ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-carbon-500 line-through text-sm">$49.99</span>
+                            <span className="text-white font-bold text-lg">$24.99</span>
+                            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isSelected ? 'bg-safety-500/15 text-safety-400' : 'bg-carbon-600/30 text-carbon-400'}`}>50% off</span>
+                          </div>
+                        ) : (
+                          <div className="text-white font-bold text-lg">$49.99</div>
+                        )}
+                        <p className="text-carbon-300 text-xs mt-1">One-time purchase.<br />Required for use.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a
+                    href={checkoutUrl(tier.key, 1, 'individual')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      isSelected
+                        ? `bg-gradient-to-r ${tc.btnGradient} ${tc.btnHover} text-white shadow-lg ${tc.shadow}`
+                        : 'bg-carbon-700/50 hover:bg-carbon-600/50 text-white border border-carbon-600/50 hover:border-carbon-500/50'
+                    }`}
+                  >
+                    {ctaLabels[tier.key]}
+                  </a>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
+
+      <FlicInfoModal open={flicModalOpen} onClose={() => setFlicModalOpen(false)} />
     </>
   );
 }
@@ -536,21 +952,45 @@ function IndividualPricing() {
 /* ------------------------------------------------------------------ */
 
 function ServiceCenterPricing() {
-  const [numTechs, setNumTechs] = useState(10);
+  const [numTechs, setNumTechs] = useState(5);
   const [selectedTier, setSelectedTier] = useState<'basic' | 'pro' | 'unlimited'>('pro');
+  const [extraFlics, setExtraFlics] = useState(0);
+  const [scFlicModalOpen, setScFlicModalOpen] = useState(false);
 
   // [PostHog] Debounced tracking — captures configurator state 2s after last change
   const configTrackRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const tier = tierConfigs.find((t) => t.key === selectedTier)!;
   const c = tierColors[selectedTier];
-  const totalPrice = numTechs * tier.pricePerSeat;
+
+  // Volume discount: 10+ seats = 5% off, 20+ seats = 10% off, 30+ seats = 15% off
+  const volumeDiscount = numTechs >= 30 ? 0.15 : numTechs >= 20 ? 0.10 : numTechs >= 10 ? 0.05 : 0;
+  const volumeDiscountPct = Math.round(volumeDiscount * 100);
+  const basePrice = numTechs * tier.pricePerSeat;
   const totalHours = tier.hoursPerSeat === Infinity ? Infinity : numTechs * tier.hoursPerSeat;
   const isUnlimited = tier.hoursPerSeat === Infinity;
 
-  // Strikethrough for unlimited
+  // Unlimited plan: combined discount from original $249 — 20%, 25%, 30%, 35%
+  const unlimitedCombinedRate = isUnlimited
+    ? (numTechs >= 30 ? 0.35 : numTechs >= 20 ? 0.30 : numTechs >= 10 ? 0.25 : 0.20)
+    : 0;
+  const unlimitedCombinedPct = Math.round(unlimitedCombinedRate * 100);
+
+  // For unlimited, price is computed from original; for others, apply volume discount
+  const totalPrice = isUnlimited && tier.originalPricePerSeat
+    ? Math.round(numTechs * tier.originalPricePerSeat * (1 - unlimitedCombinedRate))
+    : Math.round(basePrice * (1 - volumeDiscount));
+
+  // Strikethrough for unlimited (always) or volume discount on basic/pro
   const showStrikethrough = isUnlimited && tier.originalPricePerSeat;
   const strikethroughTotal = showStrikethrough ? numTechs * tier.originalPricePerSeat! : 0;
+
+  // Flic button calculations
+  const totalFlics = numTechs + extraFlics;
+  const flicTier = flicPricing[selectedTier];
+  const flicBaseCost = numTechs * flicTier.seatPrice;
+  const flicExtraCost = extraFlics * flicTier.extraPrice;
+  const totalFlicCost = flicBaseCost + flicExtraCost;
 
   // ROI calculation — efficiency gain scales with tier
   const efficiencyGain = ROI_EFFICIENCY_BY_TIER[selectedTier] ?? 0.07;
@@ -604,8 +1044,8 @@ function ServiceCenterPricing() {
               </span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              Choose the number of technician seats and a usage level.
-              Every seat gets full access — the pool of Voice AI hours is shared across your team.
+              Choose your usage level, team size, and hardware.
+              <br />Every seat/plan gets <span className="underline">every</span> feature — the only difference is Voice AI hours.
             </p>
           </motion.div>
 
@@ -618,10 +1058,81 @@ function ServiceCenterPricing() {
               viewport={{ once: true }}
               className="lg:col-span-3 space-y-8"
             >
-              {/* Technician Seats — on top */}
+              {/* 1. Usage Level Selector — first */}
               <div className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
-                <h3 className="text-white font-bold text-lg mb-2">Technician Seats</h3>
-                <p className="text-carbon-400 text-sm mb-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>1</span>
+                  <h3 className="text-white font-bold text-lg">Usage Level</h3>
+                </div>
+                <p className="text-carbon-400 text-sm mb-6 ml-10">
+                  Determines the Voice AI hours included per technician each month.<br/>Total hours are pooled and shared by all.
+                </p>
+
+                <div className="grid grid-cols-3 gap-4">
+                  {tierConfigs.map((t) => {
+                    const isSelected = selectedTier === t.key;
+                    const sc = selectorColors[t.key];
+                    const isTierUnlimited = t.key === 'unlimited';
+                    return (
+                      <button
+                        key={t.key}
+                        onClick={() => setSelectedTier(t.key)}
+                        className={`relative p-6 rounded-2xl text-left transition-all duration-200 cursor-pointer ${
+                          isSelected
+                            ? sc.selected
+                            : 'bg-carbon-700/30 border border-carbon-700/50 hover:border-carbon-600/80'
+                        }`}
+                      >
+                        <span className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                          isSelected
+                            ? t.key === 'basic'
+                              ? 'bg-gradient-to-r from-electric-500 to-electric-600 text-white shadow-lg shadow-electric-500/20'
+                              : t.key === 'unlimited'
+                                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20'
+                                : 'bg-gradient-to-r from-safety-500 to-safety-600 text-white shadow-lg shadow-safety-500/20'
+                            : 'bg-carbon-700/80 text-carbon-400 border border-carbon-600/50'
+                        }`}>
+                          {t.key === 'basic' ? 'Light Use' : t.key === 'unlimited' ? 'Best Value' : 'Most Popular'}
+                        </span>
+                        <div className={`inline-flex p-3 rounded-xl mb-3 ${
+                          isSelected ? sc.icon : 'bg-carbon-600/30 text-carbon-400'
+                        }`}>
+                          <t.icon className="w-6 h-6" />
+                        </div>
+                        <div className="text-white font-bold text-lg">{t.name}</div>
+                        <div className={`flex items-baseline gap-1 mt-1 ${
+                          isSelected ? sc.text : 'text-carbon-500'
+                        }`}>
+                          <span className="text-lg font-bold">
+                            {t.hoursPerSeat === Infinity ? '∞' : `~${t.hoursPerSeat}`}
+                          </span>
+                          <span className="text-xs font-semibold">
+                            {t.hoursPerSeat === Infinity ? 'hrs' : 'hrs'}/tech/mo
+                          </span>
+                        </div>
+                        <div className="text-carbon-400 text-base mt-1.5">
+                          {isTierUnlimited && t.originalPricePerSeat ? (
+                            <>
+                              <span className="line-through text-carbon-500">${t.originalPricePerSeat}</span>{' '}
+                              <span className="text-green-400 font-semibold">${t.pricePerSeat}</span>/seat/mo
+                            </>
+                          ) : (
+                            <>${t.pricePerSeat}/seat/mo</>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Technician Seats — second */}
+              <div className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>2</span>
+                  <h3 className="text-white font-bold text-lg">Technician Seats</h3>
+                </div>
+                <p className="text-carbon-400 text-sm mb-6 ml-10">
                   The number of technicians with access to OnRamp.
                 </p>
 
@@ -635,7 +1146,7 @@ function ServiceCenterPricing() {
                 <input
                   type="range"
                   min="5"
-                  max="25"
+                  max="50"
                   value={numTechs}
                   onChange={(e) => setNumTechs(Number(e.target.value))}
                   className="w-full"
@@ -643,80 +1154,168 @@ function ServiceCenterPricing() {
                 />
                 <div className="flex justify-between text-carbon-500 text-xs mt-1">
                   <span>5 techs</span>
-                  <span>25 techs</span>
+                  <span>50 techs</span>
                 </div>
+                {(() => {
+                  const nextTier = numTechs < 10 ? { target: 10, pct: isUnlimited ? 25 : 5, label: isUnlimited ? 'combined' : 'volume' }
+                    : numTechs < 20 ? { target: 20, pct: isUnlimited ? 30 : 10, label: isUnlimited ? 'combined' : 'volume' }
+                    : numTechs < 30 ? { target: 30, pct: isUnlimited ? 35 : 15, label: isUnlimited ? 'combined' : 'volume' }
+                    : null;
+                  const seatsNeeded = nextTier ? nextTier.target - numTechs : 0;
+                  const hasDiscount = isUnlimited ? unlimitedCombinedRate > 0.20 : volumeDiscount > 0;
+                  const isPurple = isUnlimited ? unlimitedCombinedRate >= 0.35 : volumeDiscount >= 0.15;
+                  const currentPct = isUnlimited ? unlimitedCombinedPct : volumeDiscountPct;
+                  const discountLabel = isUnlimited ? 'combined discount active' : 'volume discount active';
 
-                {/* Shared Voice AI Pool */}
-                <div className="mt-6">
-                  <div className="p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
-                    <p className={`${c.text} text-sm font-semibold mb-1`}>Shared Voice AI Pool</p>
-                    <p className="text-white font-bold text-xl mb-2">
-                      {isUnlimited ? 'Unlimited' : `${totalHours} hrs/mo`}
+                  return hasDiscount ? (
+                    <div className={`mt-3 px-3 py-2 rounded-lg border ${isPurple ? 'bg-purple-500/10 border-purple-500/30' : `${c.saveBg} ${c.borderPill}`}`}>
+                      <span className={`text-sm font-semibold ${isPurple ? 'text-purple-400' : c.saveText}`}>
+                        {currentPct}% {discountLabel}
+                      </span>
+                      {nextTier && (
+                        <p className="text-carbon-500 text-xs mt-1">
+                          Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-carbon-300 font-medium">{nextTier.pct}% {nextTier.label} discount</span>
+                        </p>
+                      )}
+                    </div>
+                  ) : nextTier ? (
+                    <p className="text-carbon-500 text-xs mt-3">
+                      Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-carbon-300 font-medium">{nextTier.pct}% {nextTier.label} discount</span>
                     </p>
-                    {!isUnlimited && (
-                      <p className="text-carbon-500 text-xs">
-                        {tier.hoursPerSeat} hrs x {numTechs} techs
-                      </p>
-                    )}
-                    <p className="text-carbon-400 text-xs mt-2">
-                      Hours are pooled across your team — if one tech uses less, others can use more. No hours go to waste.
-                    </p>
-                  </div>
-                </div>
+                  ) : null;
+                })()}
               </div>
 
-              {/* Usage Level Selector — below */}
-              <div className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
-                <h3 className="text-white font-bold text-lg mb-2">Usage Level</h3>
-                <p className="text-carbon-400 text-sm mb-6">
-                  Determines the Voice AI hours included per technician each month.
+              {/* 3. Flic Buttons — third */}
+              <div className="relative p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
+                <button
+                  onClick={() => setScFlicModalOpen(true)}
+                  className="absolute top-5 right-5 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>3</span>
+                  <h3 className="text-white font-bold text-lg">Flic Buttons</h3>
+                </div>
+                <p className="text-carbon-400 text-sm mb-6 ml-10">
+                  One button per technician for hands-free voice control.<br />Add spares so you're never down if one gets lost.
                 </p>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {tierConfigs.map((t) => {
-                    const isSelected = selectedTier === t.key;
-                    const sc = selectorColors[t.key];
-                    const isTierUnlimited = t.key === 'unlimited';
-                    return (
-                      <button
-                        key={t.key}
-                        onClick={() => setSelectedTier(t.key)}
-                        className={`relative p-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
-                          isSelected
-                            ? sc.selected
-                            : 'bg-carbon-700/30 border border-carbon-700/50 hover:border-carbon-600/80'
-                        }`}
-                      >
-                        {t.badge && (
-                          <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-gradient-to-r from-safety-500 to-safety-600 text-white text-[10px] font-semibold whitespace-nowrap">
-                            {t.badge}
-                          </span>
-                        )}
-                        <div className={`inline-flex p-2 rounded-lg mb-2 ${
-                          isSelected ? sc.icon : 'bg-carbon-600/30 text-carbon-400'
-                        }`}>
-                          <t.icon className="w-4 h-4" />
-                        </div>
-                        <div className="text-white font-semibold text-sm">{t.name}</div>
-                        <div className={`text-xs font-medium mt-0.5 ${
-                          isSelected ? sc.text : 'text-carbon-500'
-                        }`}>
-                          {t.hoursPerSeat === Infinity ? 'Unlimited hrs' : `${t.hoursPerSeat} hrs`}/tech/mo
-                        </div>
-                        <div className="text-carbon-400 text-xs mt-1">
-                          {isTierUnlimited && t.originalPricePerSeat ? (
-                            <>
-                              <span className="line-through text-carbon-500">${t.originalPricePerSeat}</span>{' '}
-                              <span className="text-green-400 font-semibold">${t.pricePerSeat}</span>/seat
-                            </>
-                          ) : (
-                            <>${t.pricePerSeat}/seat/mo</>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
+                <div className="flex items-center gap-6">
+                  {/* Flic image */}
+                  <div className="flex-shrink-0">
+                    <img
+                      src="/flic-button.png"
+                      alt="Flic 2 Smart Button"
+                      className="w-20 h-20 object-contain"
+                    />
+                  </div>
+
+                  {/* Quantity + pricing */}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-carbon-200 font-medium flex items-center gap-2">
+                        <MousePointerClick className={`w-4 h-4 ${c.text}`} />
+                        Total buttons
+                      </span>
+                      <span className={`${c.text} font-bold text-2xl`}>{totalFlics}</span>
+                    </div>
+
+                    {/* Base count (= seats) */}
+                    <div className="flex justify-between items-center text-sm mb-2">
+                      <span className="text-carbon-400">1 per technician (minimum)</span>
+                      <span className="text-carbon-300">{numTechs} buttons</span>
+                    </div>
+
+                    {/* Extra buttons +/- */}
+                    <div className="flex justify-between items-center">
+                      <span className="text-carbon-400 text-sm">Extra / spare buttons</span>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setExtraFlics(Math.max(0, extraFlics - 1))}
+                          disabled={extraFlics === 0}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            extraFlics === 0
+                              ? 'bg-carbon-700/30 text-carbon-600 cursor-not-allowed'
+                              : `bg-carbon-700/50 text-carbon-200 hover:${c.bg} hover:${c.text} cursor-pointer`
+                          }`}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-white font-bold text-lg w-6 text-center">{extraFlics}</span>
+                        <button
+                          onClick={() => setExtraFlics(extraFlics + 1)}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center bg-carbon-700/50 text-carbon-200 hover:${c.bg} hover:${c.text} transition-colors cursor-pointer`}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Flic pricing info */}
+                {(() => {
+                  const fullRetail = 49.99;
+                  const seatSavings = numTechs * (fullRetail - flicTier.seatPrice);
+                  const extraSavings = extraFlics * (fullRetail - flicTier.extraPrice);
+                  const totalFlicSavings = seatSavings + extraSavings;
+
+                  return (
+                    <div className="mt-5 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
+                      {/* Seat buttons line */}
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-carbon-300 text-sm">
+                          {numTechs} × {flicTier.seatPrice > 0 ? `$${flicTier.seatPrice}` : 'FREE'}
+                          {flicTier.seatPrice === 0 ? (
+                            <span className="ml-1 text-green-400">(100% OFF)</span>
+                          ) : flicTier.seatDiscount ? (
+                            <span className={`ml-1 ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
+                              ({flicTier.seatDiscount})
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className={`font-semibold text-sm ${flicTier.seatPrice === 0 ? 'text-green-400' : 'text-white'}`}>
+                          {flicTier.seatPrice === 0 ? 'FREE' : `$${flicBaseCost.toFixed(2)}`}
+                        </span>
+                      </div>
+                      {seatSavings > 0 && (
+                        <div className="flex justify-end mb-1">
+                          <span className="text-green-400 text-xs font-semibold">Save ${seatSavings.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {/* Extra / spare buttons line */}
+                      {extraFlics > 0 && (
+                        <>
+                          <div className="flex justify-between items-center">
+                            <span className="text-carbon-300 text-sm">
+                              {extraFlics} spare × ${flicTier.extraPrice}
+                              {flicTier.extraDiscount && (
+                                <span className={`ml-1 ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
+                                  ({flicTier.extraDiscount})
+                                </span>
+                              )}
+                            </span>
+                            <span className="text-white font-semibold text-sm">${flicExtraCost.toFixed(2)}</span>
+                          </div>
+                          {extraSavings > 0 && (
+                            <div className="flex justify-end mb-1">
+                              <span className="text-green-400 text-xs font-semibold">Save ${extraSavings.toFixed(2)}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {totalFlicSavings > 0 && (
+                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-carbon-700/30">
+                          <span className="text-carbon-400 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
+                          <span className="text-green-400 text-sm font-bold">Total savings: ${totalFlicSavings.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <p className="text-carbon-500 text-xs mt-2">One-time purchase — ships to your shop.</p>
+                    </div>
+                  );
+                })()}
               </div>
             </motion.div>
 
@@ -742,9 +1341,9 @@ function ServiceCenterPricing() {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
-                    {showStrikethrough && (
+                    {(showStrikethrough || volumeDiscount > 0) && (
                       <div className="text-carbon-500 text-lg line-through mb-1">
-                        ${strikethroughTotal.toLocaleString()}/mo
+                        ${(showStrikethrough ? strikethroughTotal : basePrice).toLocaleString()}/mo
                       </div>
                     )}
                     <div className="flex items-baseline justify-center gap-1 mb-1">
@@ -754,24 +1353,40 @@ function ServiceCenterPricing() {
                       <span className="text-carbon-400 text-lg">/mo</span>
                     </div>
                     {showStrikethrough && (
-                      <span className={`inline-block px-2 py-0.5 rounded-full ${c.saveBg} ${c.saveText} text-xs font-semibold`}>
-                        Save ${(strikethroughTotal - totalPrice).toLocaleString()}/mo
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${unlimitedCombinedRate >= 0.35 ? 'bg-purple-500/15 text-purple-400' : `${c.saveBg} ${c.saveText}`}`}>
+                        Save {unlimitedCombinedPct}% — ${(strikethroughTotal - totalPrice).toLocaleString()}/mo
                       </span>
                     )}
                   </motion.div>
 
-                  <p className="text-carbon-400 text-sm mt-3">
+                  <p className="text-carbon-400 text-base mt-3">
                     {numTechs} seats x{' '}
                     {showStrikethrough ? (
                       <>
                         <span className="line-through text-carbon-500">${tier.originalPricePerSeat}</span>{' '}
-                        <span className={c.saveText}>${tier.pricePerSeat}</span>
+                        <span className={c.saveText}>${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}</span>
+                      </>
+                    ) : volumeDiscount > 0 ? (
+                      <>
+                        <span className="line-through text-carbon-500">${tier.pricePerSeat}</span>{' '}
+                        <span className={c.saveText}>${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}</span>
                       </>
                     ) : (
                       <>${tier.pricePerSeat}</>
                     )}
                     /seat
                   </p>
+                  {!isUnlimited && volumeDiscount > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2"
+                    >
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${volumeDiscount >= 0.15 ? 'bg-purple-500/15 text-purple-400' : `${c.saveBg} ${c.saveText}`}`}>
+                        {volumeDiscountPct}% volume discount applied — save ${(basePrice - totalPrice).toLocaleString()}/mo
+                      </span>
+                    </motion.div>
+                  )}
                 </div>
 
                 <div className="h-px bg-carbon-700/50 mb-6" />
@@ -794,7 +1409,12 @@ function ServiceCenterPricing() {
                       {showStrikethrough ? (
                         <>
                           <span className="line-through text-carbon-500 mr-1">${tier.originalPricePerSeat}</span>
-                          ${tier.pricePerSeat}/mo
+                          ${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}/mo
+                        </>
+                      ) : volumeDiscount > 0 ? (
+                        <>
+                          <span className="line-through text-carbon-500 mr-1">${tier.pricePerSeat}</span>
+                          ${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}/mo
                         </>
                       ) : (
                         <>${tier.pricePerSeat}/mo</>
@@ -808,6 +1428,41 @@ function ServiceCenterPricing() {
                     </div>
                   )}
                 </div>
+
+                {/* Flic buttons one-time cost */}
+                {(() => {
+                  const fullRetail = 49.99;
+                  const retailTotal = totalFlics * fullRetail;
+                  const flicSavings = retailTotal - totalFlicCost;
+
+                  return (
+                    <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50 mb-6">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MousePointerClick className={`w-4 h-4 ${c.text}`} />
+                        <span className="text-carbon-200 text-sm font-medium">Flic Buttons (one-time)</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-carbon-400 text-sm">{totalFlics} button{totalFlics !== 1 ? 's' : ''}</span>
+                        <div className="text-right">
+                          {flicSavings > 0 && (
+                            <span className="text-carbon-500 text-xs line-through mr-2">${retailTotal.toFixed(2)}</span>
+                          )}
+                          <span className={`font-bold text-lg ${totalFlicCost === 0 ? 'text-green-400' : 'text-white'}`}>
+                            {totalFlicCost === 0 ? 'FREE' : `$${totalFlicCost.toFixed(2)}`}
+                          </span>
+                        </div>
+                      </div>
+                      {flicSavings > 0 && (
+                        <div className="flex justify-end mt-1">
+                          <span className="text-green-400 text-xs font-bold">Save ${flicSavings.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <p className="text-carbon-500 text-[10px] mt-1">
+                        One-time purchase, added at checkout
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 {/* Additional hours callout */}
                 {!isUnlimited && (
@@ -861,13 +1516,15 @@ function ServiceCenterPricing() {
                 </div>
 
                 <div className="mt-auto">
-                  <Link
-                    to="/contact"
+                  <a
+                    href={checkoutUrl(selectedTier, numTechs, 'shop')}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`group flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white font-semibold rounded-xl transition-all duration-300 shadow-lg ${c.shadow}`}
                   >
-                    Contact Sales
+                    Get Started
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  </a>
 
                   <p className="text-carbon-500 text-xs text-center mt-4">
                     All features included. No per-feature charges.
@@ -878,6 +1535,8 @@ function ServiceCenterPricing() {
           </div>
         </div>
       </section>
+
+      <SCFlicInfoModal open={scFlicModalOpen} onClose={() => setScFlicModalOpen(false)} />
     </>
   );
 }
@@ -907,13 +1566,6 @@ export default function PricingPage() {
       {/* Hero Header */}
       <section className="px-4 mb-12">
         <div className="max-w-6xl mx-auto text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-electric-400 text-sm font-semibold tracking-wider uppercase"
-          >
-            Pricing
-          </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -925,42 +1577,33 @@ export default function PricingPage() {
               Full Power.
             </span>
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-carbon-300 text-lg md:text-xl max-w-2xl mx-auto"
-          >
-            Every plan includes every feature. The only difference is how many
-            hours of Voice AI you need each month.
-          </motion.p>
         </div>
       </section>
 
       {/* Tab Toggle */}
       <section className="px-4 mb-16">
-        <div className="max-w-md mx-auto">
-          <div className="flex p-1.5 rounded-xl bg-carbon-800/60 border border-carbon-700/50">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex p-2 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
             <button
               onClick={() => { setTab('individual'); trackPricingTabSwitch('individual'); }}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-3 px-8 py-6 rounded-xl text-lg font-semibold transition-all duration-200 cursor-pointer ${
                 tab === 'individual'
-                  ? 'bg-electric-500/15 text-electric-400 border border-electric-500/30'
-                  : 'text-carbon-400 hover:text-carbon-200'
+                  ? 'bg-electric-500/20 text-electric-300 border-2 border-electric-400/50 shadow-lg shadow-electric-500/10'
+                  : 'text-electric-400'
               }`}
             >
-              <User className="w-4 h-4" />
+              <User className="w-7 h-7" />
               Individual
             </button>
             <button
               onClick={() => { setTab('service-center'); trackPricingTabSwitch('service-center'); }}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-3 px-8 py-6 rounded-xl text-lg font-semibold transition-all duration-200 cursor-pointer ${
                 tab === 'service-center'
-                  ? 'bg-safety-500/15 text-safety-400 border border-safety-500/30'
-                  : 'text-carbon-400 hover:text-carbon-200'
+                  ? 'bg-safety-500/20 text-safety-300 border-2 border-safety-400/50 shadow-lg shadow-safety-500/10'
+                  : 'text-safety-400'
               }`}
             >
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-7 h-7" />
               Service Center
             </button>
           </div>
@@ -979,6 +1622,114 @@ export default function PricingPage() {
           {tab === 'individual' ? <IndividualPricing /> : <ServiceCenterPricing />}
         </motion.div>
       </AnimatePresence>
+
+      {/* Starter Pack — tab-aware */}
+      {tab === 'individual' ? <StarterPack /> : <ServiceCenterStarterPack />}
+
+      {/* Flic Button Section — Individual */}
+      {tab === 'individual' && (
+      <section className="px-4 mb-16">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                The key to hands-free!
+              </h2>
+              <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+                The Flic button is essential to using OnRamp voice.
+                <br />Just clip it to your shirt and tap to talk. No greasy phone screens.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-carbon-700/50 overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-0">
+                {/* Left — Image + Description */}
+                <div className="p-8 md:p-12 flex flex-col items-center justify-center">
+                  <img
+                    src="/flic-button.png"
+                    alt="Flic 2 Smart Button"
+                    className="w-40 h-40 object-contain mb-6"
+                  />
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 text-center">
+                    Flic 2 Smart Button
+                  </h3>
+                  <p className="text-carbon-300 text-center max-w-sm">
+                    Hands-free voice control for the shop floor.
+                    <br />Clip it to your shirt and tap to talk.
+                  </p>
+                </div>
+
+                {/* Right — Pricing Tiers */}
+                <div className="p-8 md:p-12 bg-carbon-900/40 flex flex-col justify-center">
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                    One-time Purchase.
+                  </h3>
+                  <p className="text-carbon-300 text-sm mb-6">
+                    Discounts apply depending on your OnRamp subscription.
+                  </p>
+
+                  <div className="space-y-4">
+                    {/* Unlimited */}
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/30">
+                        <InfinityIcon className="w-5 h-5 text-amber-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold">Unlimited Plan</p>
+                        <p className="text-carbon-300 text-sm">Get the Flic for FREE!</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-amber-400 font-bold text-lg">FREE</p>
+                        <p className="text-carbon-300 text-xs">spares $24.99 ea</p>
+                      </div>
+                    </div>
+
+                    {/* Pro */}
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-electric-500/20 to-electric-600/20 border border-electric-500/30">
+                        <Zap className="w-5 h-5 text-electric-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold">Pro Plan</p>
+                        <p className="text-carbon-300 text-sm">50% off on the PRO Plan</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-electric-400 font-bold text-lg">$24.99</p>
+                        <p className="text-carbon-300 text-xs">spares $37.49 ea</p>
+                      </div>
+                    </div>
+
+                    {/* Basic */}
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-safety-500/20 to-safety-600/20 border border-safety-500/30">
+                        <Package className="w-5 h-5 text-safety-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold">Basic Plan</p>
+                        <p className="text-carbon-300 text-sm">Regular Price</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-white font-bold text-lg">$49.99</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-carbon-300 text-xs mt-4">
+                    One-time purchase. Add buttons during checkout. We also recommend buying a spare, so you don't lose a week if it gets lost or broken.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      )}
+
+      {/* SC Flic section removed — now integrated into configurator above */}
 
       {/* Feature Grid (always visible) */}
       <FeatureGrid />
@@ -999,13 +1750,15 @@ export default function PricingPage() {
               Get started with the Starter Pack or pick the monthly plan that fits your workflow.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/contact"
+              <a
+                href={checkoutUrl('pro')}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric"
               >
                 Get Started
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
               <Link
                 to="/how-it-works"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-carbon-700/50 hover:bg-carbon-600/50 text-white font-semibold rounded-xl border border-carbon-600/50 hover:border-carbon-500/50 transition-all duration-300"

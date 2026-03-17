@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Mic, Clock, Zap, Wrench, DollarSign, TrendingUp, Check,
-  ArrowRight, Package, Crown, Infinity,
+  ArrowRight, Package, Crown, Infinity, Calculator,
 } from 'lucide-react';
+import { trackCalculatorValues } from '../lib/analytics';
 
 // Technician ROI constants
-const FLAT_RATE_AVG = 28;
+const FLAT_RATE_DEFAULT = 35;
 const WEEKS_PER_MONTH = 4.33;
+const MINUTES_PER_TERMINAL_VISIT = 4;
 
 const benefits = [
   {
@@ -77,15 +79,37 @@ const tiers = [
 ];
 
 export default function TechniciansPage() {
-  const [prepTimeSaved, setPrepTimeSaved] = useState(10);
-  const [docTimeSaved, setDocTimeSaved] = useState(8);
+  const [terminalVisits, setTerminalVisits] = useState(15);
+  const [docMinutes, setDocMinutes] = useState(30);
+  const [hourlyRate, setHourlyRate] = useState(FLAT_RATE_DEFAULT);
 
-  const totalMinutesSavedPerJob = prepTimeSaved + docTimeSaved;
-  const dailyMinutesSaved = totalMinutesSavedPerJob * 4;
+  // [PostHog] Track calculator values 2s after last slider change (debounced)
+  const trackTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hasInteractedRef = useRef(false);
+
+  const dailyMinutesSaved = (terminalVisits * MINUTES_PER_TERMINAL_VISIT) + docMinutes;
   const weeklyHoursSaved = (dailyMinutesSaved * 5) / 60;
   const additionalBillableHoursWeekly = weeklyHoursSaved * 0.8;
-  const monthlyIncomeBoost = additionalBillableHoursWeekly * FLAT_RATE_AVG * WEEKS_PER_MONTH;
+  const monthlyIncomeBoost = additionalBillableHoursWeekly * hourlyRate * WEEKS_PER_MONTH;
   const yearlyIncomeBoost = monthlyIncomeBoost * 12;
+
+  // [PostHog] Debounced tracking
+  useEffect(() => {
+    if (!hasInteractedRef.current) {
+      hasInteractedRef.current = true;
+      return;
+    }
+    clearTimeout(trackTimerRef.current);
+    trackTimerRef.current = setTimeout(() => {
+      trackCalculatorValues({
+        tab: 'technician',
+        values: { terminalVisits, docMinutes, hourlyRate },
+        result: Math.round(monthlyIncomeBoost),
+      });
+    }, 2000);
+    return () => clearTimeout(trackTimerRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [terminalVisits, docMinutes, hourlyRate]);
 
   return (
     <div className="pt-16">
@@ -160,6 +184,7 @@ export default function TechniciansPage() {
       {/* ROI Calculator */}
       <section className="py-20 px-4 carbon-fiber-bg relative overflow-hidden">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-electric-500/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-safety-500/10 rounded-full blur-[150px]" />
         <div className="max-w-5xl mx-auto relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -167,10 +192,14 @@ export default function TechniciansPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <span className="inline-flex items-center gap-2 text-electric-400 text-sm font-semibold tracking-wider uppercase mb-4">
+              <Calculator className="w-4 h-4" />
+              Reclaim what's yours
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Calculate Your{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
-                Take-Home Boost
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">
+                Wasted Income
               </span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
@@ -179,55 +208,100 @@ export default function TechniciansPage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Sliders */}
+            {/* Input Panel */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50"
+              transition={{ delay: 0.2 }}
+              className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 backdrop-blur-sm"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-electric-500/20">
                   <Clock className="w-6 h-6 text-electric-400" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-xl">Time Savings</h3>
-                  <p className="text-carbon-400 text-sm">Adjust per your workflow</p>
+                  <h3 className="text-white font-bold text-xl">Time Savings Calculator</h3>
+                  <p className="text-carbon-400 text-sm">See your potential take-home boost</p>
                 </div>
               </div>
 
+              {/* Terminal Visits Slider */}
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
                   <label className="text-carbon-200 font-medium">
-                    Minutes saved per job
-                    <span className="block text-carbon-500 text-sm font-normal">(Avoiding PC/reference lookups)</span>
+                    How many times a day do you go to your terminal for diagnosis, TSB's, parts, procedures and torques?
+                    <span className="block text-carbon-500 text-sm font-normal">
+                      (We assume ~4 min per visit)
+                    </span>
                   </label>
-                  <span className="text-electric-400 font-bold text-2xl">{prepTimeSaved}m</span>
+                  <span className="text-electric-400 font-bold text-2xl shrink-0">{terminalVisits}x</span>
                 </div>
-                <input type="range" min="0" max="30" value={prepTimeSaved} onChange={(e) => setPrepTimeSaved(Number(e.target.value))} className="w-full" />
+                <input
+                  type="range"
+                  min="5"
+                  max="30"
+                  value={terminalVisits}
+                  onChange={(e) => setTerminalVisits(Number(e.target.value))}
+                  className="w-full"
+                />
                 <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                  <span>0 min</span><span>30 min</span>
+                  <span>5x</span>
+                  <span>30x</span>
                 </div>
               </div>
 
+              {/* Doc Time Slider */}
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
                   <label className="text-carbon-200 font-medium">
-                    Minutes saved on documentation
-                    <span className="block text-carbon-500 text-sm font-normal">(RO writing & story time)</span>
+                    How much time do you spend on average writing reports and documentation?
                   </label>
-                  <span className="text-electric-400 font-bold text-2xl">{docTimeSaved}m</span>
+                  <span className="text-electric-400 font-bold text-2xl shrink-0">{docMinutes}m/day</span>
                 </div>
-                <input type="range" min="0" max="20" value={docTimeSaved} onChange={(e) => setDocTimeSaved(Number(e.target.value))} className="w-full" />
+                <input
+                  type="range"
+                  min="5"
+                  max="60"
+                  value={docMinutes}
+                  onChange={(e) => setDocMinutes(Number(e.target.value))}
+                  className="w-full"
+                />
                 <div className="flex justify-between text-carbon-500 text-xs mt-1">
-                  <span>0 min</span><span>20 min</span>
+                  <span>5 min</span>
+                  <span>60 min</span>
                 </div>
               </div>
 
+              {/* Hourly Rate Slider */}
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-carbon-200 font-medium">
+                    Your hourly rate
+                  </label>
+                  <span className="text-electric-400 font-bold text-2xl shrink-0">${hourlyRate}/hr</span>
+                </div>
+                <input
+                  type="range"
+                  min="20"
+                  max="60"
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(Number(e.target.value))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <span>$20/hr</span>
+                  <span>$60/hr</span>
+                </div>
+              </div>
+
+              {/* Summary Stats */}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                 <div>
                   <p className="text-carbon-500 text-sm">Daily time saved</p>
-                  <p className="text-white font-bold text-xl">{Math.round(dailyMinutesSaved)} min</p>
+                  <p className="text-white font-bold text-xl">
+                    {Math.round(dailyMinutesSaved)} min
+                  </p>
                 </div>
                 <div>
                   <p className="text-carbon-500 text-sm">Weekly hours saved</p>
@@ -236,12 +310,13 @@ export default function TechniciansPage() {
               </div>
             </motion.div>
 
-            {/* Results */}
+            {/* Results Panel */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-electric-900/40 to-electric-950/40 border border-electric-500/30"
+              transition={{ delay: 0.3 }}
+              className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-electric-900/40 to-electric-950/40 border border-electric-500/30 backdrop-blur-sm"
             >
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2 rounded-lg bg-electric-500/20">
@@ -249,12 +324,18 @@ export default function TechniciansPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">Your Take-Home Boost</h3>
-                  <p className="text-carbon-400 text-sm">Based on ${FLAT_RATE_AVG}/hr flat rate</p>
+                  <p className="text-carbon-400 text-sm">Based on ${hourlyRate}/hr rate</p>
                 </div>
               </div>
 
+              {/* Big Number */}
               <div className="text-center py-8">
-                <motion.div key={monthlyIncomeBoost} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-2">
+                <motion.div
+                  key={monthlyIncomeBoost}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="mb-2"
+                >
                   <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric-300 to-electric-500">
                     ${Math.round(monthlyIncomeBoost).toLocaleString()}
                   </span>
@@ -263,28 +344,47 @@ export default function TechniciansPage() {
                 <p className="text-carbon-400">Potential monthly income boost</p>
               </div>
 
+              {/* Breakdown */}
               <div className="space-y-4 mt-6">
                 <div className="flex justify-between items-center p-4 rounded-xl bg-carbon-900/50">
                   <div className="flex items-center gap-3">
                     <Zap className="w-5 h-5 text-electric-400" />
                     <span className="text-carbon-200">Additional billable hours/week</span>
                   </div>
-                  <span className="text-electric-400 font-bold">+{additionalBillableHoursWeekly.toFixed(1)} hrs</span>
+                  <span className="text-electric-400 font-bold">
+                    +{additionalBillableHoursWeekly.toFixed(1)} hrs
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-4 rounded-xl bg-carbon-900/50">
                   <div className="flex items-center gap-3">
                     <TrendingUp className="w-5 h-5 text-green-400" />
-                    <span className="text-carbon-200">Yearly income potential</span>
+                    <span className="text-carbon-200">Yearly income boost</span>
                   </div>
-                  <span className="text-green-400 font-bold">+${Math.round(yearlyIncomeBoost).toLocaleString()}</span>
+                  <span className="text-green-400 font-bold">
+                    +${Math.round(yearlyIncomeBoost).toLocaleString()}
+                  </span>
                 </div>
               </div>
 
               <p className="text-carbon-500 text-xs mt-6 text-center">
-                * Based on 4 jobs/day, 5 days/week. Actual results vary by shop and workload.
+                * Based on 5 days/week. Actual results vary by shop and workload.
               </p>
             </motion.div>
           </div>
+
+          {/* Bottom Callout */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-carbon-300 text-lg mb-6">
+              These aren't hypotheticals. This is your money wasted —{' '}
+              <span className="text-white font-bold">reclaim your income</span> with the tool that works alongside you.
+            </p>
+          </motion.div>
         </div>
       </section>
 
