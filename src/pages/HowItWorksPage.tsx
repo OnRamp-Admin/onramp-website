@@ -2,8 +2,9 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import {
   Mic, Brain, FileText, Volume2, ArrowRight, Car, Clipboard,
-  CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot,
+  CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
 } from 'lucide-react';
+import QuickStartDemo from '../components/QuickStartDemo';
 
 const workflowSteps = [
   {
@@ -38,9 +39,22 @@ const workflowSteps = [
 
 const phases = [
   {
+    name: 'DIAGNOSE',
+    icon: Search,
+    color: 'electric',
+    title: 'Pinpoint the Problem',
+    description: 'Describe the symptoms and OnRamp helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
+    details: [
+      'Symptom-driven diagnostic flow guided by AI',
+      'Cross-references TSBs and known failures for your vehicle',
+      'Builds a diagnostic scratchpad as you test and observe',
+      'Confirms root cause before moving to repair',
+    ],
+  },
+  {
     name: 'PREPARE',
     icon: Wrench,
-    color: 'electric',
+    color: 'amber',
     title: 'Pull Specs & Plan the Job',
     description: 'OnRamp reads the repair order, identifies the vehicle, and pre-loads relevant TSBs, wiring diagrams, torque specs, and fluid capacities. The AI briefs you on the job before you touch a tool.',
     details: [
@@ -51,9 +65,9 @@ const phases = [
     ],
   },
   {
-    name: 'PERFORM',
+    name: 'REPAIR',
     icon: Mic,
-    color: 'safety',
+    color: 'green',
     title: 'Voice-Guided Repairs',
     description: 'Work with your hands while OnRamp coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
@@ -64,9 +78,9 @@ const phases = [
     ],
   },
   {
-    name: 'WRAP-UP',
+    name: 'CLOSE OUT',
     icon: FileCheck,
-    color: 'green',
+    color: 'orange',
     title: 'Auto-Generate Documentation',
     description: 'When the job is done, OnRamp compiles everything you said into a professional, warranty-ready RO report. Cause, Correction, Concern—structured automatically from your natural speech.',
     details: [
@@ -122,8 +136,8 @@ export default function HowItWorksPage() {
             className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight"
           >
             How{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">
-              OnRamp
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 font-black tracking-tight">
+              ONRAMP
             </span>{' '}
             Works
           </motion.h1>
@@ -237,16 +251,57 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Quick Start */}
+      <section className="py-20 px-4 carbon-fiber-bg">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="w-full lg:w-1/2"
+            >
+              <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">Quick Start</span>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
+                15 Seconds to{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Start a Repair.</span>
+              </h2>
+              <p className="text-carbon-300 text-lg leading-relaxed">
+                Enter the repair order, snap the VIN, and launch the Diagnose Voice Session. You're hands-free from here.
+              </p>
+            </motion.div>
+
+            {/* Animated Phone Mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="w-full lg:w-1/2 flex justify-center"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-electric-500/20 rounded-full blur-[80px] scale-75 opacity-50" />
+                <div className="relative">
+                  <QuickStartDemo />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Three Phases */}
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Three Phases.{' '}
+              Four Phases.{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              OnRamp adapts its behavior as you move through each phase of the repair—from prep to wrap-up.
+              OnRamp adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
             </p>
           </motion.div>
 
@@ -254,8 +309,9 @@ export default function HowItWorksPage() {
             {phases.map((phase, index) => {
               const colorMap: Record<string, { badge: string; icon: string; check: string; border: string }> = {
                 electric: { badge: 'bg-electric-500/10 text-electric-400 border-electric-500/30', icon: 'bg-electric-500/10 text-electric-400', check: 'text-electric-400', border: 'border-electric-500/30' },
-                safety: { badge: 'bg-safety-500/10 text-safety-400 border-safety-500/30', icon: 'bg-safety-500/10 text-safety-400', check: 'text-safety-400', border: 'border-safety-500/30' },
+                amber: { badge: 'bg-amber-500/10 text-amber-400 border-amber-500/30', icon: 'bg-amber-500/10 text-amber-400', check: 'text-amber-400', border: 'border-amber-500/30' },
                 green: { badge: 'bg-green-500/10 text-green-400 border-green-500/30', icon: 'bg-green-500/10 text-green-400', check: 'text-green-400', border: 'border-green-500/30' },
+                orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', icon: 'bg-orange-500/10 text-orange-400', check: 'text-orange-400', border: 'border-orange-500/30' },
               };
               const colors = colorMap[phase.color];
 
