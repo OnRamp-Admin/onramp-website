@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'For Service Managers', path: '/managers' },
   { label: 'How It Works', path: '/how-it-works' },
   { label: 'Pricing', path: '/pricing' },
+  { label: 'FAQ', path: '/faq' },
   { label: 'Contact', path: '/contact' },
 ];
 
@@ -20,8 +21,7 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group" onClick={() => setMobileOpen(false)}>
-          <span className="text-xl">🧠</span>
-          <span className="text-xl font-black text-white tracking-tight">ONRAMP</span>
+          <img src="/Onramp-Logo-Pink Brain-White Text-SML.png" alt="ONRAMP" className="h-8" />
         </Link>
 
         {/* Desktop Links */}

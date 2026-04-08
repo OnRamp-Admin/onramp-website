@@ -56,7 +56,7 @@ export default function StickyCTA() {
                     Ready to stop the paperwork tax?
                   </p>
                   <p className="text-carbon-400 text-sm">
-                    Get OnRamp running in your shop today.
+                    Get ONRAMP running in your shop today.
                   </p>
                 </div>
               </div>
@@ -64,10 +64,10 @@ export default function StickyCTA() {
               {/* CTA Button */}
               <a
                 href="#contact"
-                onClick={() => trackCTAClick({ cta_location: 'sticky_bar', cta_text: 'Get OnRamp for My Shop', destination: '/contact' })}
+                onClick={() => trackCTAClick({ cta_location: 'sticky_bar', cta_text: 'Get ONRAMP for My Shop', destination: '/contact' })}
                 className="group flex-shrink-0 flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-electric-500/30"
               >
-                Get OnRamp for My Shop
+                Get ONRAMP for My Shop
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
             </div>

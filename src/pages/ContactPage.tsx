@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Building2, X, Search } from 'lucide-react';
+import { Mail, MapPin, CheckCircle2, Building2, X, Search } from 'lucide-react';
 import { trackContactFormSubmit } from '../lib/analytics';
 import { trackConversion } from '../lib/marketing-pixels';
 
 // ─── Google Form Configuration ───────────────────────────────────────────────
 const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSecRS6mfq1RZqVOEZ4KLTmogrF_4aSZ2fwg25YMO07ap88RmQ/formResponse';
 const GOOGLE_FORM_FIELDS = {
+  source: 'entry.1894016444',
+  usageLevel: 'entry.1525145917',
+  seats: 'entry.1446346906',
   name: 'entry.502216171',
   email: 'entry.1760694518',
   phone: 'entry.1441318369',
@@ -60,6 +63,7 @@ async function submitToGoogleForm(data: {
 }): Promise<boolean> {
   try {
     const formData = new URLSearchParams();
+    formData.append(GOOGLE_FORM_FIELDS.source, 'Contact Form');
     formData.append(GOOGLE_FORM_FIELDS.name, data.name);
     formData.append(GOOGLE_FORM_FIELDS.email, data.email);
     formData.append(GOOGLE_FORM_FIELDS.phone, data.phone);
@@ -329,19 +333,11 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight"
           >
-            Let's Get Your Shop{' '}
+            Questions? Demo?{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">
-              On The Ramp
+              Let's Talk!
             </span>
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl md:text-2xl text-carbon-300 max-w-3xl mx-auto"
-          >
-            Have questions? Want a demo? Drop us a line and we'll get back to you fast.
-          </motion.p>
         </div>
       </section>
 
@@ -359,36 +355,23 @@ export default function ContactPage() {
                 className="space-y-8"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Get in Touch</h2>
-                  <p className="text-carbon-400">
-                    Whether you're a solo tech or running a 20-bay department, we'd love to hear from you.
+                  <h2 className="text-2xl font-bold text-white mb-2">Get in Touch with <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">ONRAMP</span></h2>
+                  <p className="text-carbon-300">
+                    Whether you're a solo technician or running a 5-shop operation with 50 techs, we'd love to hear from you.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 p-3 rounded-xl bg-electric-500/10">
-                      <Phone className="w-5 h-5 text-electric-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold mb-1">Phone</h3>
-                      <a href="tel:+18005551234" className="text-carbon-300 hover:text-electric-400 transition-colors">
-                        (800) 555-1234
-                      </a>
-                      <p className="text-carbon-500 text-sm mt-1">Mon-Fri, 8am-6pm EST</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 p-3 rounded-xl bg-electric-500/10">
                       <Mail className="w-5 h-5 text-electric-400" />
                     </div>
                     <div>
                       <h3 className="text-white font-semibold mb-1">Email</h3>
-                      <a href="mailto:hello@getonramp.io" className="text-carbon-300 hover:text-electric-400 transition-colors">
-                        hello@getonramp.io
+                      <a href="mailto:info@getonramp.io" className="text-carbon-300 hover:text-electric-400 transition-colors">
+                        info@getonramp.io
                       </a>
-                      <p className="text-carbon-500 text-sm mt-1">We respond within 24 hours</p>
+                      <p className="text-carbon-300 text-sm mt-1">We respond within 24 hours</p>
                     </div>
                   </div>
 
@@ -398,8 +381,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-white font-semibold mb-1">Location</h3>
-                      <p className="text-carbon-300">Detroit, MI</p>
-                      <p className="text-carbon-500 text-sm mt-1">Serving shops nationwide</p>
+                      <p className="text-carbon-300">San Diego, CA</p>
+                      <p className="text-carbon-300 text-sm mt-1">Serving shops nationwide</p>
                     </div>
                   </div>
                 </div>
@@ -496,7 +479,7 @@ export default function ContactPage() {
                       <select
                         value={formData.role}
                         onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                        className={inputClasses}
+                        className={`${inputClasses} pr-12`}
                       >
                         <option value="" className="bg-carbon-900">Select your role</option>
                         <option value="Technician" className="bg-carbon-900">Technician</option>
@@ -518,14 +501,14 @@ export default function ContactPage() {
                             <Building2 className="w-4 h-4 text-electric-400 flex-shrink-0" />
                             <div className="min-w-0">
                               <div className="text-white text-sm font-medium">{formData.shopName}</div>
-                              <div className="text-carbon-400 text-xs">{formData.shopAddress}</div>
+                              <div className="text-carbon-300 text-xs">{formData.shopAddress}</div>
                             </div>
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={clearShopSelection}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-500 hover:text-white transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-300 hover:text-white transition-colors"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -533,7 +516,7 @@ export default function ContactPage() {
                     ) : (
                       // Search state: input with search icon
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-300" />
                         <input
                           type="text"
                           value={formData.shopName}
@@ -550,7 +533,7 @@ export default function ContactPage() {
                     {/* Suggestions Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
                       <div className="absolute z-20 w-full mt-1 rounded-xl bg-carbon-800 border border-carbon-700/50 shadow-2xl max-h-64 overflow-y-auto">
-                        <div className="px-3 py-2 text-xs font-semibold text-carbon-400 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
+                        <div className="px-3 py-2 text-xs font-semibold text-carbon-300 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
                           Service Centers Near You
                         </div>
                         {suggestions.map((place, idx) => (
@@ -561,7 +544,7 @@ export default function ContactPage() {
                             className="w-full text-left px-4 py-3 hover:bg-carbon-700/50 border-b border-carbon-700/20 last:border-b-0 last:rounded-b-xl transition-colors"
                           >
                             <div className="text-white text-sm font-medium">{place.name}</div>
-                            <div className="text-carbon-400 text-xs mt-0.5">{place.formattedAddress}</div>
+                            <div className="text-carbon-300 text-xs mt-0.5">{place.formattedAddress}</div>
                           </button>
                         ))}
                         <button
@@ -570,7 +553,7 @@ export default function ContactPage() {
                             setShowSuggestions(false);
                             // Let them keep typing manually
                           }}
-                          className="w-full text-left px-4 py-2.5 text-carbon-500 hover:text-carbon-300 text-xs border-t border-carbon-700/30 transition-colors"
+                          className="w-full text-left px-4 py-2.5 text-carbon-300 hover:text-carbon-300 text-xs border-t border-carbon-700/30 transition-colors"
                         >
                           Can't find your shop? Just type the name manually
                         </button>
@@ -598,10 +581,9 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="group w-full flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="group w-full flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-600 to-electric-700 hover:from-electric-500 hover:to-electric-600 text-white font-semibold rounded-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {submitting ? 'Sending...' : 'Send Message'}
-                    {!submitting && <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+                    {submitting ? 'Submitting...' : 'Submit'}
                   </button>
                 </form>
               )}

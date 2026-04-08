@@ -106,7 +106,7 @@ export default function ValueProps() {
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
               Every minute spent at the terminal is a minute not turning a wrench.
-              OnRamp keeps you where the money is—under the hood.
+              ONRAMP keeps you where the money is—under the hood.
             </p>
           </motion.div>
 
@@ -124,7 +124,7 @@ export default function ValueProps() {
                   <benefit.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-xl mb-3">{benefit.title}</h3>
-                <p className="text-carbon-400 mb-4">{benefit.description}</p>
+                <p className="text-carbon-300 mb-4">{benefit.description}</p>
                 <span className="inline-block px-3 py-1 rounded-full bg-electric-500/10 text-electric-400 text-sm font-medium">
                   {benefit.highlight}
                 </span>
@@ -172,7 +172,7 @@ export default function ValueProps() {
                   <benefit.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-xl mb-3">{benefit.title}</h3>
-                <p className="text-carbon-400 mb-4">{benefit.description}</p>
+                <p className="text-carbon-300 mb-4">{benefit.description}</p>
                 <span className="inline-block px-3 py-1 rounded-full bg-safety-500/10 text-safety-400 text-sm font-medium">
                   {benefit.highlight}
                 </span>
@@ -203,7 +203,7 @@ export default function ValueProps() {
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
               Poor documentation costs shops thousands in rejected warranty claims every year.
-              OnRamp writes RO narratives that get approved the first time.
+              ONRAMP writes RO narratives that get approved the first time.
             </p>
           </motion.div>
 
@@ -218,7 +218,7 @@ export default function ValueProps() {
               { stat: '8%', label: 'Industry avg claim rejection rate' },
               { stat: '$15K', label: 'Avg annual warranty leakage per shop' },
               { stat: '60%', label: 'Rejections due to documentation' },
-              { stat: '90%+', label: 'OnRamp first-pass approval rate' },
+              { stat: '90%+', label: 'ONRAMP first-pass approval rate' },
             ].map((item, index) => (
               <div
                 key={item.label}
@@ -233,7 +233,7 @@ export default function ValueProps() {
                 >
                   {item.stat}
                 </motion.div>
-                <p className="text-carbon-400 text-sm">{item.label}</p>
+                <p className="text-carbon-300 text-sm">{item.label}</p>
               </div>
             ))}
           </motion.div>
@@ -254,7 +254,7 @@ export default function ValueProps() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-carbon-400">{feature.description}</p>
+                  <p className="text-carbon-300">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -274,25 +274,25 @@ export default function ValueProps() {
             </div>
             <div className="font-mono text-sm space-y-3">
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-electric-500">
-                <span className="text-carbon-500">CONCERN:</span>
+                <span className="text-carbon-300">CONCERN:</span>
                 <span className="text-carbon-200 ml-2">
                   Customer states vehicle intermittent no-start condition, occurs after sitting overnight
                 </span>
               </div>
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-safety-500">
-                <span className="text-carbon-500">CAUSE:</span>
+                <span className="text-carbon-300">CAUSE:</span>
                 <span className="text-carbon-200 ml-2">
                   Found B+ battery cable terminal end severely corroded, causing voltage drop of 2.3V under load. Parasitic draw within spec at 32mA.
                 </span>
               </div>
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-green-500">
-                <span className="text-carbon-500">CORRECTION:</span>
+                <span className="text-carbon-300">CORRECTION:</span>
                 <span className="text-carbon-200 ml-2">
                   Replaced B+ cable terminal end per TSB 19-NA-123. Cleaned battery posts, applied dielectric grease. Load tested battery at 625 CCA (spec: 600 CCA). System operates as designed.
                 </span>
               </div>
             </div>
-            <p className="text-carbon-500 text-sm mt-4">
+            <p className="text-carbon-300 text-sm mt-4">
               * Generated automatically from technician voice notes during repair
             </p>
           </motion.div>

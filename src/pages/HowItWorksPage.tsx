@@ -1,9 +1,10 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Mic, Brain, FileText, Volume2, ArrowRight, Car, Clipboard,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
-  Play, Pause, AlertCircle, ListChecks,
+  Play, Pause, AlertCircle, ListChecks, Zap, AudioLines, Gauge, UserCog,
+  MessageCircle, SlidersHorizontal, Sparkles, X, Headphones,
 } from 'lucide-react';
 import QuickStartDemo from '../components/QuickStartDemo';
 
@@ -12,29 +13,25 @@ const workflowSteps = [
     id: 'input',
     icon: Mic,
     label: 'Voice Input',
-    description: 'Speak naturally while working under the hood',
-    example: '"Found corroded battery terminal, replacing cable end..."',
+    description: 'Speak conversationally with the AI while you work — your AI wingman helps you get the job done.',
   },
   {
     id: 'process',
     icon: Brain,
-    label: 'AI Processing',
-    description: 'Real-time understanding & context awareness',
-    example: 'Parsing repair data, pulling specs, matching labor codes...',
+    label: 'Purpose-Built AI Processing',
+    description: 'Hyper-focused, automotive-trained, real-time understanding and context awareness. Rapidly processes diagnosis and procedural information.',
   },
   {
     id: 'output',
     icon: Volume2,
-    label: 'Voice Response',
-    description: 'Instant answers without leaving the bay',
-    example: '"Battery cable torque spec is 8 ft-lbs. Labor time: 0.4 hours."',
+    label: 'AI Voice Response',
+    description: 'The AI generates natural, conversational dialogue back directly into the technician\'s headphones so they can continue to work hands-free.',
   },
   {
     id: 'document',
     icon: FileText,
     label: 'Auto Documentation',
-    description: 'RO lines generated in real-time',
-    example: 'B+ Cable End Replacement - Parts: $12.50, Labor: 0.4hr',
+    description: 'The AI collects notes from the diagnosis and repair phases to document everything relevant, then automatically generates pertinent reports.',
   },
 ];
 
@@ -43,77 +40,91 @@ const phases = [
     name: 'DIAGNOSE',
     icon: Search,
     color: 'electric',
-    title: 'Pinpoint the Problem — AI FAST!',
-    description: 'Describe the symptoms and OnRamp helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
+    title: 'Pinpoint the Problem',
+    titleAccent: 'AI FAST!',
+    description: 'Describe the symptoms and ONRAMP helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
     details: [
-      'Symptom-driven diagnostic flow guided by AI',
-      "References TSBs ('95 - Today) & known failures",
-      'Builds thorough diagnostic notes as technician tests',
-      'Gets to the root cause in record time!',
+      "References TSBs & Recalls ('95 - Today), and known failures",
+      'Symptom-driven diagnostic flow that works at the speed of AI',
+      "Leverages AI's deep understanding of automotive systems",
+      'Prioritizes most likely causes - guides technician to ID root cause',
+      'Documents thorough diagnostic notes as technician tests',
+      'Gets you to the root cause fast!',
     ],
     audio: '/audio/diagnose-audio-sample.wav',
+    buttonLabel: 'Hear ONRAMP Diagnose Fast',
   },
   {
     name: 'PREPARE',
     icon: ListChecks,
     color: 'amber',
     title: 'Prepare to Perform.',
-    description: "OnRamp's AI organizes all the complex details of the job and briefs tech's so they can kill the clock. Never again get caught off guard by speciality tools, or replacement parts mid-job.",
+    description: "ONRAMP's AI organizes all the complex details of the job and briefs technicians so they know exactly what they're getting into. Never again get caught off guard by specialty tools or replacement parts mid-job.",
     details: [
       'Ingests OEM procedure documents for complex jobs',
-      'OR... generates procedure in many simpler cases',
-      'Extracts and summarizes project warnings and technical notes',
-      'Isolates tools and replacement parts lists',
-      'Technician reviews all pertinent info with AI before steps',
+      'OR... AI generates procedures in many simpler cases',
+      'ONRAMP AI clearly organizes all the steps, and adds detail',
+      'AI extracts and summarizes project warnings and technical notes',
+      'Generates a tools list and a replacement parts list',
+      "ONRAMP briefs tech's with pertinent info while they get ready",
     ],
     audio: '/audio/prepare-audio-sample.wav',
+    buttonLabel: 'Listen as ONRAMP Briefs the Tech',
   },
   {
     name: 'REPAIR',
     icon: Wrench,
     color: 'green',
     title: 'Voice-Guided Repairs',
-    description: 'Work with your hands while OnRamp coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
+    description: 'Work with your hands while ONRAMP coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
-      "Step details, torque specs and 'heads-up' guidance in your ears when you need it!",
-      'Hands-free voice — Start/Stop with smart button',
-      'OnRamp tracks progress and keeps perfect notes',
-      'AI can open PDFs to the exact page/diagram you need',
+      "AI delivers step details, torque specs and 'heads-up' guidance live as you need it!",
+      'Hands-free voice - conversational flow with the AI while you work',
+      'Start/Stop sessions with bluetooth Brain Button',
+      'Integrated timeclock to track time worked',
+      'ONRAMP tracks progress and keeps perfect notes',
+      'Capture photos & videos with phone or Meta glasses',
+      'Open PDFs to the exact page/diagram you need - using voice',
       'No more time-wasting trips to the terminal!',
     ],
     audio: '/audio/perform-audio-sample.wav',
+    buttonLabel: 'Hear ONRAMP Guide the Procedure',
   },
   {
     name: 'CLOSE OUT',
     icon: FileCheck,
     color: 'orange',
     title: 'AI-Generated RO Reports — Instantly.',
-    description: 'When the job is done, OnRamp compiles everything you said and did into a perfect, professional, warranty-worthy RO report. Complaint, Cause, Correction and Validation — structured automatically from your natural speech.',
+    description: 'When the job is done, ONRAMP compiles everything you said and did into a perfect, professional, warranty-worthy RO report. Complaint, Cause, Correction and Validation — structured automatically from your natural speech.',
     details: [
       'Complete 3C+V reports — written perfectly, instantly',
+      'Capture final photos and videos',
       'Pre-submission validation catches missing fields',
       'Ready for DMS upload or print',
-      'No wasted time at the terminal!',
+      'No wasted time at the keyboard!',
     ],
-    audio: '/audio/Close-Out-Audio-SAmple.wav',
+    audio: '/audio/close-out-audio-sample.wav',
+    buttonLabel: 'Listen as ONRAMP Writes the RO Report',
   },
 ];
 
 const hardware = [
   {
     icon: CircleDot,
-    name: 'Flic Button',
-    description: 'A wireless Bluetooth button that clips to your shirt or mounts on the bay wall. Single press to talk, double press to advance steps. No phone needed once the session is running.',
+    name: 'Brain Button',
+    description: "ONRAMP's Brain Button is a wireless Bluetooth button that clips to your shirt or belt. Tap-to-talk activates your AI voice wingman. Tap-to-pause. All hands-free and voice controlled. No greasy phone screens!",
+    image: '/BrainButton.png',
   },
   {
     icon: Smartphone,
-    name: 'iPhone App',
-    description: 'The OnRamp iOS app runs on any iPhone. It connects to the Flic button, streams audio to the AI, and plays back voice responses through your phone speaker or Bluetooth earpiece.',
+    name: 'Mobile App',
+    description: 'The ONRAMP app runs on iOS and Android. It connects to the Brain Button and streams AI voice conversationally through your headphones.',
   },
   {
     icon: Radio,
-    name: 'Any Bluetooth Audio',
-    description: 'Use your existing Bluetooth earbuds, headset, or shop speaker. OnRamp works with whatever audio setup you already have—no proprietary hardware required.',
+    name: 'Your Headphones',
+    description: 'Use your existing Bluetooth or wired headphones! ONRAMP works with any headphones as long as they have an integrated microphone.',
+    image: '/airpods.png',
   },
 ];
 
@@ -220,17 +231,18 @@ function useAudioPlayer(src: string) {
   return { state, progress, toggle };
 }
 
-function AudioSamplePlayer({ accentColor, state, progress, toggle }: {
+function AudioSamplePlayer({ accentColor, state, progress, toggle, label }: {
   accentColor: string;
   state: 'idle' | 'playing' | 'error';
   progress: number;
   toggle: () => void;
+  label: string;
 }) {
   if (state === 'error') {
     return (
       <div className="flex items-center gap-2 mt-6 p-3 rounded-lg bg-carbon-800/60 border border-carbon-700/50">
-        <AlertCircle className="w-4 h-4 text-carbon-400 flex-shrink-0" />
-        <span className="text-carbon-400 text-sm">
+        <AlertCircle className="w-4 h-4 text-carbon-300 flex-shrink-0" />
+        <span className="text-carbon-300 text-sm">
           Your browser doesn't support audio playback.{' '}
           <a href="/contact" className="underline hover:text-white transition-colors">Request a live demo</a> instead!
         </span>
@@ -263,9 +275,9 @@ function AudioSamplePlayer({ accentColor, state, progress, toggle }: {
       </div>
       <div className="flex flex-col items-start gap-1">
         <span className="text-sm font-medium text-carbon-200">
-          {state === 'playing' ? 'Playing sample...' : 'Hear an example conversation'}
+          {state === 'playing' ? 'Playing sample...' : label}
         </span>
-        <div className="w-32 h-1 rounded-full bg-carbon-700/50 overflow-hidden">
+        <div className="w-48 h-1 rounded-full bg-carbon-700/50 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
             style={{ backgroundColor: accentColor }}
@@ -347,6 +359,277 @@ const colorMap: Record<string, { badge: string; check: string; border: string; p
   orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', check: 'text-orange-400', border: 'border-orange-500/30', phoneBg: 'bg-orange-500/20', phoneAccent: '#F97316' },
 };
 
+function AIStackCard() {
+  const { state, toggle } = useAudioPlayer('/audio/diagnose-audio-sample.wav');
+
+  const items = [
+    { icon: Zap, title: 'Low-Latency Voice AI', desc: 'Real-time conversational responses with no awkward pauses. It feels like talking to a person, not waiting for a computer.' },
+    { icon: Wrench, title: 'Purpose-Built for Automotive', desc: 'Deep knowledge of vehicle systems, repair procedures, TSBs, and diagnostic patterns — not a generic chatbot.' },
+    { icon: Sparkles, title: 'Cutting-Edge AI Models', desc: 'Advanced thinking and voice models working together — the same technology powering the most sophisticated AI systems in the world.' },
+    { icon: AudioLines, title: 'Natural, Clean Audio', desc: 'Studio-quality voice that sounds like a real person. Clear, conversational, and easy to understand in a noisy shop.', audioSample: true as const },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className="p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-electric-500/20"
+    >
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2.5 rounded-xl bg-electric-500/10">
+          <Brain className="w-6 h-6 text-electric-400" />
+        </div>
+        <h3 className="text-white font-bold text-xl">Best-in-Class AI Stack</h3>
+      </div>
+      <div className="space-y-5">
+        {items.map((item) => (
+          <div key={item.title} className="flex items-start gap-3">
+            <div className="flex-shrink-0 p-2 rounded-lg bg-electric-500/10 mt-0.5">
+              <item.icon className="w-4 h-4 text-electric-400" />
+            </div>
+            <div>
+              <div className="text-white font-semibold mb-1">{item.title}</div>
+              <p className="text-carbon-300 text-sm leading-relaxed">{item.desc}</p>
+              {'audioSample' in item && item.audioSample && (
+                <button
+                  onClick={toggle}
+                  className="inline-flex items-center gap-1.5 mt-2 text-electric-400 hover:text-electric-300 text-sm font-medium transition-colors cursor-pointer"
+                >
+                  {state === 'playing' ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: 1 }} />}
+                  {state === 'playing' ? 'Pause sample' : 'Play sample'}
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Voice Sample Data ──────────────────────────────────────────────────────
+const voiceSamples: { name: string; gender: 'male' | 'female'; label: string; file: string }[] = [
+  { name: 'Achird', gender: 'male', label: 'Male Voice 1', file: '/audio/voices/achird.wav' },
+  { name: 'Algenib', gender: 'male', label: 'Male Voice 2', file: '/audio/voices/algenib.wav' },
+  { name: 'Algieba', gender: 'male', label: 'Male Voice 3', file: '/audio/voices/algieba.wav' },
+  { name: 'Alnilam', gender: 'male', label: 'Male Voice 4', file: '/audio/voices/alnilam.wav' },
+  { name: 'Charon', gender: 'male', label: 'Male Voice 5', file: '/audio/voices/charon.wav' },
+  { name: 'Enceladus', gender: 'male', label: 'Male Voice 6', file: '/audio/voices/enceladus.wav' },
+  { name: 'Iapetus', gender: 'male', label: 'Male Voice 7', file: '/audio/voices/iapetus.wav' },
+  { name: 'Orus', gender: 'male', label: 'Male Voice 8', file: '/audio/voices/orus.wav' },
+  { name: 'Rasalgethi', gender: 'male', label: 'Male Voice 9', file: '/audio/voices/rasalgethi.wav' },
+  { name: 'Sadachbia', gender: 'male', label: 'Male Voice 10', file: '/audio/voices/sadachbia.wav' },
+  { name: 'Sadaltager', gender: 'male', label: 'Male Voice 11', file: '/audio/voices/sadaltager.wav' },
+  { name: 'Schedar', gender: 'male', label: 'Male Voice 12', file: '/audio/voices/schedar.wav' },
+  { name: 'Zubenelgenubi', gender: 'male', label: 'Male Voice 13', file: '/audio/voices/zubenelgenubi.wav' },
+  { name: 'Achernar', gender: 'female', label: 'Female Voice 1', file: '/audio/voices/achernar.wav' },
+  { name: 'Aoede', gender: 'female', label: 'Female Voice 2', file: '/audio/voices/aoede.wav' },
+  { name: 'Autonoe', gender: 'female', label: 'Female Voice 3', file: '/audio/voices/autonoe.wav' },
+  { name: 'Callirrhoe', gender: 'female', label: 'Female Voice 4', file: '/audio/voices/callirrhoe.wav' },
+  { name: 'Despina', gender: 'female', label: 'Female Voice 5', file: '/audio/voices/despina.wav' },
+  { name: 'Erinome', gender: 'female', label: 'Female Voice 6', file: '/audio/voices/erinome.wav' },
+  { name: 'Gacrux', gender: 'female', label: 'Female Voice 7', file: '/audio/voices/gacrux.wav' },
+  { name: 'Kore', gender: 'female', label: 'Female Voice 8', file: '/audio/voices/kore.wav' },
+  { name: 'Laomedeia', gender: 'female', label: 'Female Voice 9', file: '/audio/voices/laomedeia.wav' },
+  { name: 'Leda', gender: 'female', label: 'Female Voice 10', file: '/audio/voices/leda.wav' },
+  { name: 'Pulcherrima', gender: 'female', label: 'Female Voice 11', file: '/audio/voices/pulcherrima.wav' },
+  { name: 'Sulafat', gender: 'female', label: 'Female Voice 12', file: '/audio/voices/sulafat.wav' },
+  { name: 'Vindemiatrix', gender: 'female', label: 'Female Voice 13', file: '/audio/voices/vindemiatrix.wav' },
+  { name: 'Zephyr', gender: 'female', label: 'Female Voice 14', file: '/audio/voices/zephyr.wav' },
+];
+
+// ─── Voice Explorer Modal ───────────────────────────────────────────────────
+function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [playingFile, setPlayingFile] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'male' | 'female'>('all');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const togglePlay = (file: string) => {
+    if (playingFile === file) {
+      audioRef.current?.pause();
+      setPlayingFile(null);
+      return;
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    const audio = new Audio(file);
+    audio.playbackRate = 1.1;
+    audio.onended = () => setPlayingFile(null);
+    audio.play();
+    audioRef.current = audio;
+    setPlayingFile(file);
+  };
+
+  // Cleanup on close
+  useEffect(() => {
+    if (!open && audioRef.current) {
+      audioRef.current.pause();
+      setPlayingFile(null);
+    }
+  }, [open]);
+
+  if (!open) return null;
+
+  const filtered = filter === 'all' ? voiceSamples : voiceSamples.filter(v => v.gender === filter);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg max-h-[80vh] rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden flex flex-col"
+        >
+          {/* Header */}
+          <div className="p-5 border-b border-carbon-700/50 flex-shrink-0">
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-safety-500/10">
+                <Headphones className="w-5 h-5 text-safety-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Explore Voice Options</h3>
+                <p className="text-carbon-300 text-sm">Tap play to hear each voice style</p>
+              </div>
+            </div>
+            {/* Filter tabs */}
+            <div className="flex gap-2">
+              {(['all', 'male', 'female'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                    filter === f
+                      ? 'bg-safety-500/20 text-safety-400 border border-safety-500/30'
+                      : 'text-carbon-300 hover:text-white hover:bg-carbon-700/50'
+                  }`}
+                >
+                  {f === 'all' ? `All (${voiceSamples.length})` : f === 'male' ? `Male (${voiceSamples.filter(v => v.gender === 'male').length})` : `Female (${voiceSamples.filter(v => v.gender === 'female').length})`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Voice list */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            {filtered.map((voice) => {
+              const isPlaying = playingFile === voice.file;
+              return (
+                <button
+                  key={voice.name}
+                  onClick={() => togglePlay(voice.file)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer ${
+                    isPlaying
+                      ? 'bg-safety-500/10 border-safety-500/30'
+                      : 'bg-carbon-900/40 border-carbon-700/30 hover:border-carbon-600/50'
+                  }`}
+                >
+                  <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                    isPlaying ? 'bg-safety-500/20' : 'bg-carbon-700/50'
+                  }`}>
+                    {isPlaying ? (
+                      <Pause size={16} className="text-safety-400" />
+                    ) : (
+                      <Play size={16} className="text-carbon-300 ml-0.5" />
+                    )}
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="text-white text-sm font-medium">{voice.label}</div>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    voice.gender === 'male'
+                      ? 'bg-electric-500/10 text-electric-400'
+                      : 'bg-pink-500/10 text-pink-400'
+                  }`}>
+                    {voice.gender}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ─── Personalization Card ───────────────────────────────────────────────────
+function PersonalizationCard() {
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-safety-500/20"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl bg-safety-500/10">
+            <UserCog className="w-6 h-6 text-safety-400" />
+          </div>
+          <h3 className="text-white font-bold text-xl">Make It Yours</h3>
+        </div>
+        <div className="space-y-5">
+          {/* 25+ Voice Options — with explore button */}
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 p-2 rounded-lg bg-safety-500/10 mt-0.5">
+              <MessageCircle className="w-4 h-4 text-safety-400" />
+            </div>
+            <div>
+              <div className="text-white font-semibold mb-1">25+ Voice Options</div>
+              <p className="text-carbon-300 text-sm leading-relaxed">Choose from over 25 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
+              <button
+                onClick={() => setVoiceModalOpen(true)}
+                className="inline-flex items-center gap-1.5 mt-2 text-safety-400 hover:text-safety-300 text-sm font-medium transition-colors cursor-pointer"
+              >
+                <Headphones size={14} />
+                Explore Voice Options
+              </button>
+            </div>
+          </div>
+
+          {/* Other personalization items */}
+          {[
+            { icon: UserCog, title: 'Name Your AI', desc: 'Give your wingman a name. It\'s your AI — make it feel personal. It\'ll respond to whatever you name it.' },
+            { icon: SlidersHorizontal, title: 'Adjustable Speech Speed', desc: 'Speed it up when you\'re experienced with a procedure. Slow it down for complex, unfamiliar work. You\'re in control.' },
+            { icon: Gauge, title: 'Your AI Adapts to You', desc: 'ONRAMP learns your preferences and adapts to how you work. The more you use it, the better it gets.' },
+          ].map((item) => (
+            <div key={item.title} className="flex items-start gap-3">
+              <div className="flex-shrink-0 p-2 rounded-lg bg-safety-500/10 mt-0.5">
+                <item.icon className="w-4 h-4 text-safety-400" />
+              </div>
+              <div>
+                <div className="text-white font-semibold mb-1">{item.title}</div>
+                <p className="text-carbon-300 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+      <VoiceExplorerModal open={voiceModalOpen} onClose={() => setVoiceModalOpen(false)} />
+    </>
+  );
+}
+
 function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: number }) {
   const colors = colorMap[phase.color];
   const textOnRight = index % 2 === 1 || index === 3;
@@ -364,11 +647,18 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
         transition={{ duration: 0.7 }}
         className="w-full lg:w-1/2"
       >
-        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold tracking-wider mb-4 ${colors.badge}`}>
-          <phase.icon className="w-4 h-4" />
-          {phase.name}
+        <div className="flex justify-center lg:justify-start">
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold tracking-wider mb-4 ${colors.badge}`}>
+            <phase.icon className="w-4 h-4" />
+            {phase.name}
+          </div>
         </div>
-        <h3 className="text-white font-bold text-2xl md:text-3xl mb-4">{phase.title}</h3>
+        <h3 className="text-white font-bold text-2xl md:text-3xl mb-4 text-center lg:text-left">
+          {phase.title}
+          {phase.titleAccent && (
+            <><span className="hidden md:inline"> — </span><br className="md:hidden" /><span className={`${colors.text}`}>{phase.titleAccent}</span></>
+          )}
+        </h3>
         <p className="text-carbon-300 text-lg mb-6">{phase.description}</p>
         <div className="space-y-3">
           {phase.details.map((detail) => (
@@ -378,7 +668,9 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
             </div>
           ))}
         </div>
-        <AudioSamplePlayer accentColor={colors.phoneAccent} state={state} progress={progress} toggle={toggle} />
+        <div className="flex justify-center lg:justify-start">
+          <AudioSamplePlayer accentColor={colors.phoneAccent} state={state} progress={progress} toggle={toggle} label={phase.buttonLabel} />
+        </div>
       </motion.div>
 
       {/* Phone mockup with play button */}
@@ -476,8 +768,8 @@ export default function HowItWorksPage() {
             transition={{ delay: 0.1 }}
             className="text-xl md:text-2xl text-carbon-300 max-w-3xl mx-auto"
           >
-            A voice-first AI assistant that rides along on every repair.
-            Here's what happens from the moment you start a job.
+            A voice-first AI assistant that accelerates technician performance on every repair.
+            Here's what happens from the moment you start a repair order.
           </motion.p>
         </div>
       </section>
@@ -531,7 +823,7 @@ export default function HowItWorksPage() {
                 className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8 max-w-lg mx-auto lg:mx-0"
               >
                 <div className="leading-relaxed flex-shrink-0">
-                  <span className="text-carbon-300 text-lg">Put on your headphones<br className="hidden lg:block" /> and Smart Button!</span><br />
+                  <span className="text-carbon-300 text-lg">Put on your headphones<br /> and Brain Button!</span><br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 font-semibold text-xl md:text-2xl">
                     ...you're hands-free from here!
                   </span>
@@ -539,9 +831,10 @@ export default function HowItWorksPage() {
                 {/* Flic + AirPods centered together */}
                 <div className="flex items-center gap-1 lg:translate-x-8">
                   <img
-                    src="/flic-button.png"
-                    alt="Flic Smart Button"
-                    className="w-22 md:w-28 h-auto drop-shadow-xl"
+                    src="/BrainButton.png"
+                    alt="Brain Button"
+                    className="w-22 md:w-28 h-auto"
+                    style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}
                   />
                   <img
                     src="/airpods.png"
@@ -576,11 +869,11 @@ export default function HowItWorksPage() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Four Phases.{' '}
+              Four Phases.<br className="md:hidden" />{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              OnRamp adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
+              ONRAMP adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
             </p>
           </motion.div>
 
@@ -597,11 +890,12 @@ export default function HowItWorksPage() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              No More Typing. Just Tap-to-Talk.<br />
+              No More Typing.<br />
+              Just Tap-to-Talk.<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 mt-2 inline-block">ONRAMP Documents Everything.</span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-3xl mx-auto">
-              OnRamp listens, understands context, and writes your repair orders while you work.<br className="hidden md:block" /> No typing. No terminal trips.
+              ONRAMP listens, understands context, and writes your repair orders while you work.<br className="hidden md:block" /> No typing. No terminal trips.
             </p>
           </motion.div>
 
@@ -626,66 +920,41 @@ export default function HowItWorksPage() {
                 }`}>
                   {index + 1}
                 </div>
-                <div className={`inline-flex p-3 rounded-xl mb-4 ${activeStep === index ? 'bg-electric-500/20 text-electric-400' : 'bg-carbon-700/50 text-carbon-400'}`}>
+                <div className={`inline-flex p-3 rounded-xl mb-4 ${activeStep === index ? 'bg-electric-500/20 text-electric-400' : 'bg-carbon-700/50 text-carbon-300'}`}>
                   <step.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">{step.label}</h3>
-                <p className="text-carbon-400 text-sm mb-4">{step.description}</p>
-                <div className={`p-3 rounded-lg text-xs font-mono ${activeStep === index ? 'bg-carbon-900/80 text-electric-300 border border-electric-500/20' : 'bg-carbon-900/50 text-carbon-500'}`}>
-                  {step.example}
-                </div>
+                <p className="text-carbon-300 text-sm">{step.description}</p>
               </motion.div>
             ))}
           </div>
 
-          {/* Live Preview */}
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-carbon-800/80 to-carbon-900/80 border border-carbon-700/50">
-            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
-              <div className="flex-shrink-0">
-                <div className="relative w-48 h-48 rounded-2xl bg-carbon-950 border border-carbon-700 p-4">
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-carbon-700 rounded-full" />
-                  <div className="h-full flex flex-col items-center justify-center">
-                    <motion.div animate={isPlaying ? { scale: [1, 1.2, 1] } : {}} transition={{ duration: 1.5, repeat: Infinity }} className="w-16 h-16 rounded-full bg-electric-500/20 flex items-center justify-center mb-3">
-                      <Mic className="w-8 h-8 text-electric-400" />
-                    </motion.div>
-                    <span className="text-electric-400 text-xs font-semibold">LISTENING</span>
-                    <div className="flex gap-1 mt-2">
-                      {[...Array(5)].map((_, i) => (
-                        <motion.div key={i} animate={isPlaying ? { scaleY: [1, 2, 1] } : {}} transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }} className="w-1 h-3 bg-electric-400 rounded-full" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 w-full">
-                <div className="flex items-center gap-2 mb-4">
-                  <Clipboard className="w-5 h-5 text-safety-400" />
-                  <span className="text-safety-400 font-semibold">Live RO Preview</span>
-                  <span className="ml-auto text-carbon-500 text-sm">Auto-generating...</span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-carbon-900/50 border border-carbon-700/30">
-                    <Car className="w-5 h-5 text-carbon-500" />
-                    <span className="text-carbon-300">2019 Honda Accord</span>
-                  </div>
-                  <div className="p-4 rounded-lg bg-carbon-900/80 border border-electric-500/20">
-                    <div className="flex items-start gap-3 mb-3">
-                      <CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5" />
-                      <div>
-                        <p className="text-white font-medium">Battery Cable B+ End Replacement</p>
-                        <p className="text-carbon-400 text-sm">Corroded terminal causing intermittent no-start</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 text-sm">
-                      <span className="text-carbon-400">Parts: <span className="text-electric-300">$12.50</span></span>
-                      <span className="text-carbon-400">Labor: <span className="text-electric-300">0.4 hr</span></span>
-                      <span className="text-carbon-400">Code: <span className="text-safety-300">B0001</span></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        </div>
+      </section>
+
+      {/* Your AI, Your Way */}
+      <section className="py-20 px-4 carbon-fiber-bg">
+        <div className="max-w-6xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+            <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
+              Built Different
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
+              Your AI,{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Your Way.</span>
+            </h2>
+            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+              Best-in-class AI voice technology, personalized to each technician.
+            </p>
           </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* AI Tech Stack */}
+            <AIStackCard />
+
+            {/* Personalization */}
+            <PersonalizationCard />
+          </div>
         </div>
       </section>
 
@@ -698,7 +967,7 @@ export default function HowItWorksPage() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">Need</span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              OnRamp runs on hardware you probably already own. The Flic button is the only new piece—and it comes free in the Starter Pack.
+              ONRAMP runs on hardware you probably already own. The Brain Button is the only new piece.
             </p>
           </motion.div>
 
@@ -710,13 +979,36 @@ export default function HowItWorksPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50"
+                className="relative p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50"
               >
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className={`absolute right-4 object-contain ${item.image.includes('airpods') ? 'w-[86px] h-[86px]' : 'w-18 h-18'}`}
+                    style={{ top: 48, transform: 'translateY(-50%)', filter: 'drop-shadow(0 0 8px rgba(74,144,217,0.2))' }}
+                  />
+                ) : item.name === 'Mobile App' && (
+                  <div className="absolute right-4 flex items-center gap-2" style={{ top: 48, transform: 'translateY(-50%)' }}>
+                    {/* Android in orange circle */}
+                    <div className="rounded-full flex items-center justify-center" style={{ width: 60, height: 60, backgroundColor: 'rgba(249, 115, 22, 0.7)' }}>
+                      <svg viewBox="0 0 24 24" style={{ width: 46, height: 46 }} fill="white">
+                        <path d="M17.523 15.341a.96.96 0 0 0 .96-.96V8.075a.96.96 0 1 0-1.92 0v6.306a.96.96 0 0 0 .96.96zM6.477 15.341a.96.96 0 0 0 .96-.96V8.075a.96.96 0 0 0-1.92 0v6.306a.96.96 0 0 0 .96.96zM8.59 17.921v2.64a1.08 1.08 0 0 0 2.16 0v-2.64h2.5v2.64a1.08 1.08 0 0 0 2.16 0v-2.64h.27a1.2 1.2 0 0 0 1.2-1.2V7.681H7.12v9.04a1.2 1.2 0 0 0 1.2 1.2h.27zM15.61 3.561l1.22-1.78a.3.3 0 0 0-.09-.42.3.3 0 0 0-.42.09l-1.27 1.85a6.47 6.47 0 0 0-6.1 0L7.68 1.451a.3.3 0 0 0-.42-.09.3.3 0 0 0-.09.42l1.22 1.78A5.28 5.28 0 0 0 5.2 7.281h13.6a5.28 5.28 0 0 0-3.19-3.72zM9.8 5.881a.6.6 0 1 1 .6-.6.6.6 0 0 1-.6.6zm4.4 0a.6.6 0 1 1 .6-.6.6.6 0 0 1-.6.6z"/>
+                      </svg>
+                    </div>
+                    {/* Apple in blue circle */}
+                    <div className="rounded-full flex items-center justify-center" style={{ width: 60, height: 60, backgroundColor: 'rgba(74, 144, 217, 0.7)' }}>
+                      <svg viewBox="0 0 384 512" style={{ width: 38, height: 38 }} fill="white">
+                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
                 <div className="inline-flex p-3 rounded-xl bg-electric-500/10 text-electric-400 mb-4">
                   <item.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-xl mb-3">{item.name}</h3>
-                <p className="text-carbon-400">{item.description}</p>
+                <p className="text-carbon-300 pr-14">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -727,10 +1019,7 @@ export default function HowItWorksPage() {
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to try it?</h2>
-            <p className="text-carbon-300 text-lg mb-8">
-              The Starter Pack gets you everything you need—Flic button and 3 months of Pro access—for $99.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">What's your role?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="/technicians" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric">
                 I'm a Technician

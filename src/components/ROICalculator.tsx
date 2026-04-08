@@ -98,7 +98,7 @@ export default function ROICalculator() {
             </span>
           </h2>
           <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-            Whether you're turning wrenches or running the floor, OnRamp puts money back in your pocket.
+            Whether you're turning wrenches or running the floor, ONRAMP puts money back in your pocket.
           </p>
         </motion.div>
 
@@ -116,7 +116,7 @@ export default function ROICalculator() {
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
                 activeTab === 'technician'
                   ? 'bg-electric-500 text-white shadow-lg shadow-electric-500/30'
-                  : 'text-carbon-400 hover:text-white'
+                  : 'text-carbon-300 hover:text-white'
               }`}
             >
               <Wrench className="w-5 h-5" />
@@ -127,7 +127,7 @@ export default function ROICalculator() {
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
                 activeTab === 'manager'
                   ? 'bg-safety-500 text-white shadow-lg shadow-safety-500/30'
-                  : 'text-carbon-400 hover:text-white'
+                  : 'text-carbon-300 hover:text-white'
               }`}
             >
               <Building2 className="w-5 h-5" />
@@ -154,7 +154,7 @@ export default function ROICalculator() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Time Savings Calculator</h3>
-                    <p className="text-carbon-400 text-sm">See your potential take-home boost</p>
+                    <p className="text-carbon-300 text-sm">See your potential take-home boost</p>
                   </div>
                 </div>
 
@@ -163,7 +163,7 @@ export default function ROICalculator() {
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
                       How many times a day do you go to your terminal for diagnosis, TSB's, parts, procedures and torques?
-                      <span className="block text-carbon-500 text-sm font-normal">
+                      <span className="block text-carbon-300 text-sm font-normal">
                         (We assume ~4 min per visit)
                       </span>
                     </label>
@@ -177,7 +177,7 @@ export default function ROICalculator() {
                     onChange={(e) => setTerminalVisits(Number(e.target.value))}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>5x</span>
                     <span>30x</span>
                   </div>
@@ -199,7 +199,7 @@ export default function ROICalculator() {
                     onChange={(e) => setDocMinutes(Number(e.target.value))}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>5 min</span>
                     <span>60 min</span>
                   </div>
@@ -221,7 +221,7 @@ export default function ROICalculator() {
                     onChange={(e) => setHourlyRate(Number(e.target.value))}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>$20/hr</span>
                     <span>$60/hr</span>
                   </div>
@@ -230,13 +230,13 @@ export default function ROICalculator() {
                 {/* Summary Stats */}
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                   <div>
-                    <p className="text-carbon-500 text-sm">Daily time saved</p>
+                    <p className="text-carbon-300 text-sm">Daily time saved</p>
                     <p className="text-white font-bold text-xl">
                       {Math.round(dailyMinutesSaved)} min
                     </p>
                   </div>
                   <div>
-                    <p className="text-carbon-500 text-sm">Weekly hours saved</p>
+                    <p className="text-carbon-300 text-sm">Weekly hours saved</p>
                     <p className="text-white font-bold text-xl">{weeklyHoursSaved.toFixed(1)} hrs</p>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export default function ROICalculator() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Shop Profit Calculator</h3>
-                    <p className="text-carbon-400 text-sm">Find your hidden capacity</p>
+                    <p className="text-carbon-300 text-sm">Find your hidden capacity</p>
                   </div>
                 </div>
 
@@ -258,7 +258,7 @@ export default function ROICalculator() {
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
                       Overall shop efficiency gain
-                      <span className="block text-carbon-500 text-sm font-normal">
+                      <span className="block text-carbon-300 text-sm font-normal">
                         (Industry avg: 10-15%)
                       </span>
                     </label>
@@ -275,7 +275,7 @@ export default function ROICalculator() {
                       background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
                     }}
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>5%</span>
                     <span>25%</span>
                   </div>
@@ -286,7 +286,7 @@ export default function ROICalculator() {
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-carbon-200 font-medium">
                       Warranty recovery from improved documentation
-                      <span className="block text-carbon-500 text-sm font-normal">
+                      <span className="block text-carbon-300 text-sm font-normal">
                         (Approval rate improvement)
                       </span>
                     </label>
@@ -303,7 +303,7 @@ export default function ROICalculator() {
                       background: `linear-gradient(to right, var(--color-green-600), var(--color-green-400))`,
                     }}
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>1%</span>
                     <span>15%</span>
                   </div>
@@ -328,7 +328,7 @@ export default function ROICalculator() {
                       background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
                     }}
                   />
-                  <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                  <div className="flex justify-between text-carbon-300 text-xs mt-1">
                     <span>1 tech</span>
                     <span>100 techs</span>
                   </div>
@@ -337,13 +337,13 @@ export default function ROICalculator() {
                 {/* Summary Stats */}
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                   <div>
-                    <p className="text-carbon-500 text-sm">Current annual capacity</p>
+                    <p className="text-carbon-300 text-sm">Current annual capacity</p>
                     <p className="text-white font-bold text-xl">
                       {currentCapacity.toLocaleString()} hrs
                     </p>
                   </div>
                   <div>
-                    <p className="text-carbon-500 text-sm">Found capacity</p>
+                    <p className="text-carbon-300 text-sm">Found capacity</p>
                     <p className="text-white font-bold text-xl">
                       +{Math.round(additionalCapacity).toLocaleString()} hrs
                     </p>
@@ -373,7 +373,7 @@ export default function ROICalculator() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Your Take-Home Boost</h3>
-                    <p className="text-carbon-400 text-sm">Based on ${hourlyRate}/hr flat rate</p>
+                    <p className="text-carbon-300 text-sm">Based on ${hourlyRate}/hr flat rate</p>
                   </div>
                 </div>
 
@@ -390,7 +390,7 @@ export default function ROICalculator() {
                     </span>
                     <span className="text-electric-400 text-2xl font-semibold">/mo</span>
                   </motion.div>
-                  <p className="text-carbon-400">Potential monthly income boost</p>
+                  <p className="text-carbon-300">Potential monthly income boost</p>
                 </div>
 
                 {/* Breakdown */}
@@ -415,7 +415,7 @@ export default function ROICalculator() {
                   </div>
                 </div>
 
-                <p className="text-carbon-500 text-xs mt-6 text-center">
+                <p className="text-carbon-300 text-xs mt-6 text-center">
                   * Based on 5 days/week. Actual results vary by shop and workload.
                 </p>
               </>
@@ -427,7 +427,7 @@ export default function ROICalculator() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Hidden Revenue Unlocked</h3>
-                    <p className="text-carbon-400 text-sm">Annual shop profit potential</p>
+                    <p className="text-carbon-300 text-sm">Annual shop profit potential</p>
                   </div>
                 </div>
 
@@ -444,7 +444,7 @@ export default function ROICalculator() {
                     </span>
                     <span className="text-safety-400 text-2xl font-semibold">/yr</span>
                   </motion.div>
-                  <p className="text-carbon-400">Total revenue opportunity</p>
+                  <p className="text-carbon-300">Total revenue opportunity</p>
                 </div>
 
                 {/* Breakdown */}
@@ -469,7 +469,7 @@ export default function ROICalculator() {
                   </div>
                 </div>
 
-                <p className="text-carbon-500 text-xs mt-6 text-center">
+                <p className="text-carbon-300 text-xs mt-6 text-center">
                   * Based on ${AVG_BILLABLE_RATE}/hr shop rate, 25% warranty work volume.
                 </p>
               </>
@@ -494,7 +494,7 @@ export default function ROICalculator() {
             href="#contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-safety-500 hover:from-electric-400 hover:to-safety-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-electric-500/20"
           >
-            Get OnRamp for My Shop
+            Get ONRAMP for My Shop
           </a>
         </motion.div>
       </div>

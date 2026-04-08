@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import BrainButtonPrompts from './BrainButtonPrompts';
 import { Link } from 'react-router-dom';
 import {
   Smartphone,
@@ -24,11 +26,11 @@ const blocks = [
     id: 'mobile-app',
     headline: "AI Brain in Your Pocket.\nAI Voice in Your Headphones.",
     subtext:
-      'OnRamp lives on your phone — but the help is right in your ears when you need it. No terminal trips, no desktop logins. Just tap-to-talk, and your AI assistant is ready to help you with every job, hands-free.',
+      'ONRAMP lives on your phone — but the help is right in your ears when you need it. No terminal trips, no desktop logins. Just tap-to-talk, and your AI assistant is ready to help you with every job, hands-free.',
     bullets: [
-      { icon: Rocket, text: 'Start jobs in 30 seconds with just the RO number and VIN' },
+      { icon: Rocket, text: 'Start jobs in 15 seconds with just the RO number and VIN' },
       { icon: Headphones, text: 'Voice-first interface — works with any Bluetooth headset' },
-      { icon: Mic, text: 'Speak naturally with OnRamp AI to diagnose, document, and navigate repairs' },
+      { icon: Mic, text: 'Speak naturally with ONRAMP AI to diagnose, document, and navigate repairs' },
       { icon: FileCheck, text: 'Wrap up jobs in seconds — AI writes your RO Reports instantly' },
       { icon: FileText, text: 'All your jobs, notes, and RO reports in one place' },
     ],
@@ -43,7 +45,7 @@ const blocks = [
     id: 'flic-button',
     headline: 'The Key to Hands-Free',
     subtext:
-      "Tap-to-Talk. The Flic button clips to your shirt, toolbox, or belt — giving you instant, physical control of your AI assistant without putting the wrench down. Tap again to pause.",
+      "Tap-to-Talk. The Brain Button clips to your shirt or belt — giving you instant, physical control of your AI assistant without putting the wrench down. Tap again to pause.",
     bullets: [
       { icon: Mic, text: 'Tap-to-Talk. Tap-to-Pause.' },
       { icon: Radio, text: 'Bluetooth-connected — instant response, no delay' },
@@ -59,13 +61,14 @@ const blocks = [
   },
   {
     id: 'dashboard',
-    headline: 'End-of-Day Visibility & Sync',
+    headline: 'Real-Time Visibility & Sync',
     subtext:
-      'Everything your techs say, do, and document syncs instantly to the web dashboard. Service managers get complete oversight without interrupting a single repair.',
+      'Everything your techs are working on or waiting on, with real-time status and perfect documentation, syncs instantly to the admin dashboard. Service managers get complete oversight without interrupting a single repair.',
     bullets: [
       { icon: RefreshCw, text: 'RO reports sync in real-time from phone to dashboard' },
       { icon: ClipboardList, text: 'Monitor job progress, tech activity, and bay status' },
-      { icon: Users, text: 'Manager tools for team performance and warranty tracking' },
+      { icon: Users, text: 'Manager tools for team performance and ONRAMP platform usage' },
+      { icon: Zap, text: 'Empower every technician to work like your best technician' },
     ],
     bulletColor: 'safety',
     visual: {
@@ -97,28 +100,50 @@ const colorMap: Record<string, { icon: string; bg: string; border: string; glow:
   },
 };
 
+const phoneScreenshots = [
+  '/diagnose-screen.PNG',
+  '/prepare-screen.PNG',
+  '/workflow-screen.PNG',
+  '/step-screen-1.PNG',
+  '/step-screen-2.PNG',
+];
+
 function PhoneMockup() {
-  // iPhone frame is 365x750px. Screen area measured from the frame image:
-  // ~5.5% inset left/right, ~3% top, ~3% bottom
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % phoneScreenshots.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="relative mx-auto w-[260px] md:w-[300px]">
       {/* Clipping container sized to the screen area within the frame */}
       <div
         className="absolute overflow-hidden z-0"
         style={{
-          left: '5.5%',
-          right: '5.5%',
-          top: '3%',
-          bottom: '3%',
+          left: '3.5%',
+          right: '3.5%',
+          top: '1.5%',
+          bottom: '1.5%',
           borderRadius: '2rem',
         }}
       >
-        <img
-          src="/app-screenshot-home.PNG"
-          alt="OnRamp mobile app showing AI-guided repair steps"
-          className="w-full h-full object-cover object-top"
-          style={{ imageRendering: 'auto', WebkitFontSmoothing: 'antialiased' }}
-        />
+        <AnimatePresence mode="popLayout">
+          <motion.img
+            key={currentIndex}
+            src={phoneScreenshots[currentIndex]}
+            alt="ONRAMP mobile app"
+            className="w-full h-full object-cover object-top absolute inset-0"
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '-30%', opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            style={{ imageRendering: 'auto', WebkitFontSmoothing: 'antialiased' }}
+          />
+        </AnimatePresence>
       </div>
       {/* iPhone frame on top */}
       <img
@@ -132,16 +157,20 @@ function PhoneMockup() {
 
 function FlicMockup() {
   return (
-    <div className="relative mx-auto w-[280px] md:w-[320px] flex items-center justify-center py-8">
-      {/* Ambient glow */}
-      <div className="absolute w-56 h-56 bg-electric-500/15 rounded-full blur-[80px]" />
-      <div className="relative">
-        <img
-          src="/flic-button.png"
-          alt="Flic 2 Smart Button"
-          className="w-48 md:w-56 h-auto drop-shadow-2xl"
-        />
+    <div className="flex flex-col items-center">
+      <div className="relative mx-auto w-[280px] md:w-[320px] flex flex-col items-center py-8">
+        {/* Ambient glow */}
+        <div className="absolute w-56 h-56 bg-electric-500/15 rounded-full blur-[80px]" />
+        <div className="relative">
+          <img
+            src="/BrainButton.png"
+            alt="Brain Button"
+            className="w-48 md:w-56 h-auto"
+            style={{ filter: "drop-shadow(0 0 14px rgba(26,160,255,0.2))" }}
+          />
+        </div>
       </div>
+      <BrainButtonPrompts />
     </div>
   );
 }
@@ -157,7 +186,7 @@ function DashboardMockup() {
         </div>
         {/* Screen area — screenshot placeholder */}
         <div className="rounded-lg bg-carbon-800 overflow-hidden aspect-[16/10] flex items-center justify-center">
-          {/* Placeholder — replace with: <img src="/dashboard-screenshot.png" alt="OnRamp Dashboard" className="w-full h-full object-cover" /> */}
+          {/* Placeholder — replace with: <img src="/dashboard-screenshot.png" alt="ONRAMP Dashboard" className="w-full h-full object-cover" /> */}
           <div className="w-full h-full p-4 md:p-6">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-4">
@@ -254,14 +283,14 @@ export default function AtAGlance() {
           viewport={{ once: true }}
           className="text-center mb-20"
         >
-          <span className="text-carbon-400 text-sm font-semibold tracking-wider uppercase">
+          <span className="text-carbon-300 text-sm font-semibold tracking-wider uppercase">
             The Platform
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
-            OnRamp at a Glance
+            ONRAMP at a Glance
           </h2>
           <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-            A mobile app, a physical button, and a management dashboard — everything your shop needs to work smarter.
+            A mobile app, a physical button, and a management dashboard — everything technicians need to work smarter.
           </p>
         </motion.div>
 
@@ -347,8 +376,17 @@ export default function AtAGlance() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.7 }}
-                      className="w-full lg:w-1/2 flex justify-center"
+                      className="w-full lg:w-1/2 flex flex-col items-center"
                     >
+                      {/* Badge centered above image on mobile for Brain Button */}
+                      {block.id === 'flic-button' && (
+                        <div className={`lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-4`}>
+                          <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
+                          <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
+                            The Brain Button
+                          </span>
+                        </div>
+                      )}
                       <div className="relative">
                         <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[80px] scale-75 opacity-50`} />
                         <div className="relative">
@@ -365,10 +403,11 @@ export default function AtAGlance() {
                       transition={{ duration: 0.7, delay: 0.1 }}
                       className="w-full lg:w-1/2"
                     >
-                      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
+                      {/* Badge — hidden on mobile for flic-button (shown above image instead) */}
+                      <div className={`${block.id === 'flic-button' ? 'hidden lg:inline-flex' : 'inline-flex'} items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
                         <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
                         <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
-                          {block.id === 'mobile-app' ? 'The App' : 'The Button'}
+                          {block.id === 'mobile-app' ? 'The App' : 'The Brain Button'}
                         </span>
                       </div>
 

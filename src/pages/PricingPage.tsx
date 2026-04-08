@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Check, Package, Zap, Crown, Infinity as InfinityIcon, ArrowRight, Clock, Users, Building2, User, TrendingUp,
-  Minus, Plus, MousePointerClick, HelpCircle, X,
+  Minus, Plus, MousePointerClick, HelpCircle, X, CheckCircle2, Loader2, Search,
 } from 'lucide-react';
 import { trackPricingTabSwitch, trackPricingConfigured } from '../lib/analytics';
 
@@ -13,8 +13,94 @@ import { trackPricingTabSwitch, trackPricingConfigured } from '../lib/analytics'
 
 const APP_URL = import.meta.env.VITE_APP_URL || 'https://app.onramp.com';
 
-function checkoutUrl(plan: string, seats = 1, type: 'individual' | 'shop' = 'individual') {
-  return `${APP_URL}/checkout?plan=${plan}&seats=${seats}&type=${type}`;
+function checkoutUrl(plan: string, seats = 1, type: 'individual' | 'shop' = 'individual', buttons?: number) {
+  const base = `${APP_URL}/get-started?plan=${plan}&seats=${seats}&type=${type}`;
+  return buttons != null ? `${base}&buttons=${buttons}` : base;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Google Form Configuration                                          */
+/* ------------------------------------------------------------------ */
+
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSecRS6mfq1RZqVOEZ4KLTmogrF_4aSZ2fwg25YMO07ap88RmQ/formResponse';
+const GOOGLE_FORM_FIELDS = {
+  source: 'entry.1894016444',
+  usageLevel: 'entry.1525145917',
+  seats: 'entry.1446346906',
+  name: 'entry.502216171',
+  email: 'entry.1760694518',
+  phone: 'entry.1441318369',
+  shopName: 'entry.417059025',
+  role: 'entry.2032741101',
+  message: 'entry.1443923466',
+};
+
+function formatPhoneNumber(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 10);
+  if (digits.length === 0) return '';
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+function getPhoneDigits(formatted: string): string {
+  return formatted.replace(/\D/g, '');
+}
+
+function isValidEmail(email: string): boolean {
+  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!pattern.test(email)) return false;
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return false;
+  const suspiciousTLDs = ['con', 'cmo', 'cim', 'coom'];
+  const tld = domain.split('.').pop() || '';
+  if (suspiciousTLDs.includes(tld)) return false;
+  return true;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Google Places Autocomplete                                         */
+/* ------------------------------------------------------------------ */
+
+interface PlaceSuggestion {
+  name: string;
+  formattedAddress: string;
+  placeId?: string;
+}
+
+const PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+
+async function searchPlaces(
+  query: string,
+  location: { lat: number; lng: number } | null,
+): Promise<PlaceSuggestion[]> {
+  if (!PLACES_API_KEY || query.length < 3) return [];
+  try {
+    const body: Record<string, unknown> = {
+      input: query,
+      includedPrimaryTypes: ['car_dealer', 'car_repair'],
+    };
+    if (location) {
+      body.locationBias = {
+        circle: { center: { latitude: location.lat, longitude: location.lng }, radius: 50000.0 },
+      };
+    }
+    const response = await fetch('https://places.googleapis.com/v1/places:autocomplete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': PLACES_API_KEY },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    const suggestions: PlaceSuggestion[] = (data.suggestions || []).map((s: any) => ({
+      name: s.placePrediction?.structuredFormat?.mainText?.text || '',
+      formattedAddress: s.placePrediction?.structuredFormat?.secondaryText?.text || '',
+      placeId: s.placePrediction?.placeId,
+    }));
+    return suggestions;
+  } catch {
+    return [];
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -114,6 +200,220 @@ const tierColors = {
   },
 } as const;
 
+/* Tier-specific fill colors for SVG (can't use Tailwind classes in SVG attributes) */
+const tierSvgColors: Record<string, { fill: string; stroke: string; glow: string }> = {
+  basic:     { fill: '#1aa0ff', stroke: '#0088e6', glow: 'rgba(26,160,255,0.3)' },
+  pro:       { fill: '#ff971a', stroke: '#e67d00', glow: 'rgba(255,151,26,0.3)' },
+  unlimited: { fill: '#4ade80', stroke: '#22c55e', glow: 'rgba(74,222,128,0.3)' },
+};
+
+/* Pool ellipse sizing per tier (rx, ry radii) */
+const poolEllipseSizes: Record<string, { rx: number; ry: number }> = {
+  basic:     { rx: 64, ry: 37 },
+  pro:       { rx: 99, ry: 57 },
+  unlimited: { rx: 113, ry: 65 },
+};
+
+/* ------------------------------------------------------------------ */
+/*  Shared Pool Visualization                                          */
+/* ------------------------------------------------------------------ */
+
+function PoolVisualization({
+  numTechs,
+  hoursPerSeat,
+  tierKey,
+}: {
+  numTechs: number;
+  hoursPerSeat: number;
+  tierKey: 'basic' | 'pro' | 'unlimited';
+}) {
+  const svg = tierSvgColors[tierKey];
+  const pool = poolEllipseSizes[tierKey];
+  const isUnlimited = hoursPerSeat === Infinity;
+  const totalHours = isUnlimited ? Infinity : numTechs * hoursPerSeat;
+
+  // Container: wider than tall to fill the space below the slider nicely
+  const containerW = 380;
+  const containerH = 260;
+  const cx = containerW / 2;
+  const cy = containerH / 2;
+
+  // Outer ellipse for node orbit — wider to match container aspect ratio
+  const orbitRx = Math.min(170, 135 + numTechs * 0.7);
+  const orbitRy = Math.min(110, 90 + numTechs * 0.4);
+
+  // Node size shrinks when there are many techs
+  const nodeR = numTechs <= 15 ? 10 : numTechs <= 30 ? 8 : 6;
+
+  // Build node positions on the elliptical orbit
+  const nodes = Array.from({ length: numTechs }, (_, i) => {
+    const angle = (i / numTechs) * Math.PI * 2 - Math.PI / 2; // start from top
+    return {
+      id: i,
+      x: cx + orbitRx * Math.cos(angle),
+      y: cy + orbitRy * Math.sin(angle),
+    };
+  });
+
+  return (
+    <div className="mt-6 flex justify-center w-full">
+      <motion.svg
+        viewBox={`0 0 ${containerW} ${containerH}`}
+        className="overflow-visible w-full max-w-[380px]"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {/* Glow filter for the central ellipse */}
+        <defs>
+          <filter id={`pool-glow-${tierKey}`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+          </filter>
+          <radialGradient id={`pool-grad-${tierKey}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={svg.fill} stopOpacity="0.18" />
+            <stop offset="80%" stopColor={svg.stroke} stopOpacity="0.06" />
+            <stop offset="100%" stopColor={svg.stroke} stopOpacity="0.02" />
+          </radialGradient>
+        </defs>
+
+        {/* Lines from each node to center */}
+        {nodes.map((node) => (
+          <motion.line
+            key={`line-${node.id}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.25, x1: node.x, y1: node.y }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, delay: node.id * 0.01 }}
+            x1={node.x}
+            y1={node.y}
+            x2={cx}
+            y2={cy}
+            stroke={svg.fill}
+            strokeWidth={1}
+            strokeDasharray="4 3"
+          />
+        ))}
+
+        {/* Central pool glow */}
+        <motion.ellipse
+          animate={{ rx: pool.rx, ry: pool.ry }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          cx={cx}
+          cy={cy}
+          fill={svg.glow}
+          filter={`url(#pool-glow-${tierKey})`}
+        />
+
+        {/* Central pool ellipse */}
+        <motion.ellipse
+          animate={{ rx: pool.rx, ry: pool.ry }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          cx={cx}
+          cy={cy}
+          fill={`url(#pool-grad-${tierKey})`}
+          stroke={svg.fill}
+          strokeWidth={1.5}
+          strokeOpacity={0.5}
+        />
+
+        {/* Pool text */}
+        {isUnlimited ? (
+          <motion.text
+            animate={{ x: cx, y: cy }}
+            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={svg.fill}
+            fontSize={72}
+            fontWeight="bold"
+            fontFamily="Inter, system-ui, sans-serif"
+          >
+            ∞
+          </motion.text>
+        ) : (
+          <>
+            <motion.text
+              animate={{ x: cx, y: cy - 8 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={svg.fill}
+              fontSize={totalHours >= 100 ? 22 : 20}
+              fontWeight="bold"
+              fontFamily="Inter, system-ui, sans-serif"
+            >
+              {totalHours}
+            </motion.text>
+            <motion.text
+              animate={{ x: cx, y: cy + 12 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={svg.fill}
+              fontSize={totalHours >= 100 ? 14 : 13}
+              fontWeight="bold"
+              fontFamily="Inter, system-ui, sans-serif"
+            >
+              HRS
+            </motion.text>
+          </>
+        )}
+
+        {/* Technician nodes */}
+        {nodes.map((node) => (
+          <motion.g key={`node-${node.id}`}>
+            {/* Outer glow */}
+            <motion.circle
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 0.3, scale: 1, cx: node.x, cy: node.y }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ duration: 0.25, delay: node.id * 0.015 }}
+              r={nodeR + 3}
+              fill={svg.fill}
+              fillOpacity={0.15}
+            />
+            {/* Node circle */}
+            <motion.circle
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1, cx: node.x, cy: node.y }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ duration: 0.25, delay: node.id * 0.015 }}
+              r={nodeR}
+              fill={svg.stroke}
+              fillOpacity={0.6}
+              stroke={svg.fill}
+              strokeWidth={1.5}
+            />
+            {/* Tiny person silhouette — only when nodes are big enough */}
+            {nodeR >= 8 && (
+              <motion.g
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.85 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, delay: node.id * 0.015 }}
+              >
+                {/* Head */}
+                <circle
+                  cx={node.x}
+                  cy={node.y - (nodeR >= 10 ? 2.5 : 2)}
+                  r={nodeR >= 10 ? 2.2 : 1.8}
+                  fill="white"
+                />
+                {/* Body */}
+                <ellipse
+                  cx={node.x}
+                  cy={node.y + (nodeR >= 10 ? 2.5 : 2)}
+                  rx={nodeR >= 10 ? 3 : 2.2}
+                  ry={nodeR >= 10 ? 2.2 : 1.6}
+                  fill="white"
+                />
+              </motion.g>
+            )}
+          </motion.g>
+        ))}
+      </motion.svg>
+    </div>
+  );
+}
+
 /* Flic button pricing per tier — full retail is $49.99 */
 const flicPricing: Record<string, { seatPrice: number; seatDiscount: string; extraPrice: number; extraDiscount: string }> = {
   basic:     { seatPrice: 49.99, seatDiscount: '',         extraPrice: 49.99, extraDiscount: '' },
@@ -146,64 +446,70 @@ const featureCategories = [
     category: 'Repair Order Management',
     features: [
       'Create and manage repair orders',
-      'RO number scanning via camera',
-      'Job tracking dashboard',
-      'Job approval workflow',
-      'Parts waiting / on-hold status',
-      'Job completion and close out',
+      'VIN scanning via camera',
+      'Job tracking dashboard with real-time status',
+      'Parts waiting / on-hold status management',
+      'Built-in clock in/out and time tracking per job',
+      'Job completion and close out workflow',
     ],
   },
   {
     category: 'AI Document Processing',
     features: [
-      'Technical documentation upload (PDF, images)',
-      'AI extraction of repair steps and procedures',
-      'Precise step-by-step workflow generation',
-      'Required parts and components extraction',
-      'Replacement component identification',
-      'Torque specification extraction',
+      'Drag-and-drop PDF upload',
+      'Multi-step AI extraction of repair procedures',
+      'Structured workflow generation with organized sections',
+      'Parts list with part numbers extraction',
+      'Tools list extraction',
+      'Torque specifications and coded values extraction',
       'Fluid capacity and type extraction',
-      'Automatic workflow organization into phases',
+      'Safety warnings and technical notes parsing',
     ],
   },
   {
-    category: 'AI-Enhanced Repair Guidance',
+    category: 'AI-Powered Diagnosis',
     features: [
-      'AI value-added enhancements per step',
-      'Safety warnings and precautions',
-      'Tool requirements per step',
-      'Real-time spec and TSB lookup',
-      'Multi-vehicle and multi-system support',
+      'Symptom-driven AI diagnostic flow',
+      'TSB and recall cross-referencing',
+      'Known failure pattern matching',
+      'Root cause prioritization',
+      'Diagnostic notes captured automatically',
+      'Works across all makes, models, and years',
     ],
   },
   {
     category: 'Voice AI Assistant',
     features: [
-      'Voice-guided repair assistance',
-      'Hands-free step-by-step job coaching',
+      'Hands-free voice coaching through every repair phase',
       'Voice-controlled step navigation',
-      'Real-time voice Q&A during repairs',
-      'AI diagnosis assistant',
-      'Dashboard voice navigation and queries',
+      'Real-time voice Q&A — torque specs, wiring, fluid capacities',
+      'Deep Research Mode for complex steps',
+      '25+ voice options — male and female styles',
+      'Adjustable speech speed',
+      'Name your AI — personalized voice assistant',
+      'Automated sleep mode to preserve usage hours',
     ],
   },
   {
     category: 'Documentation & Reporting',
     features: [
-      'AI-generated RO narratives (Concern / Cause / Correction)',
-      'OEM warranty-grade documentation',
+      'AI-generated 3C+V RO reports (Condition, Cause, Correction, Validation)',
+      'Warranty-grade documentation from voice notes',
+      'Photo and video capture during repairs',
       'Automated technician notes and observations',
       'Job history and cloud storage',
-      'Repair report export',
+      'Export reports, photos, and videos to your computer',
     ],
   },
   {
     category: 'Hardware & Platform',
     features: [
-      'iOS mobile app (native)',
-      'Web browser access',
-      'Flic wireless button integration',
-      'Bluetooth audio support',
+      'iOS and Android mobile apps',
+      'Web dashboard for management and document uploads',
+      'Brain Button — wireless Bluetooth tap-to-talk control',
+      'Works with any Bluetooth or wired headphones',
+      'Service center team management and seat administration',
+      'Usage tracking and email alerts at key thresholds',
     ],
   },
 ];
@@ -263,7 +569,7 @@ function StarterPack() {
                   transition={{ delay: 0.4 }}
                   className="text-carbon-300 text-lg mb-8 max-w-xl"
                 >
-                  Get the Flic hands-free button and 3 months of Pro-level access.
+                  Get the Brain Button and 3 months of Pro-level access.
                   We're so confident AI voice-assisted repairs will change the way you work,
                   we're giving you over 40% off to prove it.
                 </motion.p>
@@ -277,7 +583,7 @@ function StarterPack() {
                 >
                   <div className="space-y-3">
                     {[
-                      'Flic wireless button included',
+                      'Brain Button included',
                       '3 months of Pro plan (10 hrs/mo)',
                       'All features unlocked from day one',
                     ].map((item) => (
@@ -291,9 +597,10 @@ function StarterPack() {
                   </div>
                   <div className="flex flex-col items-center flex-shrink-0 sm:ml-auto">
                     <img
-                      src="/flic-button.png"
-                      alt="Flic wireless button"
-                      className="w-20 h-20 object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+                      src="/BrainButton.png"
+                      alt="Brain Button"
+                      className="w-20 h-20 object-contain"
+                      style={{ filter: "drop-shadow(0 0 12px rgba(26,160,255,0.2))" }}
                     />
                     <span className="mt-2 text-safety-400 text-xs font-bold uppercase tracking-wider">
                       Included
@@ -327,9 +634,9 @@ function StarterPack() {
                 className="flex-shrink-0 w-full max-w-sm"
               >
                 <div className="p-8 rounded-2xl bg-carbon-900/80 border border-safety-500/20 text-center flex flex-col items-center justify-center">
-                  <div className="text-5xl md:text-6xl text-carbon-500 line-through font-bold mb-3">$346</div>
+                  <div className="text-5xl md:text-6xl text-carbon-300 line-through font-bold mb-3">$346</div>
                   <div className="text-6xl md:text-7xl font-bold text-white mb-2">$199</div>
-                  <div className="text-carbon-400 mb-4">one-time to get started</div>
+                  <div className="text-carbon-300 mb-4">one-time to get started</div>
                   <div className="inline-flex items-center px-6 py-2 rounded-full bg-safety-500/15 border border-safety-500/30 mb-6">
                     <span className="text-lg font-bold text-safety-400">Save {Math.round((1 - 199/346) * 100)}%</span>
                   </div>
@@ -406,8 +713,8 @@ function ServiceCenterStarterPack() {
                   transition={{ delay: 0.4 }}
                   className="text-carbon-300 text-lg mb-8 max-w-xl"
                 >
-                  5 seats, 5 free Flic buttons, and 3 months of Pro-level access.
-                  We're so confident OnRamp will change the way your team works,
+                  5 seats, 5 free Brain Buttons, and 3 months of Pro-level access.
+                  We're so confident ONRAMP will change the way your team works,
                   we're giving you over 40% off to prove it for your first five technicians.
                 </motion.p>
 
@@ -419,7 +726,7 @@ function ServiceCenterStarterPack() {
                   className="space-y-3 mb-8"
                 >
                   {[
-                    '5 Flic wireless buttons included',
+                    '5 Brain Buttons included',
                     '5 technician seats — full access',
                     '150 pooled Voice AI hours (3 months)',
                     'All features unlocked from day one',
@@ -444,9 +751,10 @@ function ServiceCenterStarterPack() {
                     {[...Array(5)].map((_, i) => (
                       <div key={i} className="relative" style={{ transform: `rotate(${(i - 2) * 4}deg)` }}>
                         <img
-                          src="/flic-button.png"
-                          alt="Flic wireless button"
-                          className="w-14 h-14 object-contain drop-shadow-lg"
+                          src="/BrainButton.png"
+                          alt="Brain Button"
+                          className="w-14 h-14 object-contain"
+                          style={{ filter: "drop-shadow(0 0 8px rgba(26,160,255,0.4))" }}
                         />
                       </div>
                     ))}
@@ -487,9 +795,9 @@ function ServiceCenterStarterPack() {
                 className="flex-shrink-0 w-full max-w-sm"
               >
                 <div className="p-8 rounded-2xl bg-carbon-900/80 border border-safety-500/20 text-center flex flex-col items-center justify-center">
-                  <div className="text-5xl md:text-6xl text-carbon-500 line-through font-bold mb-3">${fullPrice.toLocaleString()}</div>
+                  <div className="text-5xl md:text-6xl text-carbon-300 line-through font-bold mb-3">${fullPrice.toLocaleString()}</div>
                   <div className="text-6xl md:text-7xl font-bold text-white mb-2">${packPrice}</div>
-                  <div className="text-carbon-400 mb-4">one-time to get started</div>
+                  <div className="text-carbon-300 mb-4">one-time to get started</div>
                   <div className="inline-flex items-center px-6 py-2 rounded-full bg-safety-500/15 border border-safety-500/30 mb-6">
                     <span className="text-lg font-bold text-safety-400">Save {Math.round((1 - packPrice / fullPrice) * 100)}%</span>
                   </div>
@@ -532,7 +840,7 @@ function FeatureGrid() {
             </span>
           </h2>
           <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-            No feature gates, no upsells. Every plan gets the full OnRamp platform.
+            No feature gates, no upsells. Every plan gets the full ONRAMP platform.
           </p>
         </motion.div>
 
@@ -608,24 +916,25 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-400 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
 
           {/* Content */}
-          <div className="p-8 md:p-10">
+          <div className="p-5 md:p-10">
             <div className="flex flex-col items-center text-center mb-6">
               <img
-                src="/flic-button.png"
-                alt="Flic 2 Smart Button"
+                src="/BrainButton.png"
+                alt="Brain Button"
                 className="w-28 h-28 object-contain mb-5"
+                style={{ filter: "drop-shadow(0 0 12px rgba(26,160,255,0.2))" }}
               />
               <h3 className="text-2xl font-bold text-white mb-2">
                 The Key to Hands-Free
               </h3>
               <p className="text-carbon-300 text-sm">
-                The Flic 2 Smart Button is essential to hands-free operation with OnRamp.
+                The Brain Button is a required purchase with the ONRAMP subscription — it's essential to hands-free operation.
               </p>
             </div>
 
@@ -650,7 +959,7 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">{item.title}</p>
-                    <p className="text-carbon-400 text-sm">{item.desc}</p>
+                    <p className="text-carbon-300 text-sm">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -692,23 +1001,24 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-400 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="p-8 md:p-10">
+          <div className="p-5 md:p-10">
             <div className="flex flex-col items-center text-center mb-6">
               <img
-                src="/flic-button.png"
-                alt="Flic 2 Smart Button"
+                src="/BrainButton.png"
+                alt="Brain Button"
                 className="w-28 h-28 object-contain mb-5"
+                style={{ filter: "drop-shadow(0 0 12px rgba(26,160,255,0.2))" }}
               />
               <h3 className="text-2xl font-bold text-white mb-2">
                 The Key to Hands-Free
               </h3>
               <p className="text-carbon-300 text-sm">
-                The Flic 2 Smart Button is essential to hands-free operation with OnRamp.
+                The Brain Button is a required purchase with the ONRAMP subscription — it's essential to hands-free operation.
               </p>
             </div>
 
@@ -716,7 +1026,7 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
               {[
                 {
                   title: 'One per technician',
-                  desc: 'Each tech gets their own Flic button. Clips to a shirt or lanyard for instant access.',
+                  desc: 'Each tech gets their own Brain Button. Clips to a shirt or lanyard for instant access.',
                 },
                 {
                   title: 'Tap to Start / Stop AI Voice',
@@ -737,7 +1047,7 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">{item.title}</p>
-                    <p className="text-carbon-400 text-sm">{item.desc}</p>
+                    <p className="text-carbon-300 text-sm">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -745,9 +1055,621 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
 
             <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50">
               <p className="text-carbon-300 text-xs text-center">
-                One-time purchase. Flic button pricing varies by plan level — discounts applied automatically.
+                One-time purchase. Brain Button pricing varies by plan level — discounts applied automatically.
               </p>
             </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Technician Seats Info Modal                                        */
+/* ------------------------------------------------------------------ */
+
+function SeatsInfoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  const faqs = [
+    {
+      q: 'Why is the minimum 5 technicians?',
+      a: 'When setting up a service center on ONRAMP, we provision a dedicated organization with allocated server resources. Five technicians is the minimum that makes this worthwhile. If you only have 3 techs, don\'t worry — the 3 who sign up will simply have a larger pool of Voice AI hours to pull from on Basic and Pro plans.',
+    },
+    {
+      q: 'What if I have more than 50 technicians?',
+      a: 'We can handle as many as you\'ve got. Reach out to us and we\'ll get you set up with multiple service centers to keep everything organized.',
+    },
+    {
+      q: 'Are there volume discounts?',
+      a: 'Yes — volume discounts are applied automatically as you increase the number of technicians on the platform. The more seats you add, the more you save per seat.',
+    },
+    {
+      q: 'If I only have 10 technicians, can I sign up for 15?',
+      a: 'Absolutely — and it often makes a lot of sense. Extra seats mean you can onboard new hires instantly, you\'ll have spare Brain Buttons ready to go, and your team gets a larger shared pool of Voice AI hours instead of paying for overages.',
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-3xl rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-5 md:p-10">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-electric-500/15 flex items-center justify-center mb-4">
+                <Users className="w-7 h-7 text-electric-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Technician Seats
+              </h3>
+              <p className="text-carbon-300 text-sm">
+                Common questions about team sizing on ONRAMP.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              {faqs.map((faq) => (
+                <div key={faq.q}>
+                  <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
+                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Usage Level Info Modal                                             */
+/* ------------------------------------------------------------------ */
+
+function UsageLevelModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  const faqs = [
+    {
+      q: 'The Basic plan only has 3 hours/tech/month — that doesn\'t seem like a lot?!',
+      a: 'It\'s not meant to be — Basic is designed for shops with part-time technicians or teams that are just getting started and don\'t mind paying a premium for hours ($15/hr, sold in 10-packs) as they go. The hours are pooled across all seats, so if you have 10 seats but only 5 active techs, each tech effectively gets 6 hours/mo on this plan. Light-use techs might only use ONRAMP 20 to 30 minutes per shift — that\'s 6–9 shifts per month on Basic.',
+    },
+    {
+      q: 'My full-time techs work all day — is 10 hours/tech/mo on the Pro plan really enough?',
+      a: 'Pro is the best plan for full-time shops that are just getting started, and for most shops it works great. Remember, hours are shared by all seats. If you have 20 seats, that\'s 200 hours — some techs may only use 5, and then heavy users might use 60. The pool helps balance it out. And when you go past the limit, you can add packs of 10 hours for just $120 ($12/hr), so it\'s still pay-as-you-go. Pro also gets you Brain Buttons at 50% off.',
+    },
+    {
+      q: 'Why would I need unlimited hours?',
+      a: 'The Unlimited plan is for service centers that want to unleash their technicians with no worry about hour limits or overage costs, and maximize their team\'s productivity. A truly heavy user of ONRAMP might use it 2–3 hours a day — that\'s 40–60+ hours a month, which could get expensive fast on Basic or Pro. Unlimited removes that ceiling entirely. You also get Brain Buttons FREE with every seat.',
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-3xl rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-5 md:p-10">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-electric-500/15 flex items-center justify-center mb-4">
+                <Clock className="w-7 h-7 text-electric-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Usage Levels
+              </h3>
+              <p className="text-carbon-300 text-sm">
+                How Voice AI hours work on each plan.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              {faqs.map((faq) => (
+                <div key={faq.q}>
+                  <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
+                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Individual Usage Level Modal                                       */
+/* ------------------------------------------------------------------ */
+
+function IndividualUsageLevelModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  const faqs = [
+    {
+      q: 'The Basic plan only has 3 hours/month — is that enough?',
+      a: 'Basic is really designed for part-time technicians or anyone who just wants to try ONRAMP out without a big commitment. If you use ONRAMP for about 20–30 minutes per shift, that covers roughly 6–9 shifts per month. It\'s a low-risk way to get started and see what AI-assisted repair feels like. If you go over, you can add hours for $15/hr — so you only pay for what you use.',
+    },
+    {
+      q: 'How far does 10 hours/month on the Pro plan actually go?',
+      a: 'Pro is a great starting point for most full-time technicians. Ten hours a month gives you enough for assistance on diagnostics and a couple of pointers throughout each project. If you start to tip over your included hours, additional hours are just $12/hr — so you can pay as you go without worrying about a big jump in cost.',
+    },
+    {
+      q: 'When does Unlimited make sense for an individual technician?',
+      a: 'Unlimited is for technicians who are busy and want to maximize their productivity and increase their take-home pay as much as possible. If you\'re the kind of tech who wants ONRAMP running on nearly every job, working a lot of hours, and handling a high volume of jobs — Unlimited removes any worry about watching the clock. Heavy users can easily hit 2–3 hours a day, which would run up costs quickly on Basic or Pro. Unlimited gives you peace of mind and the lowest effective cost per hour.',
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-3xl rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-5 md:p-10">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-electric-500/15 flex items-center justify-center mb-4">
+                <Clock className="w-7 h-7 text-electric-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                How Many Hours Do I Need?
+              </h3>
+              <p className="text-carbon-300 text-sm">
+                A guide to choosing the right plan based on how you work.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              {faqs.map((faq) => (
+                <div key={faq.q}>
+                  <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
+                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Signup Interest Modal                                              */
+/* ------------------------------------------------------------------ */
+
+function SignupModal({
+  open,
+  onClose,
+  mode,
+  planKey,
+  numTechs,
+}: {
+  open: boolean;
+  onClose: () => void;
+  mode: 'individual' | 'service-center';
+  planKey: 'basic' | 'pro' | 'unlimited';
+  numTechs?: number;
+}) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [role, setRole] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [shopAddress, setShopAddress] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  // Places autocomplete state
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [shopSelected, setShopSelected] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const isSelectingRef = useRef(false);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  const tier = tierConfigs.find((t) => t.key === planKey)!;
+  const c = tierColors[planKey];
+
+  const isIndividual = mode === 'individual';
+  const title = isIndividual ? 'Join the Waitlist' : 'Request Account';
+  const subtitle = isIndividual
+    ? "Due to the technical requirements of onboarding new customers, ONRAMP is bringing new users on in waves. We're also awaiting a new batch of Brain Buttons, which are essential to operation. New accounts are expected to go live in early May. Please join the waitlist, and we'll be in touch to get you signed up as soon as possible."
+    : 'Someone from our account team will be in touch to schedule a demo and get your service center signed up.';
+  const submitLabel = isIndividual ? 'Join Waitlist' : 'Submit';
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (open) {
+      setName(''); setEmail(''); setPhone(''); setRole('');
+      setShopName(''); setShopAddress('');
+      setSubmitting(false); setSubmitted(false); setError('');
+      setSuggestions([]); setShowSuggestions(false); setShopSelected(false);
+      isSelectingRef.current = false;
+    }
+  }, [open]);
+
+  // Get user location
+  useEffect(() => {
+    if (open && !userLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {},
+      );
+    }
+  }, [open, userLocation]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [open]);
+
+  // Debounced Places search
+  useEffect(() => {
+    if (isSelectingRef.current) return;
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    if (shopName.length >= 3 && !shopSelected) {
+      searchTimeoutRef.current = setTimeout(async () => {
+        const results = await searchPlaces(shopName, userLocation);
+        if (!isSelectingRef.current) {
+          setSuggestions(results);
+          setShowSuggestions(results.length > 0);
+        }
+      }, 300);
+    } else {
+      setSuggestions([]); setShowSuggestions(false);
+    }
+    return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
+  }, [shopName, userLocation, shopSelected]);
+
+  const selectPlace = (place: PlaceSuggestion) => {
+    isSelectingRef.current = true;
+    setShopName(place.name);
+    setShopAddress(place.formattedAddress);
+    setShopSelected(true);
+    setShowSuggestions(false);
+    setTimeout(() => { isSelectingRef.current = false; }, 100);
+  };
+
+  const clearShopSelection = () => {
+    setShopName(''); setShopAddress('');
+    setShopSelected(false);
+    setSuggestions([]); setShowSuggestions(false);
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+
+    if (!name.trim() || !email.trim() || !phone.trim() || !role || !shopName.trim()) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (getPhoneDigits(phone).length < 10) {
+      setError('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const source = isIndividual
+        ? `Pricing - Individual - ${tier.name}`
+        : `Pricing - Service Center - ${tier.name}`;
+      const seats = isIndividual ? '1' : String(numTechs || 1);
+
+      const formData = new URLSearchParams();
+      formData.append(GOOGLE_FORM_FIELDS.source, source);
+      formData.append(GOOGLE_FORM_FIELDS.usageLevel, tier.name);
+      formData.append(GOOGLE_FORM_FIELDS.seats, seats);
+      formData.append(GOOGLE_FORM_FIELDS.name, name.trim());
+      formData.append(GOOGLE_FORM_FIELDS.email, email.trim());
+      formData.append(GOOGLE_FORM_FIELDS.phone, getPhoneDigits(phone));
+      formData.append(GOOGLE_FORM_FIELDS.shopName, shopName.trim());
+      formData.append(GOOGLE_FORM_FIELDS.role, role);
+      formData.append(GOOGLE_FORM_FIELDS.message, '');
+
+      await fetch(GOOGLE_FORM_ACTION, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString(),
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error('[SignupModal] Submission error:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (!open) return null;
+
+  const inputClasses = 'w-full px-4 py-3 rounded-xl bg-carbon-900/60 border border-carbon-700 text-white placeholder-carbon-500 focus:outline-none focus:border-electric-500 focus:ring-1 focus:ring-electric-500/30 transition-colors text-sm';
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+        {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-6 md:p-8">
+            {submitted ? (
+              /* ── Success State ── */
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center text-center py-8"
+              >
+                <div className={`w-16 h-16 rounded-full ${c.bg} flex items-center justify-center mb-5`}>
+                  <CheckCircle2 className={`w-8 h-8 ${c.text}`} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">We'll be in touch!</h3>
+                <p className="text-carbon-300 text-sm max-w-sm">
+                  Thanks for your interest in ONRAMP. Someone from our team will reach out shortly to get you set up.
+                </p>
+                <button
+                  onClick={onClose}
+                  className={`mt-8 px-8 py-3 rounded-xl font-semibold bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white transition-all duration-300 shadow-lg ${c.shadow} cursor-pointer`}
+                >
+                  Got it
+                </button>
+              </motion.div>
+            ) : (
+              /* ── Form State ── */
+              <>
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
+                  <p className="text-carbon-300 text-sm">{subtitle}</p>
+                </div>
+
+                {/* Service Center plan summary */}
+                {!isIndividual && (
+                  <div className={`p-4 rounded-xl ${c.bg} border ${c.borderPill} mb-6`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className={`text-xs font-semibold uppercase tracking-wider ${c.text}`}>Selected Plan</span>
+                        <p className="text-white font-bold text-lg">{tier.name}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-xs font-semibold uppercase tracking-wider ${c.text}`}>Technicians</span>
+                        <p className="text-white font-bold text-lg">{numTechs}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Shop Name with Places Autocomplete — first field */}
+                  <div className="relative" ref={suggestionsRef}>
+                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Dealership / Shop Name *</label>
+                    {shopSelected ? (
+                      <div className="relative">
+                        <div className={`${inputClasses} pr-10 cursor-default`}>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-electric-400 flex-shrink-0" />
+                            <div className="min-w-0">
+                              <div className="text-white text-sm font-medium">{shopName}</div>
+                              {shopAddress && <div className="text-carbon-300 text-xs">{shopAddress}</div>}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearShopSelection}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-300 hover:text-white transition-colors cursor-pointer"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-300" />
+                        <input
+                          type="text"
+                          value={shopName}
+                          onChange={(e) => { setShopName(e.target.value); setShopSelected(false); }}
+                          onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                          className={`${inputClasses} pl-10`}
+                          placeholder="Search by name (e.g., BMW of Carlsbad)"
+                        />
+                      </div>
+                    )}
+                    {showSuggestions && suggestions.length > 0 && (
+                      <div className="absolute z-20 w-full mt-1 rounded-xl bg-carbon-800 border border-carbon-700/50 shadow-2xl max-h-48 overflow-y-auto">
+                        <div className="px-3 py-2 text-xs font-semibold text-carbon-300 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
+                          Service Centers Near You
+                        </div>
+                        {suggestions.map((place, idx) => (
+                          <button
+                            key={`place-${idx}`}
+                            type="button"
+                            onClick={() => selectPlace(place)}
+                            className="w-full text-left px-4 py-3 hover:bg-carbon-700/50 border-b border-carbon-700/20 last:border-b-0 last:rounded-b-xl transition-colors cursor-pointer"
+                          >
+                            <div className="text-white text-sm font-medium">{place.name}</div>
+                            <div className="text-carbon-300 text-xs mt-0.5">{place.formattedAddress}</div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Name *</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your full name"
+                      className={inputClasses}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Email *</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className={inputClasses}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Phone *</label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                      placeholder="(555) 123-4567"
+                      className={inputClasses}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Role *</label>
+                    <select
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      className={`${inputClasses} pr-12 ${!role ? 'text-carbon-500' : ''}`}
+                      required
+                    >
+                      <option value="" disabled>Select your role</option>
+                      <option value="Technician">Technician</option>
+                      <option value="Service Advisor">Service Advisor</option>
+                      <option value="Service Manager">Service Manager</option>
+                      <option value="Shop Owner">Shop Owner</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  {error && (
+                    <p className="text-red-400 text-sm text-center">{error}</p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className={`w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white transition-all duration-300 shadow-lg ${c.shadow} disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer`}
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      submitLabel
+                    )}
+                  </button>
+                </form>
+              </>
+            )}
           </div>
         </motion.div>
       </motion.div>
@@ -761,7 +1683,11 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
 
 function IndividualPricing() {
   const [selectedTier, setSelectedTier] = useState('pro');
+  const [hoveredTier, setHoveredTier] = useState<string | null>(null);
   const [flicModalOpen, setFlicModalOpen] = useState(false);
+  const [usageLevelModalOpen, setUsageLevelModalOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [signupPlan, setSignupPlan] = useState<'basic' | 'pro' | 'unlimited'>('pro');
 
   const badgeLabels: Record<string, string> = {
     basic: 'Light Use',
@@ -770,9 +1696,9 @@ function IndividualPricing() {
   };
 
   const ctaLabels: Record<string, string> = {
-    basic: 'Go Basic',
-    pro: 'Go Pro',
-    unlimited: 'Go Unlimited!',
+    basic: 'Join the Waitlist',
+    pro: 'Join the Waitlist',
+    unlimited: 'Join the Waitlist',
   };
 
   return (
@@ -801,9 +1727,32 @@ function IndividualPricing() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
+          {/* Mobile-only tier selector */}
+          <div className="flex md:hidden p-1.5 rounded-xl bg-carbon-800/60 border border-carbon-700/50 mb-6">
+            {tierConfigs.map((tier) => {
+              const isActive = selectedTier === tier.key;
+              const tc = tierColors[tier.key];
+              return (
+                <button
+                  key={tier.key}
+                  onClick={() => setSelectedTier(tier.key)}
+                  className={`flex-1 py-3 px-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
+                      : `${tc.bgSubtle} ${tc.text} border ${tc.borderPill}`
+                  }`}
+                >
+                  {tier.name}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-16" onMouseLeave={() => setHoveredTier(null)}>
             {tierConfigs.map((tier, index) => {
-              const isSelected = selectedTier === tier.key;
+              // Show active styling for hovered tier, or selected tier if nothing hovered
+              const activeTier = hoveredTier || selectedTier;
+              const isActive = activeTier === tier.key;
               const tc = tierColors[tier.key];
 
               return (
@@ -814,55 +1763,73 @@ function IndividualPricing() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => setSelectedTier(tier.key)}
-                  className={`relative p-8 rounded-2xl transition-all duration-300 cursor-pointer ${
-                    isSelected
+                  onMouseEnter={() => setHoveredTier(tier.key)}
+                  className={`relative p-8 rounded-2xl transition-all duration-300 cursor-pointer ${selectedTier === tier.key ? 'block' : 'hidden md:block'} ${
+                    isActive
                       ? `bg-gradient-to-b ${tc.gradient} to-carbon-800/80 border-2 ${tc.borderCard} scale-[1.02]`
-                      : 'bg-carbon-800/50 border border-carbon-700/50 hover:border-carbon-600/80'
+                      : 'bg-carbon-800/50 border border-carbon-700/50'
                   }`}
                 >
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                     <span className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                      isSelected
+                      isActive
                         ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
-                        : 'bg-carbon-700/80 text-carbon-400 border border-carbon-600/50'
+                        : 'bg-carbon-700/80 text-carbon-300 border border-carbon-600/50'
                     }`}>
                       {badgeLabels[tier.key]}
                     </span>
                   </div>
 
                   <div className={`inline-flex p-3 rounded-xl mb-4 transition-colors duration-300 ${
-                    isSelected
+                    isActive
                       ? `${tc.bgSubtle} ${tc.text}`
-                      : 'bg-carbon-700/30 text-carbon-400'
+                      : 'bg-carbon-700/30 text-carbon-300'
                   }`}>
                     <tier.icon className="w-6 h-6" />
                   </div>
 
-                  <h3 className="text-white font-bold text-2xl mb-2">{tier.name}</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-white font-bold text-2xl">{tier.name}</h3>
+                    {tier.originalPricePerSeat && (
+                      <span className={`text-sm font-bold px-3 py-1 rounded-full transition-colors duration-300 ${
+                        isActive
+                          ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                          : 'bg-carbon-700/50 text-carbon-300 border border-carbon-600/50'
+                      }`}>
+                        20% Off Deal
+                      </span>
+                    )}
+                  </div>
 
                   <div className="flex items-baseline gap-1 mb-1">
                     {tier.originalPricePerSeat && (
-                      <span className="text-carbon-500 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
+                      <span className="text-carbon-300 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
                     )}
-                    <span className="text-4xl font-bold text-white">${tier.pricePerSeat}</span>
-                    <span className="text-carbon-400">/mo</span>
+                    <span className={`text-4xl font-bold ${tier.originalPricePerSeat && isActive ? 'text-green-400' : 'text-white'}`}>${tier.pricePerSeat}</span>
+                    <span className="text-carbon-300">/mo</span>
                   </div>
 
                   <div className={`text-sm font-semibold mb-4 transition-colors duration-300 ${
-                    isSelected ? tc.text : 'text-carbon-500'
+                    isActive ? tc.text : 'text-carbon-300'
                   }`}>
                     {tier.hoursPerSeat === Infinity ? 'Unlimited' : tier.hoursPerSeat} Voice AI hours / mo
                   </div>
 
-                  <p className="text-carbon-400 text-sm mb-6">{tier.description}</p>
+                  <p className="text-carbon-300 text-sm mb-6">{tier.description}</p>
 
-                  <div className={`rounded-xl p-4 mb-6 transition-colors duration-300 ${
-                    isSelected
+                  <div className={`relative rounded-xl p-4 mb-6 transition-colors duration-300 ${
+                    isActive
                       ? `${tc.saveBg} border ${tc.borderPill}`
                       : 'bg-carbon-700/30 border border-carbon-700/50'
                   }`}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setUsageLevelModalOpen(true); }}
+                      className="absolute top-3 right-3 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-carbon-400" />
+                      <Clock className="w-4 h-4 text-carbon-300" />
                       <span className="text-carbon-200 text-sm font-medium">Voice AI Usage</span>
                     </div>
                     <div className="text-carbon-300 text-sm space-y-1">
@@ -886,7 +1853,7 @@ function IndividualPricing() {
                   </div>
 
                   <div className={`relative rounded-xl p-4 mb-6 transition-colors duration-300 ${
-                    isSelected
+                    isActive
                       ? `${tc.saveBg} border ${tc.borderPill}`
                       : 'bg-carbon-700/30 border border-carbon-700/50'
                   }`}>
@@ -898,22 +1865,23 @@ function IndividualPricing() {
                     </button>
                     <div className="flex items-center gap-4">
                       <img
-                        src="/flic-button.png"
-                        alt="Flic wireless button"
+                        src="/BrainButton.png"
+                        alt="Brain Button"
                         className="w-16 h-16 object-contain flex-shrink-0"
+                        style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <MousePointerClick className="w-4 h-4 text-carbon-400" />
-                          <span className="text-carbon-200 text-sm font-medium">Flic Button</span>
+                          <MousePointerClick className="w-4 h-4 text-carbon-300" />
+                          <span className="text-carbon-200 text-sm font-medium">Brain Button</span>
                         </div>
                         {tier.key === 'unlimited' ? (
                           <div className="text-green-400 font-bold text-lg">FREE</div>
                         ) : tier.key === 'pro' ? (
                           <div className="flex items-baseline gap-2">
-                            <span className="text-carbon-500 line-through text-sm">$49.99</span>
+                            <span className="text-carbon-300 line-through text-sm">$49.99</span>
                             <span className="text-white font-bold text-lg">$24.99</span>
-                            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isSelected ? 'bg-safety-500/15 text-safety-400' : 'bg-carbon-600/30 text-carbon-400'}`}>50% off</span>
+                            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isActive ? 'bg-safety-500/15 text-safety-400' : 'bg-carbon-600/30 text-carbon-300'}`}>50% off</span>
                           </div>
                         ) : (
                           <div className="text-white font-bold text-lg">$49.99</div>
@@ -923,18 +1891,16 @@ function IndividualPricing() {
                     </div>
                   </div>
 
-                  <a
-                    href={checkoutUrl(tier.key, 1, 'individual')}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                      isSelected
+                  <button
+                    onClick={() => { setSignupPlan(tier.key as 'basic' | 'pro' | 'unlimited'); setSignupModalOpen(true); }}
+                    className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer ${
+                      isActive
                         ? `bg-gradient-to-r ${tc.btnGradient} ${tc.btnHover} text-white shadow-lg ${tc.shadow}`
                         : 'bg-carbon-700/50 hover:bg-carbon-600/50 text-white border border-carbon-600/50 hover:border-carbon-500/50'
                     }`}
                   >
                     {ctaLabels[tier.key]}
-                  </a>
+                  </button>
                 </motion.div>
               );
             })}
@@ -943,6 +1909,13 @@ function IndividualPricing() {
       </section>
 
       <FlicInfoModal open={flicModalOpen} onClose={() => setFlicModalOpen(false)} />
+      <IndividualUsageLevelModal open={usageLevelModalOpen} onClose={() => setUsageLevelModalOpen(false)} />
+      <SignupModal
+        open={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+        mode="individual"
+        planKey={signupPlan}
+      />
     </>
   );
 }
@@ -952,10 +1925,13 @@ function IndividualPricing() {
 /* ------------------------------------------------------------------ */
 
 function ServiceCenterPricing() {
-  const [numTechs, setNumTechs] = useState(5);
+  const [numTechs, setNumTechs] = useState(10);
   const [selectedTier, setSelectedTier] = useState<'basic' | 'pro' | 'unlimited'>('pro');
   const [extraFlics, setExtraFlics] = useState(0);
   const [scFlicModalOpen, setScFlicModalOpen] = useState(false);
+  const [seatsModalOpen, setSeatsModalOpen] = useState(false);
+  const [usageLevelModalOpen, setUsageLevelModalOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
 
   // [PostHog] Debounced tracking — captures configurator state 2s after last change
   const configTrackRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -1044,7 +2020,7 @@ function ServiceCenterPricing() {
               </span>
             </h2>
             <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              Choose your usage level, team size, and hardware.
+              Choose your usage level, team size, and Brain Buttons.
               <br />Every seat/plan gets <span className="underline">every</span> feature — the only difference is Voice AI hours.
             </p>
           </motion.div>
@@ -1059,81 +2035,107 @@ function ServiceCenterPricing() {
               className="lg:col-span-3 space-y-8"
             >
               {/* 1. Usage Level Selector — first */}
-              <div className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>1</span>
+              <div className="relative pt-0 pb-6 px-4 md:pb-8 md:px-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 overflow-hidden">
+                <div className={`absolute top-0 left-0 w-10 h-10 rounded-br-xl bg-gradient-to-br ${c.btnGradient} flex items-center justify-center`}>
+                  <span className="text-white text-sm font-bold">1</span>
+                </div>
+                <button
+                  onClick={() => setUsageLevelModalOpen(true)}
+                  className="absolute top-2.5 right-5 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </button>
+                <div className="flex items-center ml-12 h-10">
                   <h3 className="text-white font-bold text-lg">Usage Level</h3>
                 </div>
-                <p className="text-carbon-400 text-sm mb-6 ml-10">
-                  Determines the Voice AI hours included per technician each month.<br/>Total hours are pooled and shared by all.
+                <p className="text-carbon-300 text-sm mb-6 ml-12">
+                  Determines the Voice AI hours included per technician each month. Total hours are pooled and shared by all.
                 </p>
 
-                <div className="grid grid-cols-3 gap-4">
+                {/* Toggle bar — matches Individual page style */}
+                <div className="flex p-1.5 rounded-xl bg-carbon-900/60 border border-carbon-700/50 mb-6">
                   {tierConfigs.map((t) => {
                     const isSelected = selectedTier === t.key;
-                    const sc = selectorColors[t.key];
-                    const isTierUnlimited = t.key === 'unlimited';
+                    const tc = tierColors[t.key];
                     return (
                       <button
                         key={t.key}
                         onClick={() => setSelectedTier(t.key)}
-                        className={`relative p-6 rounded-2xl text-left transition-all duration-200 cursor-pointer ${
+                        className={`flex-1 py-3 px-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
                           isSelected
-                            ? sc.selected
-                            : 'bg-carbon-700/30 border border-carbon-700/50 hover:border-carbon-600/80'
+                            ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
+                            : `${tc.bgSubtle} ${tc.text} border ${tc.borderPill}`
                         }`}
                       >
-                        <span className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                          isSelected
-                            ? t.key === 'basic'
-                              ? 'bg-gradient-to-r from-electric-500 to-electric-600 text-white shadow-lg shadow-electric-500/20'
-                              : t.key === 'unlimited'
-                                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20'
-                                : 'bg-gradient-to-r from-safety-500 to-safety-600 text-white shadow-lg shadow-safety-500/20'
-                            : 'bg-carbon-700/80 text-carbon-400 border border-carbon-600/50'
-                        }`}>
-                          {t.key === 'basic' ? 'Light Use' : t.key === 'unlimited' ? 'Best Value' : 'Most Popular'}
-                        </span>
-                        <div className={`inline-flex p-3 rounded-xl mb-3 ${
-                          isSelected ? sc.icon : 'bg-carbon-600/30 text-carbon-400'
-                        }`}>
-                          <t.icon className="w-6 h-6" />
-                        </div>
-                        <div className="text-white font-bold text-lg">{t.name}</div>
-                        <div className={`flex items-baseline gap-1 mt-1 ${
-                          isSelected ? sc.text : 'text-carbon-500'
-                        }`}>
-                          <span className="text-lg font-bold">
-                            {t.hoursPerSeat === Infinity ? '∞' : `~${t.hoursPerSeat}`}
-                          </span>
-                          <span className="text-xs font-semibold">
-                            {t.hoursPerSeat === Infinity ? 'hrs' : 'hrs'}/tech/mo
-                          </span>
-                        </div>
-                        <div className="text-carbon-400 text-base mt-1.5">
-                          {isTierUnlimited && t.originalPricePerSeat ? (
-                            <>
-                              <span className="line-through text-carbon-500">${t.originalPricePerSeat}</span>{' '}
-                              <span className="text-green-400 font-semibold">${t.pricePerSeat}</span>/seat/mo
-                            </>
-                          ) : (
-                            <>${t.pricePerSeat}/seat/mo</>
-                          )}
-                        </div>
+                        {t.name}
                       </button>
                     );
                   })}
                 </div>
+
+                {/* Selected plan detail card */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedTier}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25 }}
+                    className={`p-5 rounded-xl border ${c.borderPill} ${c.bgSubtle} overflow-hidden`}
+                  >
+                    {/* Header: icon + name + price stacked on mobile */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${c.bg}`}>
+                          <tier.icon className={`w-5 h-5 ${c.text}`} />
+                        </div>
+                        <div>
+                          <div className="text-white font-bold text-lg">{tier.name}</div>
+                          <div className={`text-sm font-semibold ${c.text}`}>
+                            {isUnlimited ? 'Unlimited' : tier.hoursPerSeat} Voice AI hours/tech/mo
+                          </div>
+                        </div>
+                      </div>
+                      <div className="sm:ml-auto sm:text-right">
+                        {tier.originalPricePerSeat && (
+                          <span className="text-carbon-300 text-sm line-through mr-2">${tier.originalPricePerSeat}</span>
+                        )}
+                        <span className="text-white font-bold text-xl">${tier.pricePerSeat}</span>
+                        <span className="text-carbon-300 text-sm">/seat/mo</span>
+                      </div>
+                    </div>
+                    <p className="text-carbon-300 text-sm mb-3">{tier.description}</p>
+                    {/* Stats: title on top, value below — larger */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 rounded-lg bg-carbon-900/40 text-center">
+                        <span className="text-carbon-300 text-xs block mb-1">Included hours</span>
+                        <span className={`font-bold ${c.text} ${isUnlimited ? 'text-3xl leading-none' : 'text-lg'}`}>{isUnlimited ? '∞' : `${tier.hoursPerSeat}/tech`}</span>
+                      </div>
+                      <div className="p-3 rounded-lg bg-carbon-900/40 text-center">
+                        <span className="text-carbon-300 text-xs block mb-1">Overage rate</span>
+                        <span className={`font-bold text-lg ${c.text}`}>{tier.additionalRate === 0 ? 'N/A' : `$${tier.additionalRate}/hr`}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
               {/* 2. Technician Seats — second */}
-              <div className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>2</span>
+              <div className="relative pt-0 pb-6 px-6 md:pb-8 md:px-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 overflow-hidden">
+                <div className={`absolute top-0 left-0 w-10 h-10 rounded-br-xl bg-gradient-to-br ${c.btnGradient} flex items-center justify-center`}>
+                  <span className="text-white text-sm font-bold">2</span>
+                </div>
+                <button
+                  onClick={() => setSeatsModalOpen(true)}
+                  className="absolute top-2.5 right-5 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </button>
+                <div className="flex items-center ml-12 h-10">
                   <h3 className="text-white font-bold text-lg">Technician Seats</h3>
                 </div>
-                <p className="text-carbon-400 text-sm mb-6 ml-10">
-                  The number of technicians with access to OnRamp.
+                <p className="text-carbon-300 text-sm mb-6 ml-12">
+                  The number of technicians with access to ONRAMP.
                 </p>
 
                 <div className="flex justify-between items-center mb-3">
@@ -1152,7 +2154,7 @@ function ServiceCenterPricing() {
                   className="w-full"
                   style={{ background: `linear-gradient(to right, var(${c.sliderFrom}), var(${c.sliderTo}))` }}
                 />
-                <div className="flex justify-between text-carbon-500 text-xs mt-1">
+                <div className="flex justify-between text-carbon-300 text-xs mt-1">
                   <span>5 techs</span>
                   <span>50 techs</span>
                 </div>
@@ -1162,53 +2164,77 @@ function ServiceCenterPricing() {
                     : numTechs < 30 ? { target: 30, pct: isUnlimited ? 35 : 15, label: isUnlimited ? 'combined' : 'volume' }
                     : null;
                   const seatsNeeded = nextTier ? nextTier.target - numTechs : 0;
-                  const hasDiscount = isUnlimited ? unlimitedCombinedRate > 0.20 : volumeDiscount > 0;
-                  const isPurple = isUnlimited ? unlimitedCombinedRate >= 0.35 : volumeDiscount >= 0.15;
+                  const hasDiscount = isUnlimited ? unlimitedCombinedRate >= 0.20 : volumeDiscount > 0;
                   const currentPct = isUnlimited ? unlimitedCombinedPct : volumeDiscountPct;
-                  const discountLabel = isUnlimited ? 'combined discount active' : 'volume discount active';
+                  const discountLabel = isUnlimited
+                    ? (unlimitedCombinedRate >= 0.25 ? 'combined discount active' : 'discount active')
+                    : 'volume discount active';
+
+                  // Color tiers for unlimited: 20%=green, 25%=green, 30%=yellow, 35%=purple
+                  // Color tiers for non-unlimited: use tier colors, 15%=purple
+                  const discountColor = isUnlimited
+                    ? unlimitedCombinedRate >= 0.35
+                      ? { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' }
+                      : unlimitedCombinedRate >= 0.30
+                        ? { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' }
+                        : unlimitedCombinedRate >= 0.25
+                          ? { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' }
+                          : { bg: 'bg-white/5', border: 'border-white/10', text: 'text-carbon-300' }
+                    : volumeDiscount >= 0.15
+                      ? { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' }
+                      : { bg: c.saveBg, border: c.borderPill, text: c.saveText };
 
                   return hasDiscount ? (
-                    <div className={`mt-3 px-3 py-2 rounded-lg border ${isPurple ? 'bg-purple-500/10 border-purple-500/30' : `${c.saveBg} ${c.borderPill}`}`}>
-                      <span className={`text-sm font-semibold ${isPurple ? 'text-purple-400' : c.saveText}`}>
+                    <div className={`mt-3 px-3 py-2 rounded-lg border ${discountColor.bg} ${discountColor.border}`}>
+                      <span className={`text-sm font-semibold ${discountColor.text}`}>
                         {currentPct}% {discountLabel}
                       </span>
                       {nextTier && (
-                        <p className="text-carbon-500 text-xs mt-1">
-                          Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-carbon-300 font-medium">{nextTier.pct}% {nextTier.label} discount</span>
+                        <p className="text-carbon-300 text-xs mt-1">
+                          Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-white font-medium">{nextTier.pct}% {nextTier.label} discount</span>
                         </p>
                       )}
                     </div>
                   ) : nextTier ? (
-                    <p className="text-carbon-500 text-xs mt-3">
-                      Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-carbon-300 font-medium">{nextTier.pct}% {nextTier.label} discount</span>
+                    <p className="text-carbon-300 text-xs mt-3">
+                      Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-white font-medium">{nextTier.pct}% {nextTier.label} discount</span>
                     </p>
                   ) : null;
                 })()}
+
+                {/* Shared pool visualization */}
+                <PoolVisualization numTechs={numTechs} hoursPerSeat={tier.hoursPerSeat} tierKey={selectedTier} />
+                <p className="text-carbon-300 text-xs text-center mt-2 leading-relaxed">
+                  All {numTechs} technician seats share one pool of Voice AI hours available to the entire service center.
+                </p>
               </div>
 
-              {/* 3. Flic Buttons — third */}
-              <div className="relative p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
+              {/* 3. Brain Buttons — third */}
+              <div className="relative pt-0 pb-6 px-6 md:pb-8 md:px-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 overflow-hidden">
+                <div className={`absolute top-0 left-0 w-10 h-10 rounded-br-xl bg-gradient-to-br ${c.btnGradient} flex items-center justify-center`}>
+                  <span className="text-white text-sm font-bold">3</span>
+                </div>
                 <button
                   onClick={() => setScFlicModalOpen(true)}
-                  className="absolute top-5 right-5 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
+                  className="absolute top-2.5 right-5 p-0.5 rounded-full text-white hover:text-white/80 transition-colors cursor-pointer"
                 >
                   <HelpCircle className="w-4 h-4" />
                 </button>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${c.bg} ${c.text} text-sm font-bold`}>3</span>
-                  <h3 className="text-white font-bold text-lg">Flic Buttons</h3>
+                <div className="flex items-center ml-12 h-10">
+                  <h3 className="text-white font-bold text-lg">Brain Buttons</h3>
                 </div>
-                <p className="text-carbon-400 text-sm mb-6 ml-10">
+                <p className="text-carbon-300 text-sm mb-6 ml-12">
                   One button per technician for hands-free voice control.<br />Add spares so you're never down if one gets lost.
                 </p>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3 md:gap-6">
                   {/* Flic image */}
                   <div className="flex-shrink-0">
                     <img
-                      src="/flic-button.png"
-                      alt="Flic 2 Smart Button"
-                      className="w-20 h-20 object-contain"
+                      src="/BrainButton.png"
+                      alt="Brain Button"
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                      style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}
                     />
                   </div>
 
@@ -1224,20 +2250,20 @@ function ServiceCenterPricing() {
 
                     {/* Base count (= seats) */}
                     <div className="flex justify-between items-center text-sm mb-2">
-                      <span className="text-carbon-400">1 per technician (minimum)</span>
+                      <span className="text-carbon-300">1 per technician (minimum)</span>
                       <span className="text-carbon-300">{numTechs} buttons</span>
                     </div>
 
                     {/* Extra buttons +/- */}
                     <div className="flex justify-between items-center">
-                      <span className="text-carbon-400 text-sm">Extra / spare buttons</span>
+                      <span className="text-carbon-300 text-sm">Extra / spare buttons</span>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => setExtraFlics(Math.max(0, extraFlics - 1))}
                           disabled={extraFlics === 0}
                           className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
                             extraFlics === 0
-                              ? 'bg-carbon-700/30 text-carbon-600 cursor-not-allowed'
+                              ? 'bg-carbon-700/30 text-carbon-300 cursor-not-allowed'
                               : `bg-carbon-700/50 text-carbon-200 hover:${c.bg} hover:${c.text} cursor-pointer`
                           }`}
                         >
@@ -1265,7 +2291,7 @@ function ServiceCenterPricing() {
                   return (
                     <div className="mt-5 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                       {/* Seat buttons line */}
-                      <div className="flex justify-between items-center mb-1">
+                      <div className="flex flex-wrap justify-between items-center gap-x-2 mb-1">
                         <span className="text-carbon-300 text-sm">
                           {numTechs} × {flicTier.seatPrice > 0 ? `$${flicTier.seatPrice}` : 'FREE'}
                           {flicTier.seatPrice === 0 ? (
@@ -1288,7 +2314,7 @@ function ServiceCenterPricing() {
                       {/* Extra / spare buttons line */}
                       {extraFlics > 0 && (
                         <>
-                          <div className="flex justify-between items-center">
+                          <div className="flex flex-wrap justify-between items-center gap-x-2">
                             <span className="text-carbon-300 text-sm">
                               {extraFlics} spare × ${flicTier.extraPrice}
                               {flicTier.extraDiscount && (
@@ -1307,12 +2333,12 @@ function ServiceCenterPricing() {
                         </>
                       )}
                       {totalFlicSavings > 0 && (
-                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-carbon-700/30">
-                          <span className="text-carbon-400 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mt-2 pt-2 border-t border-carbon-700/30">
+                          <span className="text-carbon-300 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
                           <span className="text-green-400 text-sm font-bold">Total savings: ${totalFlicSavings.toFixed(2)}</span>
                         </div>
                       )}
-                      <p className="text-carbon-500 text-xs mt-2">One-time purchase — ships to your shop.</p>
+                      <p className="text-carbon-300 text-xs mt-2">One-time purchase — ships to your shop.</p>
                     </div>
                   );
                 })()}
@@ -1342,7 +2368,7 @@ function ServiceCenterPricing() {
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
                     {(showStrikethrough || volumeDiscount > 0) && (
-                      <div className="text-carbon-500 text-lg line-through mb-1">
+                      <div className="text-carbon-300 text-lg line-through mb-1">
                         ${(showStrikethrough ? strikethroughTotal : basePrice).toLocaleString()}/mo
                       </div>
                     )}
@@ -1350,7 +2376,7 @@ function ServiceCenterPricing() {
                       <span className="text-5xl md:text-6xl font-bold text-white">
                         ${totalPrice.toLocaleString()}
                       </span>
-                      <span className="text-carbon-400 text-lg">/mo</span>
+                      <span className="text-carbon-300 text-lg">/mo</span>
                     </div>
                     {showStrikethrough && (
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${unlimitedCombinedRate >= 0.35 ? 'bg-purple-500/15 text-purple-400' : `${c.saveBg} ${c.saveText}`}`}>
@@ -1359,16 +2385,16 @@ function ServiceCenterPricing() {
                     )}
                   </motion.div>
 
-                  <p className="text-carbon-400 text-base mt-3">
+                  <p className="text-carbon-300 text-base mt-3">
                     {numTechs} seats x{' '}
                     {showStrikethrough ? (
                       <>
-                        <span className="line-through text-carbon-500">${tier.originalPricePerSeat}</span>{' '}
+                        <span className="line-through text-carbon-300">${tier.originalPricePerSeat}</span>{' '}
                         <span className={c.saveText}>${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}</span>
                       </>
                     ) : volumeDiscount > 0 ? (
                       <>
-                        <span className="line-through text-carbon-500">${tier.pricePerSeat}</span>{' '}
+                        <span className="line-through text-carbon-300">${tier.pricePerSeat}</span>{' '}
                         <span className={c.saveText}>${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}</span>
                       </>
                     ) : (
@@ -1408,12 +2434,12 @@ function ServiceCenterPricing() {
                     <span className="text-white font-semibold">
                       {showStrikethrough ? (
                         <>
-                          <span className="line-through text-carbon-500 mr-1">${tier.originalPricePerSeat}</span>
+                          <span className="line-through text-carbon-300 mr-1">${tier.originalPricePerSeat}</span>
                           ${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}/mo
                         </>
                       ) : volumeDiscount > 0 ? (
                         <>
-                          <span className="line-through text-carbon-500 mr-1">${tier.pricePerSeat}</span>
+                          <span className="line-through text-carbon-300 mr-1">${tier.pricePerSeat}</span>
                           ${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}/mo
                         </>
                       ) : (
@@ -1439,13 +2465,13 @@ function ServiceCenterPricing() {
                     <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50 mb-6">
                       <div className="flex items-center gap-2 mb-2">
                         <MousePointerClick className={`w-4 h-4 ${c.text}`} />
-                        <span className="text-carbon-200 text-sm font-medium">Flic Buttons (one-time)</span>
+                        <span className="text-carbon-200 text-sm font-medium">Brain Buttons (one-time)</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-carbon-400 text-sm">{totalFlics} button{totalFlics !== 1 ? 's' : ''}</span>
+                        <span className="text-carbon-300 text-sm">{totalFlics} button{totalFlics !== 1 ? 's' : ''}</span>
                         <div className="text-right">
                           {flicSavings > 0 && (
-                            <span className="text-carbon-500 text-xs line-through mr-2">${retailTotal.toFixed(2)}</span>
+                            <span className="text-carbon-300 text-xs line-through mr-2">${retailTotal.toFixed(2)}</span>
                           )}
                           <span className={`font-bold text-lg ${totalFlicCost === 0 ? 'text-green-400' : 'text-white'}`}>
                             {totalFlicCost === 0 ? 'FREE' : `$${totalFlicCost.toFixed(2)}`}
@@ -1457,7 +2483,7 @@ function ServiceCenterPricing() {
                           <span className="text-green-400 text-xs font-bold">Save ${flicSavings.toFixed(2)}</span>
                         </div>
                       )}
-                      <p className="text-carbon-500 text-[10px] mt-1">
+                      <p className="text-carbon-300 text-[10px] mt-1">
                         One-time purchase, added at checkout
                       </p>
                     </div>
@@ -1468,10 +2494,10 @@ function ServiceCenterPricing() {
                 {!isUnlimited && (
                   <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50 mb-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-carbon-400" />
+                      <Clock className="w-4 h-4 text-carbon-300" />
                       <span className="text-carbon-200 text-sm font-medium">Need more hours?</span>
                     </div>
-                    <p className="text-carbon-400 text-sm">
+                    <p className="text-carbon-300 text-sm">
                       Add 10-hour packs at{' '}
                       <span className="text-white font-semibold">${tier.additionalRate}/hr</span>{' '}
                       (${tier.additionalRate * 10}/pack).
@@ -1502,7 +2528,7 @@ function ServiceCenterPricing() {
                       ${hiddenRevenue.toLocaleString()}/yr
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-carbon-400">
+                      <span className="text-carbon-300">
                         You spend ${annualCost.toLocaleString()}/yr
                       </span>
                       <span className={`px-1.5 py-0.5 rounded ${c.saveBg} ${c.saveText} font-semibold`}>
@@ -1510,23 +2536,21 @@ function ServiceCenterPricing() {
                       </span>
                     </div>
                   </motion.div>
-                  <p className="text-carbon-500 text-[10px] mt-2">
+                  <p className="text-carbon-300 text-[10px] mt-2">
                     *Assumes {efficiencyPct}% efficiency gain + {Math.round(warrantyBump * 100)}% warranty approval improvement at ${ROI_SHOP_RATE}/hr
                   </p>
                 </div>
 
                 <div className="mt-auto">
-                  <a
-                    href={checkoutUrl(selectedTier, numTechs, 'shop')}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white font-semibold rounded-xl transition-all duration-300 shadow-lg ${c.shadow}`}
+                  <button
+                    onClick={() => setSignupModalOpen(true)}
+                    className={`group flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white font-semibold rounded-xl transition-all duration-300 shadow-lg ${c.shadow} cursor-pointer`}
                   >
-                    Get Started
+                    Contact Sales
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </button>
 
-                  <p className="text-carbon-500 text-xs text-center mt-4">
+                  <p className="text-carbon-300 text-xs text-center mt-4">
                     All features included. No per-feature charges.
                   </p>
                 </div>
@@ -1537,6 +2561,15 @@ function ServiceCenterPricing() {
       </section>
 
       <SCFlicInfoModal open={scFlicModalOpen} onClose={() => setScFlicModalOpen(false)} />
+      <SeatsInfoModal open={seatsModalOpen} onClose={() => setSeatsModalOpen(false)} />
+      <UsageLevelModal open={usageLevelModalOpen} onClose={() => setUsageLevelModalOpen(false)} />
+      <SignupModal
+        open={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+        mode="service-center"
+        planKey={selectedTier}
+        numTechs={numTechs}
+      />
     </>
   );
 }
@@ -1572,7 +2605,7 @@ export default function PricingPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl font-bold text-white mt-4 mb-6"
           >
-            Simple Plans.{' '}
+            Simple Plans.<br className="md:hidden" />{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
               Full Power.
             </span>
@@ -1581,30 +2614,31 @@ export default function PricingPage() {
       </section>
 
       {/* Tab Toggle */}
-      <section className="px-4 mb-16">
+      <section id="plan-selector" className="px-4 mb-16 scroll-mt-20">
         <div className="max-w-2xl mx-auto">
-          <div className="flex p-2 rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
+          <div className="flex p-1.5 md:p-2 rounded-xl md:rounded-2xl bg-carbon-800/60 border border-carbon-700/50">
             <button
               onClick={() => { setTab('individual'); trackPricingTabSwitch('individual'); }}
-              className={`flex-1 flex items-center justify-center gap-3 px-8 py-6 rounded-xl text-lg font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-4 md:py-6 rounded-lg md:rounded-xl text-base md:text-lg font-semibold transition-all duration-200 cursor-pointer ${
                 tab === 'individual'
                   ? 'bg-electric-500/20 text-electric-300 border-2 border-electric-400/50 shadow-lg shadow-electric-500/10'
                   : 'text-electric-400'
               }`}
             >
-              <User className="w-7 h-7" />
+              <User className="w-5 h-5 md:w-7 md:h-7" />
               Individual
             </button>
             <button
               onClick={() => { setTab('service-center'); trackPricingTabSwitch('service-center'); }}
-              className={`flex-1 flex items-center justify-center gap-3 px-8 py-6 rounded-xl text-lg font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-4 md:py-6 rounded-lg md:rounded-xl text-base md:text-lg font-semibold transition-all duration-200 cursor-pointer ${
                 tab === 'service-center'
                   ? 'bg-safety-500/20 text-safety-300 border-2 border-safety-400/50 shadow-lg shadow-safety-500/10'
                   : 'text-safety-400'
               }`}
             >
-              <Building2 className="w-7 h-7" />
-              Service Center
+              <Building2 className="w-5 h-5 md:w-7 md:h-7" />
+              <span className="hidden sm:inline">Service Center</span>
+              <span className="sm:hidden">Shop</span>
             </button>
           </div>
         </div>
@@ -1623,113 +2657,6 @@ export default function PricingPage() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Starter Pack — tab-aware */}
-      {tab === 'individual' ? <StarterPack /> : <ServiceCenterStarterPack />}
-
-      {/* Flic Button Section — Individual */}
-      {tab === 'individual' && (
-      <section className="px-4 mb-16">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                The key to hands-free!
-              </h2>
-              <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-                The Flic button is essential to using OnRamp voice.
-                <br />Just clip it to your shirt and tap to talk. No greasy phone screens.
-              </p>
-            </div>
-
-            <div className="rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-carbon-700/50 overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-0">
-                {/* Left — Image + Description */}
-                <div className="p-8 md:p-12 flex flex-col items-center justify-center">
-                  <img
-                    src="/flic-button.png"
-                    alt="Flic 2 Smart Button"
-                    className="w-40 h-40 object-contain mb-6"
-                  />
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 text-center">
-                    Flic 2 Smart Button
-                  </h3>
-                  <p className="text-carbon-300 text-center max-w-sm">
-                    Hands-free voice control for the shop floor.
-                    <br />Clip it to your shirt and tap to talk.
-                  </p>
-                </div>
-
-                {/* Right — Pricing Tiers */}
-                <div className="p-8 md:p-12 bg-carbon-900/40 flex flex-col justify-center">
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-1">
-                    One-time Purchase.
-                  </h3>
-                  <p className="text-carbon-300 text-sm mb-6">
-                    Discounts apply depending on your OnRamp subscription.
-                  </p>
-
-                  <div className="space-y-4">
-                    {/* Unlimited */}
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/30">
-                        <InfinityIcon className="w-5 h-5 text-amber-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white font-semibold">Unlimited Plan</p>
-                        <p className="text-carbon-300 text-sm">Get the Flic for FREE!</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-amber-400 font-bold text-lg">FREE</p>
-                        <p className="text-carbon-300 text-xs">spares $24.99 ea</p>
-                      </div>
-                    </div>
-
-                    {/* Pro */}
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-electric-500/20 to-electric-600/20 border border-electric-500/30">
-                        <Zap className="w-5 h-5 text-electric-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white font-semibold">Pro Plan</p>
-                        <p className="text-carbon-300 text-sm">50% off on the PRO Plan</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-electric-400 font-bold text-lg">$24.99</p>
-                        <p className="text-carbon-300 text-xs">spares $37.49 ea</p>
-                      </div>
-                    </div>
-
-                    {/* Basic */}
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-carbon-800/60 border border-carbon-700/40">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-safety-500/20 to-safety-600/20 border border-safety-500/30">
-                        <Package className="w-5 h-5 text-safety-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white font-semibold">Basic Plan</p>
-                        <p className="text-carbon-300 text-sm">Regular Price</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-bold text-lg">$49.99</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-carbon-300 text-xs mt-4">
-                    One-time purchase. Add buttons during checkout. We also recommend buying a spare, so you don't lose a week if it gets lost or broken.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      )}
-
-      {/* SC Flic section removed — now integrated into configurator above */}
 
       {/* Feature Grid (always visible) */}
       <FeatureGrid />
@@ -1743,29 +2670,19 @@ export default function PricingPage() {
             viewport={{ once: true }}
             className="text-center p-10 md:p-16 rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-carbon-700/50"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to stop the paperwork tax?
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
+              Choose Your{' '}
+              <span className={`text-transparent bg-clip-text bg-gradient-to-r ${tab === 'individual' ? 'from-electric-400 to-electric-600' : 'from-safety-400 to-safety-600'}`}>
+                Plan
+              </span>
             </h2>
-            <p className="text-carbon-300 text-lg mb-8 max-w-xl mx-auto">
-              Get started with the Starter Pack or pick the monthly plan that fits your workflow.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href={checkoutUrl('pro')}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric"
-              >
-                Get Started
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-              <Link
-                to="/how-it-works"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-carbon-700/50 hover:bg-carbon-600/50 text-white font-semibold rounded-xl border border-carbon-600/50 hover:border-carbon-500/50 transition-all duration-300"
-              >
-                See How It Works
-              </Link>
-            </div>
+            <a
+              href="#plan-selector"
+              className={`group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r ${tab === 'individual' ? 'from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 glow-electric' : 'from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 glow-safety'} text-white font-semibold rounded-xl transition-all duration-300`}
+            >
+              Choose Your Plan
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </a>
           </motion.div>
         </div>
       </section>

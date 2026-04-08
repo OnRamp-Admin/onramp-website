@@ -33,7 +33,7 @@ function StatusBar() {
   );
 }
 
-// ─── App Header (matches real OnRamp app) ───────────────────────────
+// ─── App Header (matches real ONRAMP app) ───────────────────────────
 function AppHeader() {
   return (
     <div
@@ -41,20 +41,7 @@ function AppHeader() {
       style={{ backgroundColor: '#141410', borderBottom: '1px solid #2A2A28' }}
     >
       <Menu size={14} color="#A0A0A0" />
-      <div className="flex items-center gap-1">
-        <span style={{ fontSize: '12px' }}>🧠</span>
-        <span
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 900,
-            fontSize: '13px',
-            color: '#FFFFFF',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          ONRAMP
-        </span>
-      </div>
+      <img src="/Onramp-Logo-Pink Brain-White Text-SML.png" alt="ONRAMP" style={{ height: '18px' }} />
       <div
         className="flex items-center justify-center rounded-full"
         style={{ width: 20, height: 20, backgroundColor: '#2A2A28' }}
@@ -128,9 +115,10 @@ function FormScreen({ elapsedMs }: { elapsedMs: number }) {
 
   // Phase 1: VIN scan (2000 – 6500ms)
   const vinScanStart = 2000;
-  const vinTapTime = vinScanStart + 400;
-  const vinScanningStart = vinScanStart + 800;
-  const vinScanningEnd = vinScanStart + 2600;
+  const vinTapTime = vinScanStart + 400;        // small camera icon tapped
+  const vinScanningStart = vinScanStart + 800;  // scanner overlay opens
+  const vinCaptureGlow = vinScanStart + 2200;   // capture button glows
+  const vinScanningEnd = vinScanStart + 2600;   // flash
   const vinFlashTime = vinScanningEnd;
   const vinDecodeStart = vinScanStart + 2800;
   const vin = '1HGBH41JXMN109186';
@@ -164,10 +152,11 @@ function FormScreen({ elapsedMs }: { elapsedMs: number }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 z-20 flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(0,0,0,0.85)' }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6"
+            style={{ backgroundColor: 'rgba(0,0,0,0.90)' }}
           >
-            <div className="relative" style={{ width: '75%', height: '40%' }}>
+            {/* Scanner strip */}
+            <div className="relative" style={{ width: '85%', height: 28 }}>
               {/* Corner brackets */}
               {[
                 { top: 0, left: 0, borderTop: '2px solid #4A90D9', borderLeft: '2px solid #4A90D9' },
@@ -175,21 +164,50 @@ function FormScreen({ elapsedMs }: { elapsedMs: number }) {
                 { bottom: 0, left: 0, borderBottom: '2px solid #4A90D9', borderLeft: '2px solid #4A90D9' },
                 { bottom: 0, right: 0, borderBottom: '2px solid #4A90D9', borderRight: '2px solid #4A90D9' },
               ].map((style, i) => (
-                <div key={i} className="absolute" style={{ width: 16, height: 16, ...style }} />
+                <div key={i} className="absolute" style={{ width: 10, height: 10, ...style }} />
               ))}
+              {/* Paper strip with VIN */}
+              <div
+                className="absolute inset-0 flex items-center justify-center mx-1.5 my-0.5 rounded-sm"
+                style={{ backgroundColor: '#F5F0E8', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
+              >
+                <div style={{ fontSize: '11.5px', color: '#1A1A1A', fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.3px' }}>
+                  1HGBH41JXMN109186
+                </div>
+              </div>
               {/* Scanning line */}
               <motion.div
-                animate={{ top: ['10%', '85%'] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-                className="absolute left-1 right-1"
+                animate={{ top: ['5%', '90%'] }}
+                transition={{ duration: 1.0, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                className="absolute left-1 right-1 z-10"
                 style={{ height: '1px', backgroundColor: '#4A90D9', opacity: 0.7 }}
               />
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{ fontSize: '8px', color: '#4A90D9', opacity: 0.6 }}
-              >
-                Scanning VIN...
-              </div>
+            </div>
+
+            {/* Capture button */}
+            <motion.div
+              animate={
+                elapsedMs >= vinCaptureGlow
+                  ? { scale: [1, 1.15, 1], boxShadow: ['0 0 0px rgba(74,144,217,0)', '0 0 20px rgba(74,144,217,0.8)', '0 0 6px rgba(74,144,217,0.4)'] }
+                  : {}
+              }
+              transition={{ duration: 0.4 }}
+              className="flex items-center justify-center rounded-full"
+              style={{
+                width: 44,
+                height: 44,
+                background: elapsedMs >= vinCaptureGlow
+                  ? 'radial-gradient(circle, #4A90D9 0%, #2A6AB5 100%)'
+                  : 'radial-gradient(circle, #3A7AC0 0%, #1E5090 100%)',
+                border: '3px solid rgba(255,255,255,0.3)',
+                transition: 'background 0.3s',
+              }}
+            >
+              <Camera size={20} color="#FFF" />
+            </motion.div>
+
+            <div style={{ fontSize: '7px', color: '#4A90D9', opacity: 0.7, marginTop: -4 }}>
+              {elapsedMs >= vinCaptureGlow ? 'VIN captured!' : 'Tap to capture'}
             </div>
           </motion.div>
         )}
@@ -309,20 +327,20 @@ function VoiceActiveScreen() {
       {/* Voice status bar */}
       <div
         className="flex items-center gap-1.5 px-3 py-1.5"
-        style={{ backgroundColor: 'rgba(22, 101, 52, 0.2)', borderBottom: '1px solid rgba(74, 222, 128, 0.2)' }}
+        style={{ backgroundColor: 'rgba(74, 144, 217, 0.15)', borderBottom: '1px solid rgba(74, 144, 217, 0.3)' }}
       >
         <motion.div
           animate={{ opacity: [1, 0.4, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
           className="rounded-full"
-          style={{ width: 5, height: 5, backgroundColor: '#4ADE80' }}
+          style={{ width: 5, height: 5, backgroundColor: '#4A90D9' }}
         />
-        <span style={{ fontSize: '8px', fontWeight: 600, color: '#4ADE80', fontFamily: 'Inter, sans-serif' }}>
-          Listening
+        <span style={{ fontSize: '8px', fontWeight: 600, color: '#4A90D9', fontFamily: 'Inter, sans-serif' }}>
+          AI Speaking
         </span>
       </div>
 
-      {/* Pulsating mic area */}
+      {/* Pulsating mic area + speech bubble */}
       <div className="flex-1 flex flex-col items-center justify-center relative">
         {/* Radiating rings */}
         {[0, 0.7, 1.4].map((delay, i) => (
@@ -355,14 +373,14 @@ function VoiceActiveScreen() {
         </motion.div>
 
         <span
-          className="mt-3 relative z-10"
+          className="mt-2 relative z-10"
           style={{ fontSize: '8px', fontWeight: 600, color: '#4A90D9', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif' }}
         >
-          LISTENING
+          AI SPEAKING
         </span>
 
         {/* Audio waveform bars */}
-        <div className="flex gap-0.5 mt-3 relative z-10">
+        <div className="flex gap-0.5 mt-2 relative z-10">
           {[0, 0.1, 0.2, 0.3, 0.4].map((delay, i) => (
             <motion.div
               key={i}
@@ -373,6 +391,38 @@ function VoiceActiveScreen() {
             />
           ))}
         </div>
+
+        {/* Speech bubble */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="relative z-10 mt-4"
+          style={{ width: '80%' }}
+        >
+          <div
+            className="rounded-xl px-4 py-3 relative"
+            style={{
+              backgroundColor: 'rgba(74, 144, 217, 0.15)',
+              border: '1px solid rgba(74, 144, 217, 0.3)',
+            }}
+          >
+            {/* Tail */}
+            <div
+              className="absolute -top-2 left-1/2 -translate-x-1/2"
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderBottom: '8px solid rgba(74, 144, 217, 0.3)',
+              }}
+            />
+            <p style={{ fontSize: '16px', color: '#C8DEFF', fontFamily: 'Inter, sans-serif', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.4 }}>
+              "Hey Alex,<br />how can I help?"
+            </p>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   );

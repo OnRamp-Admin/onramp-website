@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Mic, FileCheck, ClipboardList, Gauge, Shield, Users, ArrowRight, Wrench, Building2, Stethoscope, Package, PenLine, Zap, BarChart3, Eye, Magnet } from 'lucide-react';
+import { Mic, FileCheck, Gauge, Shield, ArrowRight, Wrench, Building2, Stethoscope, Package, PenLine, Zap, BarChart3, Eye, Magnet, Camera } from 'lucide-react';
 
 const techBullets = [
   { icon: Mic, text: 'Voice AI — with you every step of the way' },
-  { icon: Stethoscope, text: 'Diagnose faster' },
-  { icon: Package, text: 'AI preps your tools and parts list' },
-  { icon: Wrench, text: 'Perform faster — real-time AI in your headphones' },
+  { icon: Stethoscope, text: 'Diagnose at the speed of AI' },
+  { icon: Package, text: 'AI prepares your tools list and replacement parts list' },
+  { icon: Wrench, text: 'Perform faster — real-time AI coaching in your headphones' },
+  { icon: Camera, text: 'Capture photos and videos through device integration' },
   { icon: PenLine, text: 'Speak your notes — AI summarizes them' },
-  { icon: FileCheck, text: 'OnRamp AI writes perfect RO reports, instantly' },
+  { icon: FileCheck, text: 'ONRAMP AI writes perfect RO reports, instantly' },
 ];
 
 const managerBullets = [
@@ -37,7 +38,7 @@ export default function AudienceSplit() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-white">
-            Driving Profits — <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">For One.</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">For All!</span>
+            Driving Profits —<br className="md:hidden" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">For One.</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">For All!</span>
           </h2>
         </motion.div>
 
@@ -65,8 +66,8 @@ export default function AudienceSplit() {
 
               {/* Sub-headline */}
               <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight">
-                Beat Book Time. Every Time.
-                <br />
+                Beat Book Time.<br className="md:hidden" />
+                <span className="hidden md:inline"> </span>Every Time.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
                   Take Home More Pay.
                 </span>
@@ -74,7 +75,7 @@ export default function AudienceSplit() {
 
               {/* Core message */}
               <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
-                Stop washing your hands to scroll through PDFs or type out reports. Let OnRamp act as your co-pilot to diagnose faster, prepare better, work faster, and write your reports instantly.
+                Stop wasting time at the terminal scrolling through PDFs and typing reports. Use ONRAMP as your wingman to diagnose quickly, prepare better, work faster, and write perfect reports, instantly.
               </p>
 
               {/* Bullets */}
@@ -86,9 +87,9 @@ export default function AudienceSplit() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 + i * 0.1 }}
-                    className="flex items-start gap-3"
+                    className="flex items-center gap-3"
                   >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-electric-500/10 flex items-center justify-center mt-0.5">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-electric-500/10 flex items-center justify-center">
                       <bullet.icon className="w-4.5 h-4.5 text-electric-400" />
                     </div>
                     <span className="text-carbon-200 text-base md:text-lg">{bullet.text}</span>
@@ -99,10 +100,10 @@ export default function AudienceSplit() {
               {/* CTA */}
               <Link
                 to="/technicians"
-                className="group/btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-electric-500 hover:bg-electric-400 text-white font-semibold transition-all duration-300 shadow-lg shadow-electric-500/20 hover:shadow-electric-500/40"
+                className="group/btn w-full md:w-auto flex md:inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-electric-500 hover:bg-electric-400 text-white font-semibold transition-all duration-300 shadow-lg shadow-electric-500/20 hover:shadow-electric-500/40 text-center"
               >
-                See How You Can Flag More Time
-                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                <span>See How You Can<br className="md:hidden" /> Flag More Time</span>
+                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform flex-shrink-0" />
               </Link>
             </div>
           </motion.div>
@@ -129,7 +130,7 @@ export default function AudienceSplit() {
 
               {/* Sub-headline */}
               <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight">
-                Maximize Bay Throughput &{' '}
+                Maximize Bay Throughput &<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
                   Warranty Payouts.
                 </span>
@@ -137,7 +138,7 @@ export default function AudienceSplit() {
 
               {/* Core message */}
               <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
-                OnRamp will help your team drive profitability through faster diagnosis, AI-Guided repairs, and perfect RO reports. Accelerated turn-times and improved warranty claim approvals mean more service center profit.
+                ONRAMP will help your team drive profitability through faster diagnosis, AI-Guided repairs, and perfect RO reports. Accelerated turn-times and improved warranty claim approvals mean more service center profit.
               </p>
 
               {/* Bullets */}
@@ -149,9 +150,9 @@ export default function AudienceSplit() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 + i * 0.1 }}
-                    className="flex items-start gap-3"
+                    className="flex items-center gap-3"
                   >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-safety-500/10 flex items-center justify-center mt-0.5">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-safety-500/10 flex items-center justify-center">
                       <bullet.icon className="w-4.5 h-4.5 text-safety-400" />
                     </div>
                     <span className="text-carbon-200 text-base md:text-lg">{bullet.text}</span>
@@ -162,10 +163,10 @@ export default function AudienceSplit() {
               {/* CTA */}
               <Link
                 to="/managers"
-                className="group/btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-safety-500 hover:bg-safety-400 text-white font-semibold transition-all duration-300 shadow-lg shadow-safety-500/20 hover:shadow-safety-500/40"
+                className="group/btn w-full md:w-auto flex md:inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-safety-500 hover:bg-safety-400 text-white font-semibold transition-all duration-300 shadow-lg shadow-safety-500/20 hover:shadow-safety-500/40 text-center"
               >
-                See How OnRamp Drives Profits
-                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                <span>See How ONRAMP<br className="md:hidden" /> Drives Profits</span>
+                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform flex-shrink-0" />
               </Link>
             </div>
           </motion.div>
