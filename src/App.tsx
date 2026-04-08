@@ -70,6 +70,30 @@ function HomePage() {
 // Detect touch-only devices to disable scroll entrance animations
 const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
+// On mobile, force all framer-motion elements to their final state immediately
+// by overriding the global IntersectionObserver to trigger everything as "in view"
+if (isTouchDevice && typeof window !== 'undefined') {
+  const OriginalObserver = window.IntersectionObserver;
+  window.IntersectionObserver = class extends OriginalObserver {
+    constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+      super((entries, observer) => {
+        // Force all entries to appear as intersecting so whileInView triggers immediately
+        const modifiedEntries = entries.map(entry => {
+          if (!entry.isIntersecting) {
+            return Object.defineProperty(
+              Object.create(entry),
+              'isIntersecting',
+              { get: () => true, configurable: true }
+            );
+          }
+          return entry;
+        });
+        callback(modifiedEntries, observer);
+      }, { ...options, rootMargin: '99999px' });
+    }
+  } as typeof IntersectionObserver;
+}
+
 function App() {
   if (COMING_SOON) {
     return (
