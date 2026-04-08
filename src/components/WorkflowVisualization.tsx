@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mic, Brain, FileText, ArrowRight, Volume2, Car, Clipboard, CheckCircle2 } from 'lucide-react';
+import { Mic, Brain, FileText, ArrowRight, Volume2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const workflowSteps = [

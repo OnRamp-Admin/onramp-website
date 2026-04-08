@@ -5,7 +5,7 @@ import {
   Building2, TrendingUp, Shield, DollarSign, Users,
   FileCheck, AlertTriangle, Target, ArrowRight, Calculator,
   GraduationCap, Eye, BarChart3, Mail, Upload, UserCheck, Clock,
-  Search, List, Wrench, Brain, CheckCircle2,
+  Search, List, Wrench, CheckCircle2,
   Zap, Rocket, Smartphone, UserCog, CircleDot,
 } from 'lucide-react';
 import { trackCalculatorValues } from '../lib/analytics';

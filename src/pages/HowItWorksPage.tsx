@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Mic, Brain, FileText, Volume2, ArrowRight, Car, Clipboard,
+  Mic, Brain, FileText, Volume2, ArrowRight,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
   Play, Pause, AlertCircle, ListChecks, Zap, AudioLines, Gauge, UserCog,
   MessageCircle, SlidersHorizontal, Sparkles, X, Headphones,
@@ -352,11 +352,11 @@ function PhonePlayButton({ accentColor, state, progress, toggle }: {
   );
 }
 
-const colorMap: Record<string, { badge: string; check: string; border: string; phoneBg: string; phoneAccent: string }> = {
-  electric: { badge: 'bg-electric-500/10 text-electric-400 border-electric-500/30', check: 'text-electric-400', border: 'border-electric-500/30', phoneBg: 'bg-electric-500/20', phoneAccent: '#4A90D9' },
-  amber: { badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30', check: 'text-yellow-400', border: 'border-yellow-500/30', phoneBg: 'bg-yellow-500/20', phoneAccent: '#EAB308' },
-  green: { badge: 'bg-green-500/10 text-green-400 border-green-500/30', check: 'text-green-400', border: 'border-green-500/30', phoneBg: 'bg-green-500/20', phoneAccent: '#22C55E' },
-  orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', check: 'text-orange-400', border: 'border-orange-500/30', phoneBg: 'bg-orange-500/20', phoneAccent: '#F97316' },
+const colorMap: Record<string, { badge: string; check: string; text: string; border: string; phoneBg: string; phoneAccent: string }> = {
+  electric: { badge: 'bg-electric-500/10 text-electric-400 border-electric-500/30', check: 'text-electric-400', text: 'text-electric-400', border: 'border-electric-500/30', phoneBg: 'bg-electric-500/20', phoneAccent: '#4A90D9' },
+  amber: { badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30', check: 'text-yellow-400', text: 'text-yellow-400', border: 'border-yellow-500/30', phoneBg: 'bg-yellow-500/20', phoneAccent: '#EAB308' },
+  green: { badge: 'bg-green-500/10 text-green-400 border-green-500/30', check: 'text-green-400', text: 'text-green-400', border: 'border-green-500/30', phoneBg: 'bg-green-500/20', phoneAccent: '#22C55E' },
+  orange: { badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30', check: 'text-orange-400', text: 'text-orange-400', border: 'border-orange-500/30', phoneBg: 'bg-orange-500/20', phoneAccent: '#F97316' },
 };
 
 function AIStackCard() {
