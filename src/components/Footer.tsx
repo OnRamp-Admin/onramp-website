@@ -12,10 +12,10 @@ export default function Footer() {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img src="/Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" className="h-10" />
             </Link>
-            <p className="text-carbon-300 max-w-sm mb-6">
+            <p className="text-carbon-200 max-w-sm mb-6">
               Voice-first AI for service center technicians.
             </p>
-            <div className="flex items-center gap-2 text-carbon-300 text-sm">
+            <div className="flex items-center gap-2 text-carbon-200 text-sm">
               <MapPin className="w-4 h-4" />
               <span>San Diego, California • Serving shops nationwide</span>
             </div>
@@ -24,7 +24,7 @@ export default function Footer() {
           {/* Product */}
           <div>
             <h4 className="text-white font-semibold mb-4">Product</h4>
-            <ul className="space-y-3 text-carbon-300">
+            <ul className="space-y-3 text-carbon-200">
               <li>
                 <Link to="/technicians" className="hover:text-electric-400 transition-colors">
                   For Technicians
@@ -61,7 +61,7 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4 className="text-white font-semibold mb-4">Company</h4>
-            <ul className="space-y-3 text-carbon-300">
+            <ul className="space-y-3 text-carbon-200">
               <li>
                 <Link to="/about" className="hover:text-electric-400 transition-colors">
                   About
@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-carbon-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-carbon-300 text-sm">
+        <div className="pt-8 border-t border-carbon-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-carbon-200 text-sm">
           <p>&copy; 2026 OnRamp Innovations, Inc. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-electric-400 transition-colors">

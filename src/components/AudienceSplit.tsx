@@ -75,7 +75,7 @@ export default function AudienceSplit() {
               </h3>
 
               {/* Core message */}
-              <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
+              <p className="text-carbon-200 text-base md:text-lg mb-8 leading-relaxed">
                 Stop wasting time at the terminal scrolling through PDFs and typing reports. Use ONRAMP as your wingman to diagnose quickly, prepare better, work faster, and write perfect reports, instantly.
               </p>
 
@@ -138,7 +138,7 @@ export default function AudienceSplit() {
               </h3>
 
               {/* Core message */}
-              <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
+              <p className="text-carbon-200 text-base md:text-lg mb-8 leading-relaxed">
                 ONRAMP will help your team drive profitability through faster diagnosis, AI-Guided repairs, and perfect RO reports. Accelerated turn-times and improved warranty claim approvals mean more service center profit.
               </p>
 

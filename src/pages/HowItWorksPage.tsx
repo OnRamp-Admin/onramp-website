@@ -3,7 +3,7 @@ import { mobileViewport } from '../lib/motion';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Mic, Brain, FileText, Volume2, ArrowRight,
+  Mic, Brain, FileText, Volume2, ArrowRight, Camera,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
   Play, Pause, AlertCircle, ListChecks, Zap, AudioLines, Gauge, UserCog,
   MessageCircle, SlidersHorizontal, Sparkles, X, Headphones,
@@ -44,6 +44,7 @@ const phases = [
     color: 'electric',
     title: 'Pinpoint the Problem',
     titleAccent: 'AI FAST!',
+    bgImage: '/technician-diagnosing.png',
     description: 'Describe the symptoms and ONRAMP helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
     details: [
       "References TSBs & Recalls ('95 - Today), and known failures",
@@ -78,11 +79,12 @@ const phases = [
     icon: Wrench,
     color: 'green',
     title: 'Voice-Guided Repairs',
+    bgImage: '/technician-working.png',
     description: 'Work with your hands while ONRAMP coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
       "AI delivers step details, torque specs and 'heads-up' guidance live as you need it!",
-      'Hands-free voice - conversational flow with the AI while you work',
-      'Start/Stop sessions with bluetooth Brain Button',
+      'Hands-free — Voice AI conversation flow while you work',
+      'Start/Stop sessions with Bluetooth Brain Button',
       'Integrated timeclock to track time worked',
       'ONRAMP tracks progress and keeps perfect notes',
       'Capture photos & videos with phone or Meta glasses',
@@ -244,8 +246,8 @@ function AudioSamplePlayer({ accentColor, state, progress, toggle, label }: {
   if (state === 'error') {
     return (
       <div className="flex items-center gap-2 mt-6 p-3 rounded-lg bg-carbon-800/60 border border-carbon-700/50">
-        <AlertCircle className="w-4 h-4 text-carbon-300 flex-shrink-0" />
-        <span className="text-carbon-300 text-sm">
+        <AlertCircle className="w-4 h-4 text-carbon-200 flex-shrink-0" />
+        <span className="text-carbon-200 text-sm">
           Your browser doesn't support audio playback.{' '}
           <Link to="/contact" className="underline hover:text-white transition-colors">Request a live demo</Link> instead!
         </span>
@@ -393,7 +395,7 @@ function AIStackCard() {
             </div>
             <div>
               <div className="text-white font-semibold mb-1">{item.title}</div>
-              <p className="text-carbon-300 text-sm leading-relaxed">{item.desc}</p>
+              <p className="text-carbon-200 text-sm leading-relaxed">{item.desc}</p>
               {'audioSample' in item && item.audioSample && (
                 <button
                   onClick={toggle}
@@ -499,7 +501,7 @@ function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => v
           <div className="p-5 border-b border-carbon-700/50 flex-shrink-0">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -509,7 +511,7 @@ function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => v
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Explore Voice Options</h3>
-                <p className="text-carbon-300 text-sm">Tap play to hear each voice style</p>
+                <p className="text-carbon-200 text-sm">Tap play to hear each voice style</p>
               </div>
             </div>
             {/* Filter tabs */}
@@ -521,7 +523,7 @@ function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => v
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                     filter === f
                       ? 'bg-safety-500/20 text-safety-400 border border-safety-500/30'
-                      : 'text-carbon-300 hover:text-white hover:bg-carbon-700/50'
+                      : 'text-carbon-200 hover:text-white hover:bg-carbon-700/50'
                   }`}
                 >
                   {f === 'all' ? `All (${voiceSamples.length})` : f === 'male' ? `Male (${voiceSamples.filter(v => v.gender === 'male').length})` : `Female (${voiceSamples.filter(v => v.gender === 'female').length})`}
@@ -550,7 +552,7 @@ function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => v
                     {isPlaying ? (
                       <Pause size={16} className="text-safety-400" />
                     ) : (
-                      <Play size={16} className="text-carbon-300 ml-0.5" />
+                      <Play size={16} className="text-carbon-200 ml-0.5" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
@@ -599,7 +601,7 @@ function PersonalizationCard() {
             </div>
             <div>
               <div className="text-white font-semibold mb-1">25+ Voice Options</div>
-              <p className="text-carbon-300 text-sm leading-relaxed">Choose from over 25 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
+              <p className="text-carbon-200 text-sm leading-relaxed">Choose from over 25 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
               <button
                 onClick={() => setVoiceModalOpen(true)}
                 className="inline-flex items-center gap-1.5 mt-2 text-safety-400 hover:text-safety-300 text-sm font-medium transition-colors cursor-pointer"
@@ -622,7 +624,7 @@ function PersonalizationCard() {
               </div>
               <div>
                 <div className="text-white font-semibold mb-1">{item.title}</div>
-                <p className="text-carbon-300 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-carbon-200 text-sm leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -633,10 +635,115 @@ function PersonalizationCard() {
   );
 }
 
+// ─── "No App Screenshot?" Modal ──────────────────────────────────────────────
+const phoneScreenshots = [
+  '/diagnose-screen.PNG',
+  '/prepare-screen.PNG',
+  '/workflow-screen.PNG',
+  '/step-screen-1.PNG',
+  '/step-screen-2.PNG',
+];
+
+function NoScreenshotModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!open) return;
+    setCurrentIndex(0);
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % phoneScreenshots.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-2xl rounded-2xl bg-carbon-800 border border-carbon-700/50 shadow-2xl overflow-hidden"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-6 md:p-8">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Phone with cycling screenshots */}
+              <div className="flex-shrink-0">
+                <div className="relative mx-auto w-[180px]">
+                  <div
+                    className="absolute overflow-hidden z-0"
+                    style={{ left: '3.5%', right: '3.5%', top: '1.5%', bottom: '1.5%', borderRadius: '1.5rem' }}
+                  >
+                    <AnimatePresence mode="popLayout">
+                      <motion.img
+                        key={currentIndex}
+                        src={phoneScreenshots[currentIndex]}
+                        alt="ONRAMP app"
+                        className="w-full h-full object-cover object-top absolute inset-0"
+                        initial={{ y: '100%', opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: '-30%', opacity: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeInOut' }}
+                      />
+                    </AnimatePresence>
+                  </div>
+                  <img
+                    src="/apple-iphone-17-pro-max-2025-medium.png"
+                    alt=""
+                    className="relative z-10 w-full h-auto drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+
+              {/* Message */}
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl font-bold text-white mb-4">Why no app screenshot?</h3>
+                <div className="space-y-3 text-carbon-200 text-sm leading-relaxed">
+                  <p>
+                    The whole point of ONRAMP is to work <strong className="text-white">completely hands-free</strong>. Your phone stays locked and in your pocket while you work.
+                  </p>
+                  <p>
+                    The AI voice assistant is in your ear through your headphones — coaching you, answering questions, and documenting everything as you go. No screen needed.
+                  </p>
+                  <p>
+                    Behind the scenes, the app is building a detailed repository of your diagnostic findings, repair notes, measurements, and photos — all accessible anytime you want to review it.
+                  </p>
+                  <p className="text-carbon-200 text-xs italic">
+                    That's what hands-free really means.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: number }) {
   const colors = colorMap[phase.color];
   const textOnRight = index % 2 === 1 || index === 3;
   const { state, progress, toggle } = useAudioPlayer(phase.audio);
+  const [screenshotModalOpen, setScreenshotModalOpen] = useState(false);
 
   return (
     <div
@@ -662,7 +769,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
             <><span className="hidden md:inline"> — </span><br className="md:hidden" /><span className={`${colors.text}`}>{phase.titleAccent}</span></>
           )}
         </h3>
-        <p className="text-carbon-300 text-lg mb-6">{phase.description}</p>
+        <p className="text-carbon-200 text-lg mb-6">{phase.description}</p>
         <div className="space-y-3">
           {phase.details.map((detail) => (
             <div key={detail} className="flex items-start gap-3">
@@ -682,7 +789,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
         whileInView={{ opacity: 1, x: 0 }}
         viewport={mobileViewport}
         transition={{ duration: 0.7, delay: 0.1 }}
-        className="w-full lg:w-1/2 flex justify-center"
+        className="w-full lg:w-1/2 flex flex-col items-center"
       >
         <div className="relative mx-auto w-[220px] md:w-[260px]">
           <div className={`absolute inset-0 ${colors.phoneBg} rounded-full blur-[80px] scale-75 opacity-50`} />
@@ -729,7 +836,14 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
             className="relative z-10 w-full h-auto drop-shadow-2xl pointer-events-none"
           />
         </div>
+        <button
+          onClick={() => setScreenshotModalOpen(true)}
+          className="mt-3 text-carbon-200 text-xs hover:text-white transition-colors cursor-pointer underline underline-offset-2"
+        >
+          No app screenshot?
+        </button>
       </motion.div>
+      <NoScreenshotModal open={screenshotModalOpen} onClose={() => setScreenshotModalOpen(false)} />
     </div>
   );
 }
@@ -769,7 +883,7 @@ export default function HowItWorksPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl md:text-2xl text-carbon-300 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-carbon-200 max-w-3xl mx-auto"
           >
             A voice-first AI assistant that accelerates technician performance on every repair.
             Here's what happens from the moment you start a repair order.
@@ -797,9 +911,9 @@ export default function HowItWorksPage() {
 
               <ol className="space-y-4 text-left max-w-lg mx-auto lg:mx-0 mb-8">
                 {[
-                  { num: '1', text: 'Enter the RO Number' },
-                  { num: '2', text: 'Snap the VIN' },
-                  { num: '3', text: 'Launch the Voice Session' },
+                  { num: '1', text: <>Enter the RO Number</> },
+                  { num: '2', text: <>Snap the VIN <Camera className="w-5 h-5 inline-block ml-1 align-text-bottom text-carbon-200" /></> },
+                  { num: '3', text: <>Launch the Voice Session</> },
                 ].map((step, i) => (
                   <motion.li
                     key={step.num}
@@ -826,7 +940,7 @@ export default function HowItWorksPage() {
                 className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8 max-w-lg mx-auto lg:mx-0"
               >
                 <div className="leading-relaxed flex-shrink-0">
-                  <span className="text-carbon-300 text-lg">Put on your headphones<br /> and Brain Button!</span><br />
+                  <span className="text-carbon-200 text-lg">Put on your headphones<br /> and Brain Button!</span><br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 font-semibold text-xl md:text-2xl">
                     ...you're hands-free from here!
                   </span>
@@ -875,14 +989,33 @@ export default function HowItWorksPage() {
               Four Phases.<br className="md:hidden" />{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               ONRAMP adapts its behavior as you move through each phase of the repair—from diagnosis to close out.
             </p>
           </motion.div>
 
           <div className="space-y-20 md:space-y-28">
             {phases.map((phase, index) => (
-              <PhaseSection key={phase.name} phase={phase} index={index} />
+              phase.bgImage ? (
+                <div
+                  key={phase.name}
+                  className="relative rounded-2xl overflow-hidden"
+                  style={{
+                    backgroundImage: `linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(${phase.bgImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center 50%',
+                    width: '100vw',
+                    marginLeft: 'calc(-50vw + 50%)',
+                    borderRadius: 0,
+                  }}
+                >
+                  <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+                    <PhaseSection phase={phase} index={index} />
+                  </div>
+                </div>
+              ) : (
+                <PhaseSection key={phase.name} phase={phase} index={index} />
+              )
             ))}
           </div>
         </div>
@@ -893,11 +1026,11 @@ export default function HowItWorksPage() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              No More Typing.<br />
+              No More Typing.<br className="md:hidden" />{' '}
               Just Tap-to-Talk.<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400 mt-2 inline-block">ONRAMP Documents Everything.</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-3xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-3xl mx-auto">
               ONRAMP listens, understands context, and writes your repair orders while you work.<br className="hidden md:block" /> No typing. No terminal trips.
             </p>
           </motion.div>
@@ -919,15 +1052,15 @@ export default function HowItWorksPage() {
                 }`}
               >
                 <div className={`absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 ${
-                  activeStep === index ? 'bg-electric-500 text-white shadow-lg shadow-electric-500/50' : 'bg-carbon-700 text-carbon-300'
+                  activeStep === index ? 'bg-electric-500 text-white shadow-lg shadow-electric-500/50' : 'bg-carbon-700 text-carbon-200'
                 }`}>
                   {index + 1}
                 </div>
-                <div className={`inline-flex p-3 rounded-xl mb-4 ${activeStep === index ? 'bg-electric-500/20 text-electric-400' : 'bg-carbon-700/50 text-carbon-300'}`}>
+                <div className={`inline-flex p-3 rounded-xl mb-4 ${activeStep === index ? 'bg-electric-500/20 text-electric-400' : 'bg-carbon-700/50 text-carbon-200'}`}>
                   <step.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">{step.label}</h3>
-                <p className="text-carbon-300 text-sm">{step.description}</p>
+                <p className="text-carbon-200 text-sm">{step.description}</p>
               </motion.div>
             ))}
           </div>
@@ -946,7 +1079,7 @@ export default function HowItWorksPage() {
               Your AI,{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Your Way.</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               Best-in-class AI voice technology, personalized to each technician.
             </p>
           </motion.div>
@@ -962,15 +1095,24 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Hardware */}
-      <section className="py-20 px-4 bg-carbon-900/30">
+      <section
+        className="py-20 px-4 relative"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 50%',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               What You{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">Need</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              ONRAMP runs on hardware you probably already own. The Brain Button is the only new piece.
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
+              ONRAMP runs on hardware you already own.<br />The Brain Button is the only new piece.
             </p>
           </motion.div>
 
@@ -1011,7 +1153,7 @@ export default function HowItWorksPage() {
                   <item.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-xl mb-3">{item.name}</h3>
-                <p className="text-carbon-300 pr-14">{item.description}</p>
+                <p className="text-carbon-200 pr-14">{item.description}</p>
               </motion.div>
             ))}
           </div>

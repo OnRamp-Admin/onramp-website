@@ -3,7 +3,7 @@ import { mobileViewport } from '../lib/motion';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Clock, Zap, Wrench, DollarSign, TrendingUp,
+  Clock, Zap, Wrench, DollarSign, TrendingUp, ChevronDown,
   ArrowRight, Calculator, Search, ListChecks, FileCheck,
   CircleDot, Timer, Camera, Volume2, Brain,
   Smartphone, Radio, Rocket, UserCog,
@@ -186,7 +186,7 @@ function AnimatedClock({ minutes }: { minutes: number }) {
             stroke="currentColor"
             strokeWidth={isMajor ? 3 : 1.5}
             strokeLinecap="round"
-            className={isMajor ? 'text-carbon-300' : 'text-carbon-300'}
+            className={isMajor ? 'text-carbon-200' : 'text-carbon-200'}
           />
         );
       })}
@@ -325,7 +325,17 @@ function TerminateWastedTimeSection() {
   const currentPhase = timeSaverPhases[activePhase];
 
   return (
-    <section className="py-20 px-4 bg-carbon-900/30" ref={sectionRef}>
+    <section
+      className="py-20 px-4 relative"
+      ref={sectionRef}
+      style={{
+        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 40%',
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+      }}
+    >
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -339,7 +349,7 @@ function TerminateWastedTimeSection() {
             </span>
             <span className="block md:inline">{' '}at the Terminal!</span>
           </h2>
-          <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+          <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             Every trip away from the bay costs a few minutes! Minutes turn into hours, and hours turn into a bigger paycheck. ONRAMP keeps you <span className="text-white font-bold">ON TASK</span>.
           </p>
         </motion.div>
@@ -347,7 +357,7 @@ function TerminateWastedTimeSection() {
         <div className="flex flex-col md:grid md:grid-cols-2 items-start gap-10 md:gap-14 max-w-5xl mx-auto">
           {/* Left column: Clock — centered on mobile, pushed toward center on desktop */}
           <div className="flex flex-col items-center gap-4 w-full md:w-auto md:justify-self-end md:pr-4">
-            <div className="w-48 h-48 md:w-56 md:h-56 text-carbon-300">
+            <div className="w-48 h-48 md:w-56 md:h-56 text-carbon-200">
               <AnimatedClock minutes={clockMinutes} />
             </div>
             <div className="text-center">
@@ -360,7 +370,7 @@ function TerminateWastedTimeSection() {
               >
                 {clockMinutes} min
               </motion.span>
-              <p className="text-carbon-300 text-sm mt-1">saved per day</p>
+              <p className="text-carbon-200 text-sm mt-1">saved per day</p>
             </div>
           </div>
 
@@ -388,8 +398,8 @@ function TerminateWastedTimeSection() {
                           borderColor: isLit ? 'rgba(50,50,48,0.5)' : 'rgba(40,40,38,0.3)',
                         }}
                       >
-                        <span className={`text-2xl mt-0 flex-shrink-0 leading-none transition-colors duration-700 ${isLit ? currentPhase.color : 'text-carbon-300/30'}`}>{isLit ? '✓' : '○'}</span>
-                        <span className={`transition-colors duration-700 ${isLit ? 'text-carbon-200' : 'text-carbon-300'}`} style={{ fontSize: '16px' }}>{item}</span>
+                        <span className={`text-2xl mt-0 flex-shrink-0 leading-none transition-colors duration-700 ${isLit ? currentPhase.color : 'text-carbon-200/30'}`}>{isLit ? '✓' : '○'}</span>
+                        <span className={`transition-colors duration-700 ${isLit ? 'text-carbon-200' : 'text-carbon-200'}`} style={{ fontSize: '16px' }}>{item}</span>
                       </div>
                     );
                   })}
@@ -405,6 +415,7 @@ function TerminateWastedTimeSection() {
 
 export default function TechniciansPage() {
   const [hoveredPhase, setHoveredPhase] = useState<number | null>(null);
+  const [mobileExpandedPhases, setMobileExpandedPhases] = useState<Set<number>>(new Set());
   const [terminalVisits, setTerminalVisits] = useState(15);
   const [docMinutes, setDocMinutes] = useState(30);
   const [hourlyRate, setHourlyRate] = useState(FLAT_RATE_DEFAULT);
@@ -472,7 +483,7 @@ export default function TechniciansPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-carbon-300 mb-10 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-carbon-200 mb-10 max-w-3xl mx-auto"
           >
             ONRAMP is a hands-free AI voice assistant that stays with you through every job —
             from diagnosis to close-out. Diagnose faster, work smarter, and never write another RO report from scratch.
@@ -525,7 +536,7 @@ export default function TechniciansPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4 mb-4">
               ONRAMP Guides You Through Every Job
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               From first symptom to final report — ONRAMP is with you at every step.
               <span className="hidden md:inline"> Hover any phase to see the details.</span>
             </p>
@@ -537,6 +548,17 @@ export default function TechniciansPage() {
               const c = phaseColors[phase.color];
               const isHovered = hoveredPhase === i;
 
+              const isMobileExpanded = mobileExpandedPhases.has(i);
+
+              const toggleMobileExpand = () => {
+                setMobileExpandedPhases(prev => {
+                  const next = new Set(prev);
+                  if (next.has(i)) next.delete(i);
+                  else next.add(i);
+                  return next;
+                });
+              };
+
               return (
                 <motion.div
                   key={phase.name}
@@ -545,43 +567,82 @@ export default function TechniciansPage() {
                   viewport={mobileViewport}
                   transition={{ delay: i * 0.1 }}
                   onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredPhase(i); }}
-                  onClick={() => setHoveredPhase(isHovered ? null : i)}
+                  onClick={() => {
+                    // Desktop: toggle hover. Mobile: toggle expand.
+                    if (window.matchMedia('(hover: hover)').matches) {
+                      setHoveredPhase(isHovered ? null : i);
+                    } else {
+                      toggleMobileExpand();
+                    }
+                  }}
                   className={`rounded-2xl border cursor-default transition-all duration-400 overflow-hidden ${
-                    isHovered
+                    isHovered || isMobileExpanded
                       ? `${c.border} bg-carbon-800/80`
                       : `${c.border} bg-carbon-800/50 hover:bg-carbon-800/60`
                   }`}
                 >
                   <div className="p-4 md:p-6">
                     {/* Header row */}
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3">
                       <div className={`p-2.5 rounded-xl ${c.bg}`}>
                         <phase.icon className={`w-5 h-5 ${c.text}`} />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <span className={`text-sm font-bold tracking-widest uppercase ${c.text}`}>{phase.name}</span>
-                        {/* Desktop: dash + tagline inline. Mobile: tagline as subtext */}
-                        <span className="hidden md:inline text-carbon-300 text-sm ml-2">— {phase.tagline}</span>
+                        <span className="hidden md:inline text-carbon-200 text-sm ml-2">— {phase.tagline}</span>
                         <span className={`block md:hidden text-xs ${c.text} mt-0.5`}>{phase.tagline}</span>
                       </div>
-                    </div>
-
-                    <p className="text-carbon-300 text-sm leading-relaxed">{phase.description}</p>
-
-                    {/* Desktop: expand on hover. Mobile: always expanded */}
-                    {/* Mobile: always visible */}
-                    <div className="md:hidden mt-4 pt-4 border-t" style={{ borderColor: 'inherit' }}>
-                      <div className="grid grid-cols-1 gap-3">
-                        {phase.details.map((detail) => (
-                          <div key={detail} className="flex items-start gap-2.5">
-                            <div className={`flex-shrink-0 w-5 h-5 rounded-full ${c.bg} flex items-center justify-center mt-0.5`}>
-                              <Zap className={`w-3 h-3 ${c.text}`} />
-                            </div>
-                            <span className="text-carbon-200 text-sm">{detail}</span>
-                          </div>
-                        ))}
+                      {/* Mobile chevron — pulses when collapsed to draw attention */}
+                      <div className="md:hidden">
+                        <motion.div
+                          animate={{ rotate: isMobileExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <motion.div
+                            animate={isMobileExpanded
+                              ? { scale: 1, opacity: 1 }
+                              : { scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }
+                            }
+                            transition={isMobileExpanded
+                              ? { duration: 0.15 }
+                              : { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+                            }
+                          >
+                            <ChevronDown className={`w-6 h-6 ${c.text}`} />
+                          </motion.div>
+                        </motion.div>
                       </div>
                     </div>
+
+                    {/* Description — always visible on desktop, hidden on mobile unless expanded */}
+                    <p className="hidden md:block text-carbon-200 text-sm leading-relaxed mt-2">{phase.description}</p>
+
+                    {/* Mobile: collapsible content */}
+                    <AnimatePresence initial={false}>
+                      {isMobileExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          className="overflow-hidden md:hidden"
+                        >
+                          <p className="text-carbon-200 text-sm leading-relaxed mt-3">{phase.description}</p>
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'inherit' }}>
+                            <div className="grid grid-cols-1 gap-3">
+                              {phase.details.map((detail) => (
+                                <div key={detail} className="flex items-start gap-2.5">
+                                  <div className={`flex-shrink-0 w-5 h-5 rounded-full ${c.bg} flex items-center justify-center mt-0.5`}>
+                                    <Zap className={`w-3 h-3 ${c.text}`} />
+                                  </div>
+                                  <span className="text-carbon-200 text-sm">{detail}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Desktop: expandable on hover */}
                     <motion.div
@@ -644,7 +705,7 @@ export default function TechniciansPage() {
                 ONRAMP
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               It's like having a master technician riding shotgun on every job — helping you diagnose faster, prepare better, work more efficiently, and writing your reports so you can keep turning wrenches.
             </p>
           </motion.div>
@@ -665,16 +726,16 @@ export default function TechniciansPage() {
                       <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-red-500/10 md:group-hover:bg-red-500/0 flex items-center justify-center transition-all duration-500">
                         <Clock className="w-4 h-4 text-red-400/70 md:group-hover:text-red-400/30 transition-all duration-500" />
                       </div>
-                      <span className="text-carbon-300 md:group-hover:line-through md:group-hover:decoration-red-500/50 transition-all duration-500">
+                      <span className="text-carbon-200 md:group-hover:line-through md:group-hover:decoration-red-500/50 transition-all duration-500">
                         {item.pain}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 md:gap-3 transition-all duration-500">
                       <div className="flex-shrink-0 w-8 h-8 md:w-auto md:h-auto flex items-center justify-center">
                         <img src="/Onramp-Brain Bug-Pink.png" alt="" className="h-5 w-auto md:hidden" />
-                        <ArrowRight className="w-4 h-4 hidden md:block text-carbon-300 md:group-hover:text-electric-400 transition-colors duration-500" />
+                        <ArrowRight className="w-4 h-4 hidden md:block text-carbon-200 md:group-hover:text-electric-400 transition-colors duration-500" />
                       </div>
-                      <span className="text-electric-300 md:text-carbon-300 md:group-hover:text-electric-300 font-medium transition-colors duration-500">{item.solution}</span>
+                      <span className="text-electric-300 md:text-carbon-200 md:group-hover:text-electric-300 font-medium transition-colors duration-500">{item.solution}</span>
                     </div>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-electric-500/5 to-electric-500/10 opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -683,14 +744,23 @@ export default function TechniciansPage() {
             ))}
           </div>
 
-          <p className="text-carbon-300 text-sm text-center mt-6 hidden md:block">
+          <p className="text-carbon-200 text-sm text-center mt-6 hidden md:block">
             Hover over each item to see the ONRAMP difference
           </p>
         </div>
       </section>
 
       {/* ── Capabilities ─────────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-carbon-900/30">
+      <section
+        className="py-20 px-4 relative"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 50%',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -723,7 +793,7 @@ export default function TechniciansPage() {
                   <cap.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2">{cap.title}</h3>
-                <p className="text-carbon-300 text-sm leading-relaxed">{cap.description}</p>
+                <p className="text-carbon-200 text-sm leading-relaxed">{cap.description}</p>
               </motion.div>
             ))}
           </div>
@@ -738,7 +808,7 @@ export default function TechniciansPage() {
               What You{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">Need</span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               ONRAMP runs on hardware you probably already own. The Brain Button is the only new piece.
             </p>
           </motion.div>
@@ -796,7 +866,7 @@ export default function TechniciansPage() {
                   <item.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-xl mb-3">{item.name}</h3>
-                <p className="text-carbon-300 pr-14">{item.description}</p>
+                <p className="text-carbon-200 pr-14">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -824,7 +894,7 @@ export default function TechniciansPage() {
                 Wasted Income
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               See how much more you could be earning with the time ONRAMP saves you.
             </p>
           </motion.div>
@@ -844,7 +914,7 @@ export default function TechniciansPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">Time Savings Calculator</h3>
-                  <p className="text-carbon-300 text-sm">See your potential take-home boost</p>
+                  <p className="text-carbon-200 text-sm">See your potential take-home boost</p>
                 </div>
               </div>
 
@@ -853,7 +923,7 @@ export default function TechniciansPage() {
                 <div className="flex justify-between items-start gap-4 mb-3">
                   <label className="text-carbon-200 font-medium text-sm md:text-base">
                     How many times a day do you go to your terminal for diagnosis, TSB's, parts, procedures and torques?
-                    <span className="block text-carbon-300 text-sm font-normal">
+                    <span className="block text-carbon-200 text-sm font-normal">
                       (We assume ~4 min per visit)
                     </span>
                   </label>
@@ -867,7 +937,7 @@ export default function TechniciansPage() {
                   onChange={(e) => setTerminalVisits(Number(e.target.value))}
                   className="w-full"
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>5x</span>
                   <span>30x</span>
                 </div>
@@ -889,7 +959,7 @@ export default function TechniciansPage() {
                   onChange={(e) => setDocMinutes(Number(e.target.value))}
                   className="w-full"
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>5 min</span>
                   <span>60 min</span>
                 </div>
@@ -911,7 +981,7 @@ export default function TechniciansPage() {
                   onChange={(e) => setHourlyRate(Number(e.target.value))}
                   className="w-full"
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>$20/hr</span>
                   <span>$60/hr</span>
                 </div>
@@ -920,13 +990,13 @@ export default function TechniciansPage() {
               {/* Summary Stats */}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                 <div className="flex flex-col">
-                  <p className="text-carbon-300 text-sm flex-1">Daily time saved</p>
+                  <p className="text-carbon-200 text-sm flex-1">Daily time saved</p>
                   <p className="text-white font-bold text-xl mt-1">
                     {Math.round(dailyMinutesSaved)} min
                   </p>
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-carbon-300 text-sm flex-1">Weekly hours saved</p>
+                  <p className="text-carbon-200 text-sm flex-1">Weekly hours saved</p>
                   <p className="text-white font-bold text-xl mt-1">{weeklyHoursSaved.toFixed(1)} hrs</p>
                 </div>
               </div>
@@ -946,7 +1016,7 @@ export default function TechniciansPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">Your Take-Home Boost</h3>
-                  <p className="text-carbon-300 text-sm">Based on ${hourlyRate}/hr rate</p>
+                  <p className="text-carbon-200 text-sm">Based on ${hourlyRate}/hr rate</p>
                 </div>
               </div>
 
@@ -963,7 +1033,7 @@ export default function TechniciansPage() {
                   </span>
                   <span className="text-electric-400 text-2xl font-semibold">/mo</span>
                 </motion.div>
-                <p className="text-carbon-300">Potential monthly income boost</p>
+                <p className="text-carbon-200">Potential monthly income boost</p>
               </div>
 
               {/* Breakdown */}
@@ -988,7 +1058,7 @@ export default function TechniciansPage() {
                 </div>
               </div>
 
-              <p className="text-carbon-300 text-xs mt-6 text-center">
+              <p className="text-carbon-200 text-xs mt-6 text-center">
                 * Based on 5 days/week. Actual results vary by shop and workload.
               </p>
             </motion.div>
@@ -1002,7 +1072,7 @@ export default function TechniciansPage() {
             transition={{ delay: 0.4 }}
             className="mt-12 text-center"
           >
-            <p className="text-carbon-300 text-lg mb-6">
+            <p className="text-carbon-200 text-lg mb-6">
               These aren't hypotheticals. This is your money wasted —{' '}
               <span className="text-white font-bold">reclaim your income</span> with the tool that works alongside you.
             </p>
@@ -1030,7 +1100,7 @@ export default function TechniciansPage() {
                 Under 10 Minutes
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               When you sign up, you'll choose a start date. This gives us time to ship your Brain Button. From your start date, you'll be up and running in under 10 minutes.
             </p>
           </motion.div>
@@ -1082,7 +1152,7 @@ export default function TechniciansPage() {
                       {item.time}
                     </span>
                   </div>
-                  <p className="text-carbon-300 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
+                  <p className="text-carbon-200 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
                 </div>
               </motion.div>
             ))}

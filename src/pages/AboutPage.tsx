@@ -95,7 +95,7 @@ export default function AboutPage() {
                 <span className="md:ml-[0.25em]">SAVVY.</span>
               </span>
             </h1>
-            <p className="text-carbon-300 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+            <p className="text-carbon-200 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
               Twenty years in technology.<br />
               A lifetime in the garage.<br />
               One question that wouldn't go away.
@@ -116,7 +116,7 @@ export default function AboutPage() {
             {/* The Spark */}
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">The Spark</h2>
-              <div className="space-y-4 text-carbon-300 text-base md:text-lg leading-relaxed">
+              <div className="space-y-4 text-carbon-200 text-base md:text-lg leading-relaxed">
                 <p>
                   I've spent 20 years building software — from startups to enterprise, across industries,
                   through every wave of technology that promised to change the world. Most of them did.
@@ -135,7 +135,7 @@ export default function AboutPage() {
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Two Worlds</h2>
               <div className="flex flex-col lg:flex-row items-stretch gap-8 lg:gap-12">
                 {/* Text — left on desktop, wraps photo on mobile */}
-                <div className="flex-1 text-carbon-300 text-base md:text-lg leading-relaxed space-y-4">
+                <div className="flex-1 text-carbon-200 text-base md:text-lg leading-relaxed space-y-4">
                   <p>
                     Like a lot of people who develop a passion for the automotive industry, it started when I was a young
                     man turning wrenches with my dad in the garage. Cars, motorcycles, anything with an
@@ -171,7 +171,7 @@ export default function AboutPage() {
             {/* Why ONRAMP */}
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Why ONRAMP</h2>
-              <div className="space-y-4 text-carbon-300 text-base md:text-lg leading-relaxed">
+              <div className="space-y-4 text-carbon-200 text-base md:text-lg leading-relaxed">
                 <p>
                   That's why I built ONRAMP. It's an AI voice agent purpose-built for automotive
                   technicians. It rides along on every repair — diagnosing, coaching, documenting — so
@@ -198,7 +198,7 @@ export default function AboutPage() {
                     What if AI actually helped the people who need it most?
                   </span>
                 </p>
-                <p className="text-carbon-300">
+                <p className="text-carbon-200">
                   — Alex Littlewood, Founder
                 </p>
               </div>
@@ -238,7 +238,7 @@ export default function AboutPage() {
                   <value.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2">{value.title}</h3>
-                <p className="text-carbon-300 text-sm leading-relaxed">{value.description}</p>
+                <p className="text-carbon-200 text-sm leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -256,7 +256,7 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               What can <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-500">ONRAMP</span> do for you?
             </h2>
-            <p className="text-carbon-300 text-lg mb-8">
+            <p className="text-carbon-200 text-lg mb-8">
               Whether you're a technician looking to work smarter or a manager looking to drive profits — we built this for you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -43,7 +43,7 @@ function ComingSoonPage() {
       <div className="text-center">
         <img src="/Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" className="h-20 mb-8" />
         <h1 className="sr-only">ONRAMP</h1>
-        <p className="text-xl md:text-2xl text-carbon-300 mb-2">
+        <p className="text-xl md:text-2xl text-carbon-200 mb-2">
           Coming Soon
         </p>
         <p className="text-carbon-500 text-lg">

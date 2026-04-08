@@ -398,7 +398,7 @@ function ManagerPhaseCards() {
                 <phase.icon className={`w-5 h-5 ${phase.color}`} />
               </div>
               <h3 className={`text-sm font-bold ${phase.color} mb-1.5 tracking-wider`}>{phase.label}</h3>
-              <p className="text-carbon-300 text-xs md:text-sm">{phase.shortDesc}</p>
+              <p className="text-carbon-200 text-xs md:text-sm">{phase.shortDesc}</p>
 
               {/* Active indicator arrow — desktop only */}
               {isActive && (
@@ -439,7 +439,7 @@ function ManagerPhaseCards() {
                 </div>
                 <h4 className={`font-bold text-lg tracking-wider ${managerPhases[activePhase].color}`}>{managerPhases[activePhase].label}</h4>
               </div>
-              <p className="text-carbon-300 text-sm md:text-base mb-4">
+              <p className="text-carbon-200 text-sm md:text-base mb-4">
                 {mgrRichDescriptions[managerPhases[activePhase].desc] || managerPhases[activePhase].desc}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -457,7 +457,7 @@ function ManagerPhaseCards() {
 
       {/* Mobile hint */}
       {activePhase === null && (
-        <p className="md:hidden text-carbon-300 text-xs mt-3 text-center">Tap each phase to learn more</p>
+        <p className="md:hidden text-carbon-200 text-xs mt-3 text-center">Tap each phase to learn more</p>
       )}
     </div>
   );
@@ -535,7 +535,7 @@ export default function ManagersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-carbon-300 mb-10 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-carbon-200 mb-10 max-w-3xl mx-auto"
           >
             ONRAMP gives your entire team AI-powered diagnostics, step-by-step repair guidance, and automated RO documentation.
             Faster turn times. Better warranty approvals. Techs who want to stay.
@@ -573,7 +573,16 @@ export default function ManagersPage() {
       </section>
 
       {/* ── Three Profit Levers ──────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-carbon-900/30">
+      <section
+        className="py-20 px-4 relative"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 50%',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -590,7 +599,7 @@ export default function ManagersPage() {
                 One Tool.
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               ONRAMP drives profit from three directions simultaneously — efficiency, warranty recovery, and talent development.
             </p>
           </motion.div>
@@ -614,12 +623,12 @@ export default function ManagersPage() {
                       </div>
                       <div>
                         <div className={`text-3xl font-bold ${c.stat}`}>{lever.stat}</div>
-                        <div className="text-carbon-300 text-xs">{lever.statLabel}</div>
+                        <div className="text-carbon-200 text-xs">{lever.statLabel}</div>
                       </div>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-white font-bold text-xl mb-2">{lever.title}</h3>
-                      <p className="text-carbon-300 leading-relaxed">{lever.description}</p>
+                      <p className="text-carbon-200 leading-relaxed">{lever.description}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -647,8 +656,8 @@ export default function ManagersPage() {
                 AI-Powered.
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-              Your entire service department operating at peak performance — simultaneously. Every technician gets the same best-in-class AI coaching, on every repair, all at once.
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
+              Your entire service department operating at peak performance — simultaneously. Every technician gets the same best-in-class AI coaching, on every step of every repair.
             </p>
           </motion.div>
 
@@ -661,7 +670,16 @@ export default function ManagersPage() {
       </section>
 
       {/* ── What Managers Get ────────────────────────────────────────── */}
-      <section className="py-20 px-4 carbon-fiber-bg">
+      <section
+        className="py-20 px-4 relative"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 50%',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -678,7 +696,7 @@ export default function ManagersPage() {
                 Zero Interruptions.
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               See what your techs are working on, what they're waiting on, and where every job stands — real-time status and documentation visibility without interrupting a single repair.
             </p>
           </motion.div>
@@ -697,7 +715,7 @@ export default function ManagersPage() {
                   <feat.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2">{feat.title}</h3>
-                <p className="text-carbon-300 text-sm leading-relaxed">{feat.description}</p>
+                <p className="text-carbon-200 text-sm leading-relaxed">{feat.description}</p>
               </motion.div>
             ))}
           </div>
@@ -723,7 +741,7 @@ export default function ManagersPage() {
                 OEM's Table
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               Poor documentation costs shops thousands in rejected warranty claims every year.
               ONRAMP generates RO narratives that get approved the first time.
             </p>
@@ -745,7 +763,7 @@ export default function ManagersPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-carbon-300">{feature.description}</p>
+                  <p className="text-carbon-200">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -765,31 +783,31 @@ export default function ManagersPage() {
             </div>
             <div className="font-mono text-sm space-y-3">
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-electric-500">
-                <span className="text-carbon-300">CONCERN:</span>
+                <span className="text-carbon-200">CONCERN:</span>
                 <span className="text-carbon-200 ml-2">
                   Customer states vehicle intermittent no-start condition, occurs after sitting overnight
                 </span>
               </div>
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-safety-500">
-                <span className="text-carbon-300">CAUSE:</span>
+                <span className="text-carbon-200">CAUSE:</span>
                 <span className="text-carbon-200 ml-2">
                   Found B+ battery cable terminal end severely corroded, causing voltage drop of 2.3V under load. Parasitic draw within spec at 32mA.
                 </span>
               </div>
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-green-500">
-                <span className="text-carbon-300">CORRECTION:</span>
+                <span className="text-carbon-200">CORRECTION:</span>
                 <span className="text-carbon-200 ml-2">
                   Replaced B+ cable terminal end per TSB 19-NA-123. Cleaned battery posts, applied dielectric grease. Load tested battery at 625 CCA (spec: 600 CCA). System operates as designed.
                 </span>
               </div>
               <div className="p-3 rounded bg-carbon-900/80 border-l-4 border-amber-500">
-                <span className="text-carbon-300">VALIDATION:</span>
+                <span className="text-carbon-200">VALIDATION:</span>
                 <span className="text-carbon-200 ml-2">
                   Vehicle started and shut off 5 consecutive times with no hesitation. Overnight cold-soak test passed — vehicle started on first crank after 14-hour sit. Voltage drop under load measured 0.1V (spec: &lt;0.5V). Repair verified.
                 </span>
               </div>
             </div>
-            <p className="text-carbon-300 text-sm mt-4">
+            <p className="text-carbon-200 text-sm mt-4">
               * Generated automatically from technician voice notes during the repair — no typing required.
             </p>
           </motion.div>
@@ -817,7 +835,7 @@ export default function ManagersPage() {
                 Hidden Revenue
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               See how ONRAMP can unlock hidden revenue and lost profits for your service department.
             </p>
           </motion.div>
@@ -837,7 +855,7 @@ export default function ManagersPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">Shop Profit Calculator</h3>
-                  <p className="text-carbon-300 text-sm">Find your hidden capacity</p>
+                  <p className="text-carbon-200 text-sm">Find your hidden capacity</p>
                 </div>
               </div>
 
@@ -860,7 +878,7 @@ export default function ManagersPage() {
                     background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
                   }}
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>3 techs</span>
                   <span>100 techs</span>
                 </div>
@@ -871,7 +889,7 @@ export default function ManagersPage() {
                 <div className="flex justify-between items-start gap-4 mb-3">
                   <label className="text-carbon-200 font-medium text-sm md:text-base">
                     How much more efficient would your techs be if they weren't constantly going to the terminal?
-                    <span className="block text-carbon-300 text-sm font-normal">
+                    <span className="block text-carbon-200 text-sm font-normal">
                       (Average shops see 10-15%)
                     </span>
                   </label>
@@ -888,7 +906,7 @@ export default function ManagersPage() {
                     background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
                   }}
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>5%</span>
                   <span>25%</span>
                 </div>
@@ -899,7 +917,7 @@ export default function ManagersPage() {
                 <div className="flex justify-between items-start gap-4 mb-3">
                   <label className="text-carbon-200 font-medium text-sm md:text-base">
                     Warranty recovery from improved documentation
-                    <span className="block text-carbon-300 text-sm font-normal">
+                    <span className="block text-carbon-200 text-sm font-normal">
                       (Approval rate improvement)
                     </span>
                   </label>
@@ -916,7 +934,7 @@ export default function ManagersPage() {
                     background: `linear-gradient(to right, var(--color-green-600), var(--color-green-400))`,
                   }}
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>1%</span>
                   <span>15%</span>
                 </div>
@@ -925,13 +943,13 @@ export default function ManagersPage() {
               {/* Summary Stats */}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                 <div className="flex flex-col">
-                  <p className="text-carbon-300 text-sm flex-1">Current annual capacity</p>
+                  <p className="text-carbon-200 text-sm flex-1">Current annual capacity</p>
                   <p className="text-white font-bold text-xl mt-1">
                     {currentCapacity.toLocaleString()} hrs
                   </p>
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-carbon-300 text-sm flex-1">Found capacity</p>
+                  <p className="text-carbon-200 text-sm flex-1">Found capacity</p>
                   <p className="text-white font-bold text-xl mt-1">
                     +{Math.round(additionalCapacity).toLocaleString()} hrs
                   </p>
@@ -953,7 +971,7 @@ export default function ManagersPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">Hidden Revenue Unlocked</h3>
-                  <p className="text-carbon-300 text-sm">Annual shop profit potential</p>
+                  <p className="text-carbon-200 text-sm">Annual shop profit potential</p>
                 </div>
               </div>
 
@@ -977,7 +995,7 @@ export default function ManagersPage() {
                     background: `linear-gradient(to right, var(--color-safety-600), var(--color-safety-500))`,
                   }}
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>$75/hr</span>
                   <span>$300/hr</span>
                 </div>
@@ -996,7 +1014,7 @@ export default function ManagersPage() {
                   </span>
                   <span className="text-safety-400 text-2xl font-semibold">/yr</span>
                 </motion.div>
-                <p className="text-carbon-300">Total revenue opportunity</p>
+                <p className="text-carbon-200">Total revenue opportunity</p>
               </div>
 
               {/* Breakdown */}
@@ -1021,7 +1039,7 @@ export default function ManagersPage() {
                 </div>
               </div>
 
-              <p className="text-carbon-300 text-xs mt-6 text-center">
+              <p className="text-carbon-200 text-xs mt-6 text-center">
                 * Based on ${shopRate}/hr shop rate, 25% warranty work volume.
               </p>
             </motion.div>
@@ -1035,7 +1053,7 @@ export default function ManagersPage() {
             transition={{ delay: 0.4 }}
             className="mt-12 text-center"
           >
-            <p className="text-carbon-300 text-lg mb-6">
+            <p className="text-carbon-200 text-lg mb-6">
               These aren't hypothetical numbers. This is{' '}
               <span className="text-white font-semibold">found capacity</span>—profitability that's
               currently evaporating.
@@ -1064,7 +1082,7 @@ export default function ManagersPage() {
                 Under 20 Minutes
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               When you sign up, you'll choose a start date. This gives us time to ship Brain Buttons for your team. From your start date, your entire service department will be up and running in under 20 minutes.
             </p>
           </motion.div>
@@ -1109,7 +1127,7 @@ export default function ManagersPage() {
                         {item.time}
                       </span>
                     </div>
-                    <p className="text-carbon-300 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
+                    <p className="text-carbon-200 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -1184,7 +1202,7 @@ export default function ManagersPage() {
                         {item.time}
                       </span>
                     </div>
-                    <p className="text-carbon-300 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
+                    <p className="text-carbon-200 text-sm md:text-base ml-[36px] md:ml-12">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -1198,7 +1216,7 @@ export default function ManagersPage() {
             transition={{ delay: 0.6 }}
             className="text-center mt-12"
           >
-            <p className="text-carbon-300 text-lg mb-2">
+            <p className="text-carbon-200 text-lg mb-2">
               Admin setup in <span className="text-safety-400 font-semibold">8 minutes</span>. Each tech ready in <span className="text-electric-400 font-semibold">8 minutes</span>.
             </p>
             <p className="text-carbon-400 text-lg font-medium">

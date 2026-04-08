@@ -105,7 +105,14 @@ export default function Hero() {
   const [activePhase, setActivePhase] = useState<number | null>(null);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center px-4 py-20 carbon-fiber-bg overflow-hidden">
+    <section
+      className="relative min-h-screen flex flex-col justify-center items-center px-4 py-20 overflow-hidden"
+      style={{
+        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: '70% 50%',
+      }}
+    >
       {/* Background Gradient Orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-electric-500/20 rounded-full blur-[128px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-safety-500/15 rounded-full blur-[128px]" />
@@ -130,7 +137,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-base md:text-xl text-carbon-300 mb-12 max-w-3xl mx-auto"
+          className="text-base md:text-xl text-carbon-200 mb-12 max-w-3xl mx-auto"
         >
           ONRAMP is the hands-free, <span className="text-white font-bold">AI voice agent</span> helping technicians flag more hours.
           Our AI helps techs diagnose faster, execute complex procedures flawlessly,
@@ -173,7 +180,7 @@ export default function Hero() {
                   <h3 className={`text-sm md:text-base font-bold ${phase.color} mb-1.5 tracking-wider`}>
                     {phase.label}
                   </h3>
-                  <p className="text-carbon-300 text-xs md:text-sm">{phase.description}</p>
+                  <p className="text-carbon-200 text-xs md:text-sm">{phase.description}</p>
 
                   {/* Connection Line */}
                   {index < phases.length - 1 && (
@@ -219,7 +226,7 @@ export default function Hero() {
                     </div>
                     <h4 className={`font-bold text-lg tracking-wider ${phases[activePhase].color}`}>{phases[activePhase].label}</h4>
                   </div>
-                  <p className="text-carbon-300 text-sm md:text-base mb-4">
+                  <p className="text-carbon-200 text-sm md:text-base mb-4">
                     {richDescriptions[phases[activePhase].detailDescription] || phases[activePhase].detailDescription}
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -238,7 +245,7 @@ export default function Hero() {
 
         {/* Mobile hint — only visible when no phase is active */}
         {activePhase === null && (
-          <p className="md:hidden text-carbon-300 text-xs mt-2 mb-4">Tap each phase to learn more</p>
+          <p className="md:hidden text-carbon-200 text-xs mt-2 mb-4">Tap each phase to learn more</p>
         )}
 
         {/* CTA Button */}

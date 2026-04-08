@@ -63,7 +63,7 @@ export default function WorkflowVisualization() {
               Document Everything.
             </span>
           </h2>
-          <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+          <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             ONRAMP listens, understands context, and writes your repair orders while you work.
             No typing. No terminal trips. Just turn wrenches and talk.
           </p>
@@ -115,7 +115,7 @@ export default function WorkflowVisualization() {
                     className={`absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 z-10 ${
                       activeStep === index
                         ? 'bg-electric-500 text-white shadow-lg shadow-electric-500/50'
-                        : 'bg-carbon-700 text-carbon-300'
+                        : 'bg-carbon-700 text-carbon-200'
                     }`}
                   >
                     {index + 1}
@@ -134,7 +134,7 @@ export default function WorkflowVisualization() {
                       className={`inline-flex p-3 rounded-xl mb-4 transition-colors duration-300 ${
                         activeStep === index
                           ? 'bg-electric-500/20 text-electric-400'
-                          : 'bg-carbon-700/50 text-carbon-300 group-hover:text-electric-400'
+                          : 'bg-carbon-700/50 text-carbon-200 group-hover:text-electric-400'
                       }`}
                     >
                       <step.icon className="w-6 h-6" />
@@ -142,14 +142,14 @@ export default function WorkflowVisualization() {
 
                     {/* Content */}
                     <h3 className="text-white font-semibold mb-2">{step.label}</h3>
-                    <p className="text-carbon-300 text-sm">{step.description}</p>
+                    <p className="text-carbon-200 text-sm">{step.description}</p>
                   </div>
 
                   {/* Arrow */}
                   {index < workflowSteps.length - 1 && (
                     <ArrowRight
                       className={`absolute top-1/2 -right-5 w-4 h-4 transition-colors duration-300 ${
-                        activeStep === index ? 'text-electric-400' : 'text-carbon-300'
+                        activeStep === index ? 'text-electric-400' : 'text-carbon-200'
                       }`}
                     />
                   )}
@@ -183,14 +183,14 @@ export default function WorkflowVisualization() {
                   className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
                     activeStep === index
                       ? 'bg-electric-500 text-white'
-                      : 'bg-carbon-700 text-carbon-300'
+                      : 'bg-carbon-700 text-carbon-200'
                   }`}
                 >
                   <step.icon className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-white font-semibold mb-1">{step.label}</h3>
-                  <p className="text-carbon-300 text-sm">{step.description}</p>
+                  <p className="text-carbon-200 text-sm">{step.description}</p>
                 </div>
               </div>
             </motion.div>

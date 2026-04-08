@@ -524,7 +524,7 @@ function FeatureGrid() {
               Every Plan
             </span>
           </h2>
-          <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+          <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             No feature gates, no upsells. Every plan gets the full ONRAMP platform.
           </p>
         </motion.div>
@@ -601,7 +601,7 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -618,7 +618,7 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
               <h3 className="text-2xl font-bold text-white mb-2">
                 The Key to Hands-Free
               </h3>
-              <p className="text-carbon-300 text-sm">
+              <p className="text-carbon-200 text-sm">
                 The Brain Button is a required purchase with the ONRAMP subscription — it's essential to hands-free operation.
               </p>
             </div>
@@ -644,14 +644,14 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">{item.title}</p>
-                    <p className="text-carbon-300 text-sm">{item.desc}</p>
+                    <p className="text-carbon-200 text-sm">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50">
-              <p className="text-carbon-300 text-xs text-center">
+              <p className="text-carbon-200 text-xs text-center">
                 One-time purchase. Required for use. Discounts available depending on your plan level.
               </p>
             </div>
@@ -686,7 +686,7 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -702,7 +702,7 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
               <h3 className="text-2xl font-bold text-white mb-2">
                 The Key to Hands-Free
               </h3>
-              <p className="text-carbon-300 text-sm">
+              <p className="text-carbon-200 text-sm">
                 The Brain Button is a required purchase with the ONRAMP subscription — it's essential to hands-free operation.
               </p>
             </div>
@@ -732,14 +732,14 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">{item.title}</p>
-                    <p className="text-carbon-300 text-sm">{item.desc}</p>
+                    <p className="text-carbon-200 text-sm">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50">
-              <p className="text-carbon-300 text-xs text-center">
+              <p className="text-carbon-200 text-xs text-center">
                 One-time purchase. Brain Button pricing varies by plan level — discounts applied automatically.
               </p>
             </div>
@@ -797,7 +797,7 @@ function SeatsInfoModal({ open, onClose }: { open: boolean; onClose: () => void 
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -810,7 +810,7 @@ function SeatsInfoModal({ open, onClose }: { open: boolean; onClose: () => void 
               <h3 className="text-2xl font-bold text-white mb-2">
                 Technician Seats
               </h3>
-              <p className="text-carbon-300 text-sm">
+              <p className="text-carbon-200 text-sm">
                 Common questions about team sizing on ONRAMP.
               </p>
             </div>
@@ -819,7 +819,7 @@ function SeatsInfoModal({ open, onClose }: { open: boolean; onClose: () => void 
               {faqs.map((faq) => (
                 <div key={faq.q}>
                   <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
-                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-carbon-200 text-sm leading-relaxed">{faq.a}</p>
                 </div>
               ))}
             </div>
@@ -873,7 +873,7 @@ function UsageLevelModal({ open, onClose }: { open: boolean; onClose: () => void
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -886,7 +886,7 @@ function UsageLevelModal({ open, onClose }: { open: boolean; onClose: () => void
               <h3 className="text-2xl font-bold text-white mb-2">
                 Usage Levels
               </h3>
-              <p className="text-carbon-300 text-sm">
+              <p className="text-carbon-200 text-sm">
                 How Voice AI hours work on each plan.
               </p>
             </div>
@@ -895,7 +895,7 @@ function UsageLevelModal({ open, onClose }: { open: boolean; onClose: () => void
               {faqs.map((faq) => (
                 <div key={faq.q}>
                   <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
-                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-carbon-200 text-sm leading-relaxed">{faq.a}</p>
                 </div>
               ))}
             </div>
@@ -949,7 +949,7 @@ function IndividualUsageLevelModal({ open, onClose }: { open: boolean; onClose: 
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -962,7 +962,7 @@ function IndividualUsageLevelModal({ open, onClose }: { open: boolean; onClose: 
               <h3 className="text-2xl font-bold text-white mb-2">
                 How Many Hours Do I Need?
               </h3>
-              <p className="text-carbon-300 text-sm">
+              <p className="text-carbon-200 text-sm">
                 A guide to choosing the right plan based on how you work.
               </p>
             </div>
@@ -971,7 +971,7 @@ function IndividualUsageLevelModal({ open, onClose }: { open: boolean; onClose: 
               {faqs.map((faq) => (
                 <div key={faq.q}>
                   <p className="text-white font-semibold text-sm mb-1">{faq.q}</p>
-                  <p className="text-carbon-300 text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-carbon-200 text-sm leading-relaxed">{faq.a}</p>
                 </div>
               ))}
             </div>
@@ -1174,7 +1174,7 @@ function SignupModal({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-300 hover:text-white transition-colors z-10 cursor-pointer"
+            className="absolute top-4 right-4 p-1.5 rounded-lg bg-carbon-700/50 hover:bg-carbon-600/50 text-carbon-200 hover:text-white transition-colors z-10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -1191,7 +1191,7 @@ function SignupModal({
                   <CheckCircle2 className={`w-8 h-8 ${c.text}`} />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">We'll be in touch!</h3>
-                <p className="text-carbon-300 text-sm max-w-sm">
+                <p className="text-carbon-200 text-sm max-w-sm">
                   Thanks for your interest in ONRAMP. Someone from our team will reach out shortly to get you set up.
                 </p>
                 <button
@@ -1206,7 +1206,7 @@ function SignupModal({
               <>
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-                  <p className="text-carbon-300 text-sm">{subtitle}</p>
+                  <p className="text-carbon-200 text-sm">{subtitle}</p>
                 </div>
 
                 {/* Service Center plan summary */}
@@ -1228,7 +1228,7 @@ function SignupModal({
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Shop Name with Places Autocomplete — first field */}
                   <div className="relative" ref={suggestionsRef}>
-                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Dealership / Shop Name *</label>
+                    <label className="block text-carbon-200 text-xs font-medium mb-1.5">Dealership / Shop Name *</label>
                     {shopSelected ? (
                       <div className="relative">
                         <div className={`${inputClasses} pr-10 cursor-default`}>
@@ -1236,21 +1236,21 @@ function SignupModal({
                             <Building2 className="w-4 h-4 text-electric-400 flex-shrink-0" />
                             <div className="min-w-0">
                               <div className="text-white text-sm font-medium">{shopName}</div>
-                              {shopAddress && <div className="text-carbon-300 text-xs">{shopAddress}</div>}
+                              {shopAddress && <div className="text-carbon-200 text-xs">{shopAddress}</div>}
                             </div>
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={clearShopSelection}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-300 hover:text-white transition-colors cursor-pointer"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-200 hover:text-white transition-colors cursor-pointer"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                     ) : (
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-300" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-200" />
                         <input
                           type="text"
                           value={shopName}
@@ -1263,7 +1263,7 @@ function SignupModal({
                     )}
                     {showSuggestions && suggestions.length > 0 && (
                       <div className="absolute z-20 w-full mt-1 rounded-xl bg-carbon-800 border border-carbon-700/50 shadow-2xl max-h-48 overflow-y-auto">
-                        <div className="px-3 py-2 text-xs font-semibold text-carbon-300 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
+                        <div className="px-3 py-2 text-xs font-semibold text-carbon-200 bg-carbon-800/80 border-b border-carbon-700/30 rounded-t-xl">
                           Service Centers Near You
                         </div>
                         {suggestions.map((place, idx) => (
@@ -1274,7 +1274,7 @@ function SignupModal({
                             className="w-full text-left px-4 py-3 hover:bg-carbon-700/50 border-b border-carbon-700/20 last:border-b-0 last:rounded-b-xl transition-colors cursor-pointer"
                           >
                             <div className="text-white text-sm font-medium">{place.name}</div>
-                            <div className="text-carbon-300 text-xs mt-0.5">{place.formattedAddress}</div>
+                            <div className="text-carbon-200 text-xs mt-0.5">{place.formattedAddress}</div>
                           </button>
                         ))}
                       </div>
@@ -1282,7 +1282,7 @@ function SignupModal({
                   </div>
 
                   <div>
-                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Name *</label>
+                    <label className="block text-carbon-200 text-xs font-medium mb-1.5">Name *</label>
                     <input
                       type="text"
                       value={name}
@@ -1294,7 +1294,7 @@ function SignupModal({
                   </div>
 
                   <div>
-                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Email *</label>
+                    <label className="block text-carbon-200 text-xs font-medium mb-1.5">Email *</label>
                     <input
                       type="email"
                       value={email}
@@ -1306,7 +1306,7 @@ function SignupModal({
                   </div>
 
                   <div>
-                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Phone *</label>
+                    <label className="block text-carbon-200 text-xs font-medium mb-1.5">Phone *</label>
                     <input
                       type="tel"
                       value={phone}
@@ -1318,7 +1318,7 @@ function SignupModal({
                   </div>
 
                   <div>
-                    <label className="block text-carbon-300 text-xs font-medium mb-1.5">Role *</label>
+                    <label className="block text-carbon-200 text-xs font-medium mb-1.5">Role *</label>
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
@@ -1406,7 +1406,7 @@ function IndividualPricing() {
                 Level
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               Every plan includes <span className="underline">every</span> feature.
               <br />The only difference is how many hours of Voice AI are included.
             </p>
@@ -1459,7 +1459,7 @@ function IndividualPricing() {
                     <span className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                       isActive
                         ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
-                        : 'bg-carbon-700/80 text-carbon-300 border border-carbon-600/50'
+                        : 'bg-carbon-700/80 text-carbon-200 border border-carbon-600/50'
                     }`}>
                       {badgeLabels[tier.key]}
                     </span>
@@ -1468,7 +1468,7 @@ function IndividualPricing() {
                   <div className={`inline-flex p-3 rounded-xl mb-4 transition-colors duration-300 ${
                     isActive
                       ? `${tc.bgSubtle} ${tc.text}`
-                      : 'bg-carbon-700/30 text-carbon-300'
+                      : 'bg-carbon-700/30 text-carbon-200'
                   }`}>
                     <tier.icon className="w-6 h-6" />
                   </div>
@@ -1479,7 +1479,7 @@ function IndividualPricing() {
                       <span className={`text-sm font-bold px-3 py-1 rounded-full transition-colors duration-300 ${
                         isActive
                           ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-                          : 'bg-carbon-700/50 text-carbon-300 border border-carbon-600/50'
+                          : 'bg-carbon-700/50 text-carbon-200 border border-carbon-600/50'
                       }`}>
                         20% Off Deal
                       </span>
@@ -1488,19 +1488,19 @@ function IndividualPricing() {
 
                   <div className="flex items-baseline gap-1 mb-1">
                     {tier.originalPricePerSeat && (
-                      <span className="text-carbon-300 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
+                      <span className="text-carbon-200 text-lg line-through mr-1">${tier.originalPricePerSeat}</span>
                     )}
                     <span className={`text-4xl font-bold ${tier.originalPricePerSeat && isActive ? 'text-green-400' : 'text-white'}`}>${tier.pricePerSeat}</span>
-                    <span className="text-carbon-300">/mo</span>
+                    <span className="text-carbon-200">/mo</span>
                   </div>
 
                   <div className={`text-sm font-semibold mb-4 transition-colors duration-300 ${
-                    isActive ? tc.text : 'text-carbon-300'
+                    isActive ? tc.text : 'text-carbon-200'
                   }`}>
                     {tier.hoursPerSeat === Infinity ? 'Unlimited' : tier.hoursPerSeat} Voice AI hours / mo
                   </div>
 
-                  <p className="text-carbon-300 text-sm mb-6">{tier.description}</p>
+                  <p className="text-carbon-200 text-sm mb-6">{tier.description}</p>
 
                   <div className={`relative rounded-xl p-4 mb-6 transition-colors duration-300 ${
                     isActive
@@ -1514,10 +1514,10 @@ function IndividualPricing() {
                       <HelpCircle className="w-4 h-4" />
                     </button>
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-carbon-300" />
+                      <Clock className="w-4 h-4 text-carbon-200" />
                       <span className="text-carbon-200 text-sm font-medium">Voice AI Usage</span>
                     </div>
-                    <div className="text-carbon-300 text-sm space-y-1">
+                    <div className="text-carbon-200 text-sm space-y-1">
                       <div className="flex justify-between">
                         <span>Included hours</span>
                         <span className="text-white font-semibold">
@@ -1557,21 +1557,21 @@ function IndividualPricing() {
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <MousePointerClick className="w-4 h-4 text-carbon-300" />
+                          <MousePointerClick className="w-4 h-4 text-carbon-200" />
                           <span className="text-carbon-200 text-sm font-medium">Brain Button</span>
                         </div>
                         {tier.key === 'unlimited' ? (
                           <div className="text-green-400 font-bold text-lg">FREE</div>
                         ) : tier.key === 'pro' ? (
                           <div className="flex items-baseline gap-2">
-                            <span className="text-carbon-300 line-through text-sm">$49.99</span>
+                            <span className="text-carbon-200 line-through text-sm">$49.99</span>
                             <span className="text-white font-bold text-lg">$24.99</span>
-                            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isActive ? 'bg-safety-500/15 text-safety-400' : 'bg-carbon-600/30 text-carbon-300'}`}>50% off</span>
+                            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isActive ? 'bg-safety-500/15 text-safety-400' : 'bg-carbon-600/30 text-carbon-200'}`}>50% off</span>
                           </div>
                         ) : (
                           <div className="text-white font-bold text-lg">$49.99</div>
                         )}
-                        <p className="text-carbon-300 text-xs mt-1">One-time purchase.<br />Required for use.</p>
+                        <p className="text-carbon-200 text-xs mt-1">One-time purchase.<br />Required for use.</p>
                       </div>
                     </div>
                   </div>
@@ -1698,7 +1698,7 @@ function ServiceCenterPricing() {
                 Shop Plan
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               Choose your usage level, team size, and Brain Buttons.
               <br />Every seat/plan gets <span className="underline">every</span> feature — the only difference is Voice AI hours.
             </p>
@@ -1727,7 +1727,7 @@ function ServiceCenterPricing() {
                 <div className="flex items-center ml-12 h-10">
                   <h3 className="text-white font-bold text-lg">Usage Level</h3>
                 </div>
-                <p className="text-carbon-300 text-sm mb-6 ml-12">
+                <p className="text-carbon-200 text-sm mb-6 ml-12">
                   Determines the Voice AI hours included per technician each month. Total hours are pooled and shared by all.
                 </p>
 
@@ -1777,21 +1777,21 @@ function ServiceCenterPricing() {
                       </div>
                       <div className="sm:ml-auto sm:text-right">
                         {tier.originalPricePerSeat && (
-                          <span className="text-carbon-300 text-sm line-through mr-2">${tier.originalPricePerSeat}</span>
+                          <span className="text-carbon-200 text-sm line-through mr-2">${tier.originalPricePerSeat}</span>
                         )}
                         <span className="text-white font-bold text-xl">${tier.pricePerSeat}</span>
-                        <span className="text-carbon-300 text-sm">/seat/mo</span>
+                        <span className="text-carbon-200 text-sm">/seat/mo</span>
                       </div>
                     </div>
-                    <p className="text-carbon-300 text-sm mb-3">{tier.description}</p>
+                    <p className="text-carbon-200 text-sm mb-3">{tier.description}</p>
                     {/* Stats: title on top, value below — larger */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-3 rounded-lg bg-carbon-900/40 text-center">
-                        <span className="text-carbon-300 text-xs block mb-1">Included hours</span>
+                        <span className="text-carbon-200 text-xs block mb-1">Included hours</span>
                         <span className={`font-bold ${c.text} ${isUnlimited ? 'text-3xl leading-none' : 'text-lg'}`}>{isUnlimited ? '∞' : `${tier.hoursPerSeat}/tech`}</span>
                       </div>
                       <div className="p-3 rounded-lg bg-carbon-900/40 text-center">
-                        <span className="text-carbon-300 text-xs block mb-1">Overage rate</span>
+                        <span className="text-carbon-200 text-xs block mb-1">Overage rate</span>
                         <span className={`font-bold text-lg ${c.text}`}>{tier.additionalRate === 0 ? 'N/A' : `$${tier.additionalRate}/hr`}</span>
                       </div>
                     </div>
@@ -1813,7 +1813,7 @@ function ServiceCenterPricing() {
                 <div className="flex items-center ml-12 h-10">
                   <h3 className="text-white font-bold text-lg">Technician Seats</h3>
                 </div>
-                <p className="text-carbon-300 text-sm mb-6 ml-12">
+                <p className="text-carbon-200 text-sm mb-6 ml-12">
                   The number of technicians with access to ONRAMP.
                 </p>
 
@@ -1833,7 +1833,7 @@ function ServiceCenterPricing() {
                   className="w-full"
                   style={{ background: `linear-gradient(to right, var(${c.sliderFrom}), var(${c.sliderTo}))` }}
                 />
-                <div className="flex justify-between text-carbon-300 text-xs mt-1">
+                <div className="flex justify-between text-carbon-200 text-xs mt-1">
                   <span>5 techs</span>
                   <span>50 techs</span>
                 </div>
@@ -1858,7 +1858,7 @@ function ServiceCenterPricing() {
                         ? { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' }
                         : unlimitedCombinedRate >= 0.25
                           ? { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' }
-                          : { bg: 'bg-white/5', border: 'border-white/10', text: 'text-carbon-300' }
+                          : { bg: 'bg-white/5', border: 'border-white/10', text: 'text-carbon-200' }
                     : volumeDiscount >= 0.15
                       ? { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' }
                       : { bg: c.saveBg, border: c.borderPill, text: c.saveText };
@@ -1869,13 +1869,13 @@ function ServiceCenterPricing() {
                         {currentPct}% {discountLabel}
                       </span>
                       {nextTier && (
-                        <p className="text-carbon-300 text-xs mt-1">
+                        <p className="text-carbon-200 text-xs mt-1">
                           Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-white font-medium">{nextTier.pct}% {nextTier.label} discount</span>
                         </p>
                       )}
                     </div>
                   ) : nextTier ? (
-                    <p className="text-carbon-300 text-xs mt-3">
+                    <p className="text-carbon-200 text-xs mt-3">
                       Add {seatsNeeded} more seat{seatsNeeded !== 1 ? 's' : ''} to unlock <span className="text-white font-medium">{nextTier.pct}% {nextTier.label} discount</span>
                     </p>
                   ) : null;
@@ -1883,7 +1883,7 @@ function ServiceCenterPricing() {
 
                 {/* Shared pool visualization */}
                 <PoolVisualization numTechs={numTechs} hoursPerSeat={tier.hoursPerSeat} tierKey={selectedTier} />
-                <p className="text-carbon-300 text-xs text-center mt-2 leading-relaxed">
+                <p className="text-carbon-200 text-xs text-center mt-2 leading-relaxed">
                   All {numTechs} technician seats share one pool of Voice AI hours available to the entire service center.
                 </p>
               </div>
@@ -1902,7 +1902,7 @@ function ServiceCenterPricing() {
                 <div className="flex items-center ml-12 h-10">
                   <h3 className="text-white font-bold text-lg">Brain Buttons</h3>
                 </div>
-                <p className="text-carbon-300 text-sm mb-6 ml-12">
+                <p className="text-carbon-200 text-sm mb-6 ml-12">
                   One button per technician for hands-free voice control.<br />Add spares so you're never down if one gets lost.
                 </p>
 
@@ -1929,20 +1929,20 @@ function ServiceCenterPricing() {
 
                     {/* Base count (= seats) */}
                     <div className="flex justify-between items-center text-sm mb-2">
-                      <span className="text-carbon-300">1 per technician (minimum)</span>
-                      <span className="text-carbon-300">{numTechs} buttons</span>
+                      <span className="text-carbon-200">1 per technician (minimum)</span>
+                      <span className="text-carbon-200">{numTechs} buttons</span>
                     </div>
 
                     {/* Extra buttons +/- */}
                     <div className="flex justify-between items-center">
-                      <span className="text-carbon-300 text-sm">Extra / spare buttons</span>
+                      <span className="text-carbon-200 text-sm">Extra / spare buttons</span>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => setExtraFlics(Math.max(0, extraFlics - 1))}
                           disabled={extraFlics === 0}
                           className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
                             extraFlics === 0
-                              ? 'bg-carbon-700/30 text-carbon-300 cursor-not-allowed'
+                              ? 'bg-carbon-700/30 text-carbon-200 cursor-not-allowed'
                               : `bg-carbon-700/50 text-carbon-200 hover:${c.bg} hover:${c.text} cursor-pointer`
                           }`}
                         >
@@ -1971,7 +1971,7 @@ function ServiceCenterPricing() {
                     <div className="mt-5 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                       {/* Seat buttons line */}
                       <div className="flex flex-wrap justify-between items-center gap-x-2 mb-1">
-                        <span className="text-carbon-300 text-sm">
+                        <span className="text-carbon-200 text-sm">
                           {numTechs} × {flicTier.seatPrice > 0 ? `$${flicTier.seatPrice}` : 'FREE'}
                           {flicTier.seatPrice === 0 ? (
                             <span className="ml-1 text-green-400">(100% OFF)</span>
@@ -1994,7 +1994,7 @@ function ServiceCenterPricing() {
                       {extraFlics > 0 && (
                         <>
                           <div className="flex flex-wrap justify-between items-center gap-x-2">
-                            <span className="text-carbon-300 text-sm">
+                            <span className="text-carbon-200 text-sm">
                               {extraFlics} spare × ${flicTier.extraPrice}
                               {flicTier.extraDiscount && (
                                 <span className={`ml-1 ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
@@ -2013,11 +2013,11 @@ function ServiceCenterPricing() {
                       )}
                       {totalFlicSavings > 0 && (
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mt-2 pt-2 border-t border-carbon-700/30">
-                          <span className="text-carbon-300 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
+                          <span className="text-carbon-200 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
                           <span className="text-green-400 text-sm font-bold">Total savings: ${totalFlicSavings.toFixed(2)}</span>
                         </div>
                       )}
-                      <p className="text-carbon-300 text-xs mt-2">One-time purchase — ships to your shop.</p>
+                      <p className="text-carbon-200 text-xs mt-2">One-time purchase — ships to your shop.</p>
                     </div>
                   );
                 })()}
@@ -2047,7 +2047,7 @@ function ServiceCenterPricing() {
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
                     {(showStrikethrough || volumeDiscount > 0) && (
-                      <div className="text-carbon-300 text-lg line-through mb-1">
+                      <div className="text-carbon-200 text-lg line-through mb-1">
                         ${(showStrikethrough ? strikethroughTotal : basePrice).toLocaleString()}/mo
                       </div>
                     )}
@@ -2055,7 +2055,7 @@ function ServiceCenterPricing() {
                       <span className="text-5xl md:text-6xl font-bold text-white">
                         ${totalPrice.toLocaleString()}
                       </span>
-                      <span className="text-carbon-300 text-lg">/mo</span>
+                      <span className="text-carbon-200 text-lg">/mo</span>
                     </div>
                     {showStrikethrough && (
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${unlimitedCombinedRate >= 0.35 ? 'bg-purple-500/15 text-purple-400' : `${c.saveBg} ${c.saveText}`}`}>
@@ -2064,16 +2064,16 @@ function ServiceCenterPricing() {
                     )}
                   </motion.div>
 
-                  <p className="text-carbon-300 text-base mt-3">
+                  <p className="text-carbon-200 text-base mt-3">
                     {numTechs} seats x{' '}
                     {showStrikethrough ? (
                       <>
-                        <span className="line-through text-carbon-300">${tier.originalPricePerSeat}</span>{' '}
+                        <span className="line-through text-carbon-200">${tier.originalPricePerSeat}</span>{' '}
                         <span className={c.saveText}>${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}</span>
                       </>
                     ) : volumeDiscount > 0 ? (
                       <>
-                        <span className="line-through text-carbon-300">${tier.pricePerSeat}</span>{' '}
+                        <span className="line-through text-carbon-200">${tier.pricePerSeat}</span>{' '}
                         <span className={c.saveText}>${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}</span>
                       </>
                     ) : (
@@ -2099,26 +2099,26 @@ function ServiceCenterPricing() {
                 {/* Summary details */}
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-carbon-300 text-sm">Technician seats</span>
+                    <span className="text-carbon-200 text-sm">Technician seats</span>
                     <span className="text-white font-semibold">{numTechs}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-carbon-300 text-sm">Shared Voice AI pool</span>
+                    <span className="text-carbon-200 text-sm">Shared Voice AI pool</span>
                     <span className="text-white font-semibold">
                       {isUnlimited ? 'Unlimited' : `${totalHours} hrs/mo`}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-carbon-300 text-sm">Per-seat cost</span>
+                    <span className="text-carbon-200 text-sm">Per-seat cost</span>
                     <span className="text-white font-semibold">
                       {showStrikethrough ? (
                         <>
-                          <span className="line-through text-carbon-300 mr-1">${tier.originalPricePerSeat}</span>
+                          <span className="line-through text-carbon-200 mr-1">${tier.originalPricePerSeat}</span>
                           ${Math.round(tier.originalPricePerSeat! * (1 - unlimitedCombinedRate))}/mo
                         </>
                       ) : volumeDiscount > 0 ? (
                         <>
-                          <span className="line-through text-carbon-300 mr-1">${tier.pricePerSeat}</span>
+                          <span className="line-through text-carbon-200 mr-1">${tier.pricePerSeat}</span>
                           ${Math.round(tier.pricePerSeat * (1 - volumeDiscount))}/mo
                         </>
                       ) : (
@@ -2128,7 +2128,7 @@ function ServiceCenterPricing() {
                   </div>
                   {!isUnlimited && (
                     <div className="flex justify-between items-center">
-                      <span className="text-carbon-300 text-sm">Avg hours per tech</span>
+                      <span className="text-carbon-200 text-sm">Avg hours per tech</span>
                       <span className="text-white font-semibold">{tier.hoursPerSeat} hrs/mo</span>
                     </div>
                   )}
@@ -2147,10 +2147,10 @@ function ServiceCenterPricing() {
                         <span className="text-carbon-200 text-sm font-medium">Brain Buttons (one-time)</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-carbon-300 text-sm">{totalFlics} button{totalFlics !== 1 ? 's' : ''}</span>
+                        <span className="text-carbon-200 text-sm">{totalFlics} button{totalFlics !== 1 ? 's' : ''}</span>
                         <div className="text-right">
                           {flicSavings > 0 && (
-                            <span className="text-carbon-300 text-xs line-through mr-2">${retailTotal.toFixed(2)}</span>
+                            <span className="text-carbon-200 text-xs line-through mr-2">${retailTotal.toFixed(2)}</span>
                           )}
                           <span className={`font-bold text-lg ${totalFlicCost === 0 ? 'text-green-400' : 'text-white'}`}>
                             {totalFlicCost === 0 ? 'FREE' : `$${totalFlicCost.toFixed(2)}`}
@@ -2162,7 +2162,7 @@ function ServiceCenterPricing() {
                           <span className="text-green-400 text-xs font-bold">Save ${flicSavings.toFixed(2)}</span>
                         </div>
                       )}
-                      <p className="text-carbon-300 text-[10px] mt-1">
+                      <p className="text-carbon-200 text-[10px] mt-1">
                         One-time purchase, added at checkout
                       </p>
                     </div>
@@ -2173,10 +2173,10 @@ function ServiceCenterPricing() {
                 {!isUnlimited && (
                   <div className="p-4 rounded-xl bg-carbon-900/60 border border-carbon-700/50 mb-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-carbon-300" />
+                      <Clock className="w-4 h-4 text-carbon-200" />
                       <span className="text-carbon-200 text-sm font-medium">Need more hours?</span>
                     </div>
-                    <p className="text-carbon-300 text-sm">
+                    <p className="text-carbon-200 text-sm">
                       Add 10-hour packs at{' '}
                       <span className="text-white font-semibold">${tier.additionalRate}/hr</span>{' '}
                       (${tier.additionalRate * 10}/pack).
@@ -2207,7 +2207,7 @@ function ServiceCenterPricing() {
                       ${hiddenRevenue.toLocaleString()}/yr
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-carbon-300">
+                      <span className="text-carbon-200">
                         You spend ${annualCost.toLocaleString()}/yr
                       </span>
                       <span className={`px-1.5 py-0.5 rounded ${c.saveBg} ${c.saveText} font-semibold`}>
@@ -2215,7 +2215,7 @@ function ServiceCenterPricing() {
                       </span>
                     </div>
                   </motion.div>
-                  <p className="text-carbon-300 text-[10px] mt-2">
+                  <p className="text-carbon-200 text-[10px] mt-2">
                     *Assumes {efficiencyPct}% efficiency gain + {Math.round(warrantyBump * 100)}% warranty approval improvement at ${ROI_SHOP_RATE}/hr
                   </p>
                 </div>
@@ -2229,7 +2229,7 @@ function ServiceCenterPricing() {
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
 
-                  <p className="text-carbon-300 text-xs text-center mt-4">
+                  <p className="text-carbon-200 text-xs text-center mt-4">
                     All features included. No per-feature charges.
                   </p>
                 </div>

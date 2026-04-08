@@ -178,7 +178,7 @@ function FlicMockup() {
 
 function DashboardMockup() {
   return (
-    <div className="relative mx-auto w-full max-w-[600px] md:max-w-[700px] lg:max-w-[800px]">
+    <div className="relative mx-auto w-full max-w-[500px]">
       {/* Monitor frame — sleek modern display */}
       <div className="rounded-xl border-[4px] border-carbon-500/80 bg-carbon-900 p-1.5 shadow-2xl shadow-safety-500/10">
         {/* Top bezel with camera dot */}
@@ -284,13 +284,13 @@ export default function AtAGlance() {
           viewport={mobileViewport}
           className="text-center mb-20"
         >
-          <span className="text-carbon-300 text-sm font-semibold tracking-wider uppercase">
+          <span className="text-carbon-200 text-sm font-semibold tracking-wider uppercase">
             The Platform
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
             ONRAMP at a Glance
           </h2>
-          <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+          <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             A mobile app, a physical button, and a management dashboard — everything technicians need to work smarter.
           </p>
         </motion.div>
@@ -306,65 +306,83 @@ export default function AtAGlance() {
             return (
               <div key={block.id}>
                 {isDashboard ? (
-                  /* Dashboard uses stacked layout for the large monitor */
-                  <div className="flex flex-col items-center gap-12">
-                    {/* Text — centered above */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={mobileViewport}
-                      transition={{ duration: 0.7 }}
-                      className="w-full max-w-2xl text-center"
-                    >
-                      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
-                        <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
-                        <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
-                          The Dashboard
-                        </span>
-                      </div>
-
-                      <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight whitespace-pre-line">
-                        {block.headline}
-                      </h3>
-
-                      <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
-                        {block.subtext}
-                      </p>
-
-                      <ul className="space-y-4 text-left max-w-lg mx-auto">
-                        {block.bullets.map((bullet, i) => (
-                          <motion.li
-                            key={bullet.text}
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={mobileViewport}
-                            transition={{ delay: 0.3 + i * 0.1 }}
-                            className="flex items-start gap-3"
-                          >
-                            <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center mt-0.5`}>
-                              <bullet.icon className={`w-4 h-4 ${colors.icon}`} />
-                            </div>
-                            <span className="text-carbon-200 text-base md:text-lg">{bullet.text}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </motion.div>
-
-                    {/* Large monitor visual */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 40 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={mobileViewport}
-                      transition={{ duration: 0.8 }}
-                      className="w-full"
-                    >
-                      <div className="relative">
-                        <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[100px] scale-75 opacity-40`} />
-                        <div className="relative">
-                          <Mockup />
+                  /* Dashboard — full-width background, content constrained inside */
+                  <div
+                    className="relative overflow-hidden"
+                    style={{
+                      backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.png)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center 60%',
+                      width: '100vw',
+                      marginLeft: 'calc(-50vw + 50%)',
+                    }}
+                  >
+                    <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-14 px-4 md:px-8 py-12 md:py-16 lg:py-20">
+                      {/* Left — Dashboard mockup (smaller) + CTA */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={mobileViewport}
+                        transition={{ duration: 0.7 }}
+                        className="w-full lg:w-1/2 flex flex-col items-center"
+                      >
+                        <div className="relative w-full max-w-md">
+                          <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[80px] scale-75 opacity-30`} />
+                          <div className="relative">
+                            <Mockup />
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
+                        <Link
+                          to="/how-it-works"
+                          className="group inline-flex items-center gap-2 mt-6 px-6 py-3 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-safety-500/20"
+                        >
+                          How It Works
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </motion.div>
+
+                      {/* Right — Text */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={mobileViewport}
+                        transition={{ duration: 0.7, delay: 0.1 }}
+                        className="w-full lg:w-1/2"
+                      >
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
+                          <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
+                          <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
+                            The Dashboard
+                          </span>
+                        </div>
+
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight whitespace-pre-line">
+                          {block.headline}
+                        </h3>
+
+                        <p className="text-carbon-200 text-base md:text-lg mb-6 leading-relaxed">
+                          {block.subtext}
+                        </p>
+
+                        <ul className="space-y-3">
+                          {block.bullets.map((bullet, i) => (
+                            <motion.li
+                              key={bullet.text}
+                              initial={{ opacity: 0, y: 10 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={mobileViewport}
+                              transition={{ delay: 0.3 + i * 0.1 }}
+                              className="flex items-start gap-3"
+                            >
+                              <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center mt-0.5`}>
+                                <bullet.icon className={`w-4 h-4 ${colors.icon}`} />
+                              </div>
+                              <span className="text-carbon-200 text-base md:text-lg">{bullet.text}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    </div>
                   </div>
                 ) : (
                   /* Phone + Flic use side-by-side zig-zag */
@@ -416,7 +434,7 @@ export default function AtAGlance() {
                         {block.headline}
                       </h3>
 
-                      <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
+                      <p className="text-carbon-200 text-base md:text-lg mb-8 leading-relaxed">
                         {block.subtext}
                       </p>
 
@@ -445,21 +463,6 @@ export default function AtAGlance() {
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={mobileViewport}
-          className="text-center mt-24"
-        >
-          <Link
-            to="/how-it-works"
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-safety-500/20 hover:shadow-safety-500/40 text-lg"
-          >
-            How It Works
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
       </div>
     </section>
   );

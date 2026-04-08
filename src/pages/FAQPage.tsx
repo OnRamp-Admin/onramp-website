@@ -253,7 +253,7 @@ const faqCategories = [
 // Rich answers that need JSX formatting (bullets, links, etc.)
 const richAnswers: Record<string, React.ReactNode> = {
   BULLET_REPAIR_PROCEDURES: (
-    <div className="text-carbon-300 leading-relaxed space-y-3">
+    <div className="text-carbon-200 leading-relaxed space-y-3">
       <p>In some cases, ONRAMP's knowledge base has enough depth to generate reliable repair steps on its own. In other cases — especially complex repairs, newer vehicles, or specialized OEM procedures — it's far better to upload the technical repair manual so ONRAMP can work from the source material.</p>
       <ul className="space-y-4 ml-1">
         <li className="flex gap-3">
@@ -268,7 +268,7 @@ const richAnswers: Record<string, React.ReactNode> = {
     </div>
   ),
   PRICING_LINK: (
-    <p className="text-carbon-300 leading-relaxed">
+    <p className="text-carbon-200 leading-relaxed">
       ONRAMP's pricing is structured around the number one operating cost: the always-on voice AI, which is expensive to run. Plans are based on the number of voice AI hours shared across your shop, with volume discounts as you add more technicians. Visit our{' '}
       <Link to="/pricing" className="text-electric-400 hover:text-electric-300 underline underline-offset-2">
         pricing page
@@ -277,7 +277,7 @@ const richAnswers: Record<string, React.ReactNode> = {
     </p>
   ),
   BULLET_GOOGLE_DIFF: (
-    <div className="text-carbon-300 leading-relaxed space-y-3">
+    <div className="text-carbon-200 leading-relaxed space-y-3">
       <p>Three things:</p>
       <ul className="space-y-2 ml-1">
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span><strong className="text-white">It's hands-free</strong> — you talk, it guides, you never touch a screen mid-repair.</span></li>
@@ -288,7 +288,7 @@ const richAnswers: Record<string, React.ReactNode> = {
     </div>
   ),
   BULLET_FOUR_PHASES: (
-    <div className="text-carbon-300 leading-relaxed space-y-3">
+    <div className="text-carbon-200 leading-relaxed space-y-3">
       <p>Every job flows through four phases. You advance through them naturally — ONRAMP handles the transitions.</p>
       <ul className="space-y-2 ml-1">
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span><strong className="text-white">Diagnose</strong> — AI helps you pinpoint the problem, cross-references TSBs and known failures.</span></li>
@@ -299,7 +299,7 @@ const richAnswers: Record<string, React.ReactNode> = {
     </div>
   ),
   BULLET_VOICE_CONTROL: (
-    <div className="text-carbon-300 leading-relaxed space-y-3">
+    <div className="text-carbon-200 leading-relaxed space-y-3">
       <p>Put on your headphones — Bluetooth or wired — and put the app into voice mode from your screen or your Brain Button. From there, you just have a conversation with it. Talk naturally:</p>
       <ul className="space-y-2 ml-1">
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"Next step" / "Go back"</span></li>
@@ -307,14 +307,14 @@ const richAnswers: Record<string, React.ReactNode> = {
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"What size socket do I need?"</span></li>
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"Take a note — found corrosion on the connector"</span></li>
         <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"What's the pinout for the C210 connector?" / "Which wire goes to the PCM on pin 3?"</span></li>
-        <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"I need to take a photo" — <em className="text-carbon-300">ONRAMP will open your camera for you.</em></span></li>
-        <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"I need to see the diagram" / "Open the PDF" — <em className="text-carbon-300">ONRAMP will open to the page of the PDF you need.</em></span></li>
+        <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"I need to take a photo" — <em className="text-carbon-200">ONRAMP will open your camera for you.</em></span></li>
+        <li className="flex gap-3"><span className="text-electric-400 mt-1.5 text-xs">&#9679;</span><span>"I need to see the diagram" / "Open the PDF" — <em className="text-carbon-200">ONRAMP will open to the page of the PDF you need.</em></span></li>
       </ul>
       <p>Get stuck on a step? Activate <strong className="text-white">Deep Research Mode</strong> by asking for more information, and ONRAMP's AI will go gather the most in-depth information possible to help you get the job done — without you having to leave the bay and walk to the terminal.</p>
     </div>
   ),
   BULLET_USAGE_IMBALANCE: (
-    <div className="text-carbon-300 leading-relaxed space-y-3">
+    <div className="text-carbon-200 leading-relaxed space-y-3">
       <p>The pool of AI hours is shared between all technicians in your service center. You're going to have some techs who use it heavily and others who use it less — and that's fine. The shared pool means you're limiting waste because usage naturally balances out across the team.</p>
       <p>For technicians who aren't using it as much, that usually means they're not maximizing the performance they could be getting out of the app. ONRAMP will make proactive efforts to nudge and train those techs to make sure they're getting the full benefit.</p>
       <p>When their performance rate goes up, <strong className="text-white">they take home more money and the dealership makes more money</strong>. It's a win for everyone.</p>
@@ -329,7 +329,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     if (answer in richAnswers) {
       return richAnswers[answer];
     }
-    return <p className="text-carbon-300 leading-relaxed">{answer}</p>;
+    return <p className="text-carbon-200 leading-relaxed">{answer}</p>;
   };
 
   return (
@@ -346,7 +346,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
           transition={{ duration: 0.2 }}
           className="mt-1 flex-shrink-0"
         >
-          <ChevronDown className="w-5 h-5 text-carbon-300 group-hover:text-electric-400 transition-colors" />
+          <ChevronDown className="w-5 h-5 text-carbon-200 group-hover:text-electric-400 transition-colors" />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
@@ -410,7 +410,7 @@ export default function FAQPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Got Questions? We've Got Answers.
           </h1>
-          <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+          <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             Everything technicians and service managers want to know about ONRAMP — from how the voice AI works in a real shop to pricing, security, and getting started.
           </p>
         </motion.div>
@@ -431,7 +431,7 @@ export default function FAQPage() {
           <h2 className="text-3xl font-bold text-white mb-4">
             Still have questions? <span className="text-safety-500">Let's talk.</span>
           </h2>
-          <p className="text-carbon-300 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-carbon-200 text-lg mb-8 max-w-xl mx-auto">
             We'd love to hear from you. Reach out to our team or check out our pricing to find the right plan for your shop.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

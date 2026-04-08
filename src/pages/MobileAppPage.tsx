@@ -92,7 +92,7 @@ function GooglePlayBadge() {
           </text>
         </svg>
       </div>
-      <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-carbon-300 whitespace-nowrap">
+      <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-carbon-200 whitespace-nowrap">
         Coming soon
       </span>
     </div>
@@ -111,7 +111,7 @@ function PhoneMockup() {
         {/* Screen content */}
         <div className="aspect-[9/19.5] bg-gradient-to-b from-carbon-900 to-carbon-950 flex flex-col items-center p-6 pt-10">
           {/* Status bar */}
-          <div className="absolute top-2 left-0 right-0 flex justify-between px-8 text-[10px] text-carbon-300">
+          <div className="absolute top-2 left-0 right-0 flex justify-between px-8 text-[10px] text-carbon-200">
             <span>9:41</span>
             <div className="flex gap-1 items-center">
               <Wifi className="w-3 h-3" />
@@ -152,7 +152,7 @@ function PhoneMockup() {
 
             <div className="w-full mt-4 space-y-2">
               <div className="bg-carbon-800/60 rounded-lg p-3 border border-carbon-700/50">
-                <p className="text-[11px] text-carbon-300 leading-relaxed">
+                <p className="text-[11px] text-carbon-200 leading-relaxed">
                   The intake manifold bolts on the 2019 Ford F-150 5.0L should be torqued to <span className="text-electric-400 font-semibold">89 lb-in</span> in the sequence shown...
                 </p>
               </div>
@@ -270,7 +270,7 @@ export default function MobileAppPage() {
                 </span>
               </h1>
 
-              <p className="text-lg text-carbon-300 mb-8 leading-relaxed">
+              <p className="text-lg text-carbon-200 mb-8 leading-relaxed">
                 ONRAMP's AI voice assistant is designed to work from your mobile device.
                 Bring the power of hands-free, voice-guided repair instructions directly to the vehicle —
                 no more running back to a service terminal.
@@ -287,7 +287,7 @@ export default function MobileAppPage() {
                 <QRCodePlaceholder />
                 <div>
                   <p className="text-white font-semibold text-sm mb-1">Scan to Download</p>
-                  <p className="text-carbon-300 text-xs leading-relaxed max-w-[180px]">
+                  <p className="text-carbon-200 text-xs leading-relaxed max-w-[180px]">
                     Point your phone's camera at this QR code to go directly to the app store.
                   </p>
                 </div>
@@ -322,7 +322,7 @@ export default function MobileAppPage() {
                 Full Power
               </span>
             </h2>
-            <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
+            <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               ONRAMP works best when you use the web app and mobile app together.
             </p>
           </motion.div>
@@ -361,7 +361,7 @@ export default function MobileAppPage() {
                   {item.step}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-carbon-300 leading-relaxed">{item.description}</p>
+                <p className="text-carbon-200 leading-relaxed">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -381,7 +381,7 @@ export default function MobileAppPage() {
                   <feature.icon className="w-6 h-6 text-electric-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-carbon-300 leading-relaxed">{feature.description}</p>
+                <p className="text-carbon-200 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -433,7 +433,7 @@ export default function MobileAppPage() {
                 The Key to Hands-Free
               </h3>
 
-              <p className="text-carbon-300 text-base md:text-lg mb-8 leading-relaxed">
+              <p className="text-carbon-200 text-base md:text-lg mb-8 leading-relaxed">
                 Tap-to-Talk. The Brain Button clips to your shirt or belt — giving you instant,
                 physical control of your AI assistant without putting the wrench down. Tap again to pause.
               </p>
