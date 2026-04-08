@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { Mic, Brain, FileText, ArrowRight, Volume2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -50,7 +51,7 @@ export default function WorkflowVisualization() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           transition={{ duration: 0.5 }}
         >
           <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -101,7 +102,7 @@ export default function WorkflowVisualization() {
                   key={step.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   onClick={() => {
                     setActiveStep(index);
@@ -165,7 +166,7 @@ export default function WorkflowVisualization() {
               key={step.id}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               onClick={() => {
                 setActiveStep(index);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import BrainButtonPrompts from './BrainButtonPrompts';
 import { Link } from 'react-router-dom';
 import {
@@ -280,7 +281,7 @@ export default function AtAGlance() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mb-20"
         >
           <span className="text-carbon-300 text-sm font-semibold tracking-wider uppercase">
@@ -311,7 +312,7 @@ export default function AtAGlance() {
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
+                      viewport={mobileViewport}
                       transition={{ duration: 0.7 }}
                       className="w-full max-w-2xl text-center"
                     >
@@ -336,7 +337,7 @@ export default function AtAGlance() {
                             key={bullet.text}
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={mobileViewport}
                             transition={{ delay: 0.3 + i * 0.1 }}
                             className="flex items-start gap-3"
                           >
@@ -353,7 +354,7 @@ export default function AtAGlance() {
                     <motion.div
                       initial={{ opacity: 0, y: 40 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
+                      viewport={mobileViewport}
                       transition={{ duration: 0.8 }}
                       className="w-full"
                     >
@@ -374,7 +375,7 @@ export default function AtAGlance() {
                     <motion.div
                       initial={{ opacity: 0, x: block.imageLeft ? -40 : 40 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
+                      viewport={mobileViewport}
                       transition={{ duration: 0.7 }}
                       className="w-full lg:w-1/2 flex flex-col items-center"
                     >
@@ -399,7 +400,7 @@ export default function AtAGlance() {
                     <motion.div
                       initial={{ opacity: 0, x: block.imageLeft ? 40 : -40 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
+                      viewport={mobileViewport}
                       transition={{ duration: 0.7, delay: 0.1 }}
                       className="w-full lg:w-1/2"
                     >
@@ -425,7 +426,7 @@ export default function AtAGlance() {
                             key={bullet.text}
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={mobileViewport}
                             transition={{ delay: 0.3 + i * 0.1 }}
                             className="flex items-start gap-3"
                           >
@@ -448,7 +449,7 @@ export default function AtAGlance() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mt-24"
         >
           <Link

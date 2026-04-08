@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -228,7 +229,7 @@ function TeamVisualization() {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
+      viewport={mobileViewport}
       transition={{ duration: 0.7 }}
       className="flex justify-center mb-14"
     >
@@ -383,7 +384,7 @@ function ManagerPhaseCards() {
               key={phase.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -4 }}
               onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setActivePhase(index); }}
@@ -572,7 +573,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
@@ -597,7 +598,7 @@ export default function ManagersPage() {
                   key={lever.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: i * 0.1 }}
                   className={`p-6 md:p-8 rounded-2xl bg-carbon-800/50 border ${c.border} hover:bg-carbon-800/70 transition-all duration-300`}
                 >
@@ -629,7 +630,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
@@ -660,7 +661,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
@@ -683,7 +684,7 @@ export default function ManagersPage() {
                 key={feat.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.08 }}
                 className="group p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50 hover:border-safety-500/30 transition-all duration-300"
               >
@@ -704,7 +705,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-green-400 text-sm font-semibold tracking-wider uppercase flex items-center justify-center gap-2">
@@ -730,7 +731,7 @@ export default function ManagersPage() {
                 key={feature.title}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="flex gap-4 p-6 rounded-2xl bg-carbon-800/30 border border-carbon-700/30"
               >
@@ -749,7 +750,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.3 }}
             className="p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-green-500/20"
           >
@@ -798,7 +799,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-12"
           >
             <span className="inline-flex items-center gap-2 text-safety-400 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -821,7 +822,7 @@ export default function ManagersPage() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: 0.2 }}
               className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 backdrop-blur-sm"
             >
@@ -937,7 +938,7 @@ export default function ManagersPage() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: 0.3 }}
               className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-safety-900/40 to-safety-950/40 border border-safety-500/30 backdrop-blur-sm"
             >
@@ -1025,7 +1026,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.4 }}
             className="mt-12 text-center"
           >
@@ -1045,7 +1046,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-16"
           >
             <span className="inline-flex items-center gap-2 text-safety-400 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -1068,7 +1069,7 @@ export default function ManagersPage() {
             <motion.h3
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="text-safety-400 font-semibold text-sm uppercase tracking-widest mb-6 ml-[3.75rem] md:ml-[4.25rem]"
             >
               Manager Setup (~8 minutes)
@@ -1084,7 +1085,7 @@ export default function ManagersPage() {
                   key={item.step}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: i * 0.15 }}
                   className="relative flex items-center gap-3 md:gap-5 mb-6 last:mb-0"
                 >
@@ -1113,7 +1114,7 @@ export default function ManagersPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="flex items-center gap-3 md:gap-4 mb-12 ml-[3.75rem] md:ml-[4.25rem]"
             >
               <div className="flex-1 h-px bg-gradient-to-r from-safety-400/50 via-electric-400/50 to-electric-400/50" />
@@ -1128,7 +1129,7 @@ export default function ManagersPage() {
             <motion.h3
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="text-electric-400 font-semibold text-sm uppercase tracking-widest mb-6 ml-[3.75rem] md:ml-[4.25rem]"
             >
               Each Technician (~8 minutes)
@@ -1145,7 +1146,7 @@ export default function ManagersPage() {
                   key={item.step}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: i * 0.15 }}
                   className="relative flex items-center gap-3 md:gap-5 mb-6 last:mb-0"
                 >
@@ -1188,7 +1189,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.6 }}
             className="text-center mt-12"
           >
@@ -1208,7 +1209,7 @@ export default function ManagersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center p-10 md:p-16 rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-safety-500/30"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">

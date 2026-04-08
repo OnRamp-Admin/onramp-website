@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -372,7 +373,7 @@ function FAQCategory({ category, items }: { category: string; items: { q: string
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={mobileViewport}
       transition={{ duration: 0.5 }}
       className="mb-16"
     >
@@ -423,7 +424,7 @@ export default function FAQPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           transition={{ duration: 0.5 }}
           className="text-center mt-20 bg-gradient-to-br from-electric-500/10 to-carbon-900/50 rounded-2xl border border-electric-500/20 p-10 md:p-14"
         >

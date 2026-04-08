@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useState, useEffect, useRef } from 'react';
 import { Mail, MapPin, CheckCircle2, Building2, X, Search } from 'lucide-react';
 import { trackContactFormSubmit } from '../lib/analytics';
@@ -351,7 +352,7 @@ export default function ContactPage() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 className="space-y-8"
               >
                 <div>
@@ -393,7 +394,7 @@ export default function ContactPage() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="lg:col-span-3"
             >
               {submitted ? (

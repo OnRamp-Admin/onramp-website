@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useLocation } from 'react-router-dom';
 import {
   Check, Zap, Crown, Infinity as InfinityIcon, ArrowRight, Clock, Users, Building2, User, TrendingUp,
@@ -511,7 +512,7 @@ function FeatureGrid() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mb-16"
         >
           <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -534,7 +535,7 @@ function FeatureGrid() {
               key={cat.category}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: catIndex * 0.05 }}
             >
               <div className="flex items-center gap-3 mb-5">
@@ -550,7 +551,7 @@ function FeatureGrid() {
                     key={feature}
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={mobileViewport}
                     transition={{ delay: fIndex * 0.03 }}
                     className="flex items-start gap-3 py-1"
                   >
@@ -1393,7 +1394,7 @@ function IndividualPricing() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-12"
           >
             <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -1444,7 +1445,7 @@ function IndividualPricing() {
                   key={tier.name}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => setSelectedTier(tier.key)}
                   onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredTier(tier.key); }}
@@ -1685,7 +1686,7 @@ function ServiceCenterPricing() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-12"
           >
             <span className={`${c.text} text-sm font-semibold tracking-wider uppercase`}>
@@ -1709,7 +1710,7 @@ function ServiceCenterPricing() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="lg:col-span-3 space-y-8"
             >
               {/* 1. Usage Level Selector — first */}
@@ -2027,7 +2028,7 @@ function ServiceCenterPricing() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               className="lg:col-span-2"
             >
               <div className={`sticky top-24 p-8 rounded-2xl bg-gradient-to-b ${c.gradient} to-carbon-800/80 border-2 ${c.borderCard} flex flex-col transition-colors duration-300`}>
@@ -2345,7 +2346,7 @@ export default function PricingPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center p-10 md:p-16 rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-carbon-700/50"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">

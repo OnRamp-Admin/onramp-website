@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { Link } from 'react-router-dom';
 import { Mic, FileCheck, Gauge, Shield, ArrowRight, Wrench, Building2, Stethoscope, Package, PenLine, Zap, BarChart3, Eye, Magnet, Camera } from 'lucide-react';
 
@@ -34,7 +35,7 @@ export default function AudienceSplit() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-white">
@@ -48,7 +49,7 @@ export default function AudienceSplit() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ duration: 0.6 }}
             className="group relative rounded-2xl border border-electric-500/20 bg-gradient-to-br from-carbon-800/80 to-carbon-900/80 p-8 md:p-10 hover:border-electric-500/40 transition-all duration-500"
           >
@@ -85,7 +86,7 @@ export default function AudienceSplit() {
                     key={bullet.text}
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={mobileViewport}
                     transition={{ delay: 0.2 + i * 0.1 }}
                     className="flex items-center gap-3"
                   >
@@ -112,7 +113,7 @@ export default function AudienceSplit() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ duration: 0.6 }}
             className="group relative rounded-2xl border border-safety-500/20 bg-gradient-to-br from-carbon-800/80 to-carbon-900/80 p-8 md:p-10 hover:border-safety-500/40 transition-all duration-500"
           >
@@ -148,7 +149,7 @@ export default function AudienceSplit() {
                     key={bullet.text}
                     initial={{ opacity: 0, x: 10 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={mobileViewport}
                     transition={{ delay: 0.2 + i * 0.1 }}
                     className="flex items-center gap-3"
                   >

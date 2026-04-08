@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useState, useRef, useEffect } from 'react';
 import { Wrench, Building2, DollarSign, Clock, Users, TrendingUp, Calculator, Zap, Shield } from 'lucide-react';
 import { trackCalculatorTabSwitch, trackCalculatorValues } from '../lib/analytics';
@@ -84,7 +85,7 @@ export default function ROICalculator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mb-12"
         >
           <span className="inline-flex items-center gap-2 text-electric-400 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -106,7 +107,7 @@ export default function ROICalculator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           transition={{ delay: 0.1 }}
           className="flex justify-center mb-8"
         >
@@ -142,7 +143,7 @@ export default function ROICalculator() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.2 }}
             className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 backdrop-blur-sm"
           >
@@ -357,7 +358,7 @@ export default function ROICalculator() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.3 }}
             className={`p-6 md:p-8 rounded-2xl border backdrop-blur-sm ${
               activeTab === 'technician'
@@ -481,7 +482,7 @@ export default function ROICalculator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           transition={{ delay: 0.4 }}
           className="mt-12 text-center"
         >

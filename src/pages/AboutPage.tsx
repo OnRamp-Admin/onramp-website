@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { Link } from 'react-router-dom';
 import { Wrench, Sparkles, User, Shield, ArrowRight } from 'lucide-react';
 
@@ -109,7 +110,7 @@ export default function AboutPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="space-y-10"
           >
             {/* The Spark */}
@@ -212,7 +213,7 @@ export default function AboutPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -229,7 +230,7 @@ export default function AboutPage() {
                 key={value.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.1 }}
                 className="p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50"
               >
@@ -250,7 +251,7 @@ export default function AboutPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               What can <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-500">ONRAMP</span> do for you?

@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -374,7 +375,7 @@ function AIStackCard() {
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
+      viewport={mobileViewport}
       className="p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-electric-500/20"
     >
       <div className="flex items-center gap-3 mb-6">
@@ -580,7 +581,7 @@ function PersonalizationCard() {
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
+        viewport={mobileViewport}
         className="p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-safety-500/20"
       >
         <div className="flex items-center gap-3 mb-6">
@@ -644,7 +645,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
       <motion.div
         initial={{ opacity: 0, x: textOnRight ? 40 : -40 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
+        viewport={mobileViewport}
         transition={{ duration: 0.7 }}
         className="w-full lg:w-1/2"
       >
@@ -678,7 +679,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
       <motion.div
         initial={{ opacity: 0, x: textOnRight ? -40 : 40 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
+        viewport={mobileViewport}
         transition={{ duration: 0.7, delay: 0.1 }}
         className="w-full lg:w-1/2 flex justify-center"
       >
@@ -783,7 +784,7 @@ export default function HowItWorksPage() {
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ duration: 0.7 }}
               className="w-full lg:w-1/2 text-center lg:text-left"
             >
@@ -803,7 +804,7 @@ export default function HowItWorksPage() {
                     key={step.num}
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={mobileViewport}
                     transition={{ delay: 0.3 + i * 0.1 }}
                     className="flex items-center gap-4"
                   >
@@ -819,7 +820,7 @@ export default function HowItWorksPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: 0.6 }}
                 className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8 max-w-lg mx-auto lg:mx-0"
               >
@@ -850,7 +851,7 @@ export default function HowItWorksPage() {
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ duration: 0.7, delay: 0.1 }}
               className="w-full lg:w-1/2 flex justify-center"
             >
@@ -868,7 +869,7 @@ export default function HowItWorksPage() {
       {/* Four Phases */}
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Four Phases.<br className="md:hidden" />{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">One Seamless Flow.</span>
@@ -889,7 +890,7 @@ export default function HowItWorksPage() {
       {/* The Voice Loop */}
       <section className="py-20 px-4 bg-carbon-900/50">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
               No More Typing.<br />
               Just Tap-to-Talk.<br />
@@ -907,7 +908,7 @@ export default function HowItWorksPage() {
                 key={step.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => { setActiveStep(index); setIsPlaying(false); }}
                 className={`relative cursor-pointer p-6 rounded-2xl border transition-all duration-300 ${
@@ -936,7 +937,7 @@ export default function HowItWorksPage() {
       {/* Your AI, Your Way */}
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
               Built Different
             </span>
@@ -962,7 +963,7 @@ export default function HowItWorksPage() {
       {/* Hardware */}
       <section className="py-20 px-4 bg-carbon-900/30">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               What You{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">Need</span>
@@ -978,7 +979,7 @@ export default function HowItWorksPage() {
                 key={item.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="relative p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50"
               >
@@ -1019,7 +1020,7 @@ export default function HowItWorksPage() {
       {/* CTA */}
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-3xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport}>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">What's your role?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/technicians" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric">

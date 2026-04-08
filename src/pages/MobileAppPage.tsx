@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { Mic, Smartphone, Wifi, Shield, Zap, Radio, HandMetal, BatteryFull } from 'lucide-react';
 import BrainButtonPrompts from '../components/BrainButtonPrompts';
 
@@ -312,7 +313,7 @@ export default function MobileAppPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -352,7 +353,7 @@ export default function MobileAppPage() {
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.15 }}
                 className="relative bg-carbon-900/50 border border-carbon-800/50 rounded-2xl p-6"
               >
@@ -372,7 +373,7 @@ export default function MobileAppPage() {
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.15 }}
                 className="bg-carbon-900/50 border border-carbon-800/50 rounded-2xl p-6 hover:border-electric-500/30 transition-colors"
               >
@@ -395,7 +396,7 @@ export default function MobileAppPage() {
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ duration: 0.7 }}
               className="w-full lg:w-1/2 flex justify-center"
             >
@@ -417,7 +418,7 @@ export default function MobileAppPage() {
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ duration: 0.7, delay: 0.1 }}
               className="w-full lg:w-1/2"
             >
@@ -443,7 +444,7 @@ export default function MobileAppPage() {
                     key={bullet.text}
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={mobileViewport}
                     transition={{ delay: 0.3 + i * 0.1 }}
                     className="flex items-start gap-3"
                   >

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import {
   FileCheck,
   Clock,
@@ -92,7 +93,7 @@ export default function ValueProps() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-16"
           >
             <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -116,7 +117,7 @@ export default function ValueProps() {
                 key={benefit.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="group p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50 hover:border-electric-500/30 transition-all duration-300"
               >
@@ -140,7 +141,7 @@ export default function ValueProps() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-16"
           >
             <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
@@ -164,7 +165,7 @@ export default function ValueProps() {
                 key={benefit.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="group p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50 hover:border-safety-500/30 transition-all duration-300"
               >
@@ -188,7 +189,7 @@ export default function ValueProps() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-16"
           >
             <span className="text-green-400 text-sm font-semibold tracking-wider uppercase flex items-center justify-center gap-2">
@@ -211,7 +212,7 @@ export default function ValueProps() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
           >
             {[
@@ -227,7 +228,7 @@ export default function ValueProps() {
                 <motion.div
                   initial={{ scale: 0.5 }}
                   whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: index * 0.1, type: 'spring' }}
                   className="text-3xl md:text-4xl font-bold text-green-400 mb-2"
                 >
@@ -245,7 +246,7 @@ export default function ValueProps() {
                 key={feature.title}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="flex gap-4 p-6 rounded-2xl bg-carbon-800/30 border border-carbon-700/30"
               >
@@ -264,7 +265,7 @@ export default function ValueProps() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.3 }}
             className="mt-16 p-6 md:p-8 rounded-2xl bg-carbon-800/50 border border-green-500/20"
           >

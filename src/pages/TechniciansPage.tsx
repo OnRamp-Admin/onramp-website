@@ -1,4 +1,5 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { mobileViewport } from '../lib/motion';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -329,7 +330,7 @@ function TerminateWastedTimeSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={mobileViewport}
           className="text-center mb-14"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
@@ -512,7 +513,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -538,7 +539,7 @@ export default function TechniciansPage() {
                   key={phase.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={mobileViewport}
                   transition={{ delay: i * 0.1 }}
                   onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredPhase(i); }}
                   onClick={() => setHoveredPhase(isHovered ? null : i)}
@@ -611,7 +612,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mt-10"
           >
             <Link
@@ -631,7 +632,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -651,7 +652,7 @@ export default function TechniciansPage() {
                 key={item.pain}
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.07 }}
                 className="group relative"
               >
@@ -691,7 +692,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-14"
           >
             <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
@@ -711,7 +712,7 @@ export default function TechniciansPage() {
                 key={cap.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.08 }}
                 className="group p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50 hover:border-electric-500/30 transition-all duration-300"
               >
@@ -729,7 +730,7 @@ export default function TechniciansPage() {
       {/* ── What You Need ────────────────────────────────────────────── */}
       <section className="py-20 px-4 carbon-fiber-bg">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               What You{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">Need</span>
@@ -763,7 +764,7 @@ export default function TechniciansPage() {
                 key={item.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: index * 0.1 }}
                 className="relative p-6 rounded-2xl bg-carbon-800/50 border border-carbon-700/50"
               >
@@ -807,7 +808,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-12"
           >
             <span className="inline-flex items-center gap-2 text-electric-400 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -830,7 +831,7 @@ export default function TechniciansPage() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: 0.2 }}
               className="p-6 md:p-8 rounded-2xl bg-carbon-800/60 border border-carbon-700/50 backdrop-blur-sm"
             >
@@ -932,7 +933,7 @@ export default function TechniciansPage() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={mobileViewport}
               transition={{ delay: 0.3 }}
               className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-electric-900/40 to-electric-950/40 border border-electric-500/30 backdrop-blur-sm"
             >
@@ -994,7 +995,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.4 }}
             className="mt-12 text-center"
           >
@@ -1013,7 +1014,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center mb-16"
           >
             <span className="inline-flex items-center gap-2 text-electric-400 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -1042,7 +1043,7 @@ export default function TechniciansPage() {
                 key={item.step}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={mobileViewport}
                 transition={{ delay: i * 0.15 }}
                 className="relative flex items-center gap-3 md:gap-5 mb-6 last:mb-0"
               >
@@ -1087,7 +1088,7 @@ export default function TechniciansPage() {
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             transition={{ delay: 0.6 }}
             className="text-center text-carbon-400 text-lg mt-12 font-medium"
           >
@@ -1102,7 +1103,7 @@ export default function TechniciansPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={mobileViewport}
             className="text-center p-10 md:p-16 rounded-3xl bg-gradient-to-br from-carbon-800/80 to-carbon-800/40 border border-electric-500/30"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
