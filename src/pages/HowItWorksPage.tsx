@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Mic, Brain, FileText, Volume2, ArrowRight,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
@@ -244,7 +245,7 @@ function AudioSamplePlayer({ accentColor, state, progress, toggle, label }: {
         <AlertCircle className="w-4 h-4 text-carbon-300 flex-shrink-0" />
         <span className="text-carbon-300 text-sm">
           Your browser doesn't support audio playback.{' '}
-          <a href="/contact" className="underline hover:text-white transition-colors">Request a live demo</a> instead!
+          <Link to="/contact" className="underline hover:text-white transition-colors">Request a live demo</Link> instead!
         </span>
       </div>
     );
@@ -1021,14 +1022,14 @@ export default function HowItWorksPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">What's your role?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/technicians" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric">
+              <Link to="/technicians" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric">
                 I'm a Technician
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-              <a href="/managers" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety">
+              </Link>
+              <Link to="/managers" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety">
                 I'm a Service Manager
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

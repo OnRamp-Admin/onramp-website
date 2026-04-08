@@ -1108,13 +1108,13 @@ export default function TechniciansPage() {
                 Plan
               </span>
             </h2>
-            <a
-              href="/pricing#individual"
+            <Link
+              to="/pricing#individual"
               className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric"
             >
               Choose Your Plan
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>

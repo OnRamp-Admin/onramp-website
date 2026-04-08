@@ -1214,13 +1214,13 @@ export default function ManagersPage() {
                 Plan
               </span>
             </h2>
-            <a
-              href="/pricing#service-center"
+            <Link
+              to="/pricing#service-center"
               className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety"
             >
               Choose Your Plan
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>
