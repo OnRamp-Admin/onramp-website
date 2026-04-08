@@ -144,12 +144,4 @@ input[type="range"]::-moz-range-thumb {
   background: var(--color-carbon-500);
 }
 
-/* Mobile: disable all entrance animations for smooth scrolling.
-   Touch devices skip opacity/transform transitions entirely. */
-@media (hover: none) and (pointer: coarse) {
-  * {
-    animation-duration: 0.001s !important;
-    transition-duration: 0.001s !important;
-  }
-}
 
