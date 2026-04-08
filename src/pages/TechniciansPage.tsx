@@ -340,7 +340,7 @@ function TerminateWastedTimeSection() {
             <span className="block md:inline">{' '}at the Terminal!</span>
           </h2>
           <p className="text-carbon-300 text-lg max-w-2xl mx-auto">
-            Every trip away from the bay costs a few minutes! Minutes turn into hours, and hours turn into a bigger paycheck. ONRAMP keeps you <span className="text-white font-bold">ON TASK</span> — here's what you'll never have to walk to the terminal for again:
+            Every trip away from the bay costs a few minutes! Minutes turn into hours, and hours turn into a bigger paycheck. ONRAMP keeps you <span className="text-white font-bold">ON TASK</span>.
           </p>
         </motion.div>
 
