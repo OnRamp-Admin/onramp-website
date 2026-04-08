@@ -487,7 +487,10 @@ export default function TechniciansPage() {
             <button
               onClick={() => {
                 const el = document.getElementById('roi-calculator');
-                if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                if (!el) return;
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
+                setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 1000);
               }}
               className="group px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric flex items-center gap-2 cursor-pointer"
             >

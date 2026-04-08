@@ -550,7 +550,12 @@ export default function ManagersPage() {
             <button
               onClick={() => {
                 const el = document.getElementById('roi-calculator');
-                if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                if (!el) return;
+                // Scroll multiple times to compensate for whileInView animations
+                // changing the page height during scroll
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
+                setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 1000);
               }}
               className="group px-8 py-4 bg-gradient-to-r from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 text-white font-semibold rounded-xl transition-all duration-300 glow-safety flex items-center gap-2 cursor-pointer"
             >
