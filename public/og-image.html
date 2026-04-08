@@ -1,0 +1,79 @@
+<!-- Open this in a browser and screenshot at 1200x630 to create og-image.png -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(135deg, #06060d 0%, #0d0d1a 40%, #1a1a33 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Inter, system-ui, sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+  .glow-blue {
+    position: absolute;
+    top: 10%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+    background: rgba(26, 160, 255, 0.12);
+    border-radius: 50%;
+    filter: blur(100px);
+  }
+  .glow-orange {
+    position: absolute;
+    bottom: 10%;
+    right: -5%;
+    width: 350px;
+    height: 350px;
+    background: rgba(249, 115, 22, 0.1);
+    border-radius: 50%;
+    filter: blur(100px);
+  }
+  .content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .logo {
+    height: 80px;
+    margin-bottom: 40px;
+  }
+  .tagline {
+    font-size: 32px;
+    font-weight: 600;
+    color: rgba(200, 200, 210, 0.9);
+    letter-spacing: 0.5px;
+  }
+  .highlight {
+    background: linear-gradient(90deg, #60a5fa, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+  .url {
+    position: absolute;
+    bottom: 30px;
+    color: rgba(150, 150, 165, 0.6);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+  <div class="glow-blue"></div>
+  <div class="glow-orange"></div>
+  <div class="content">
+    <img src="Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" class="logo" />
+    <div class="tagline">The <span class="highlight">AI Voice Agent</span> for Automotive Technicians</div>
+  </div>
+  <div class="url">getonramp.io</div>
+</body>
+</html>
