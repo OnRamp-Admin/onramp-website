@@ -108,7 +108,7 @@ export default function Hero() {
     <section
       className="relative min-h-screen flex flex-col justify-center items-center px-4 py-20 overflow-hidden"
       style={{
-        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.png)',
+        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: '70% 50%',
       }}

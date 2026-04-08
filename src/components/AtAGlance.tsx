@@ -310,7 +310,7 @@ export default function AtAGlance() {
                   <div
                     className="relative overflow-hidden"
                     style={{
-                      backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.png)',
+                      backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.jpg)',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center 60%',
                       width: '100vw',

@@ -576,7 +576,7 @@ export default function ManagersPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.png)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',
@@ -673,7 +673,7 @@ export default function ManagersPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.png)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',

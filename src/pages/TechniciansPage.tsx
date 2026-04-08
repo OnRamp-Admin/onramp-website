@@ -329,7 +329,7 @@ function TerminateWastedTimeSection() {
       className="py-20 px-4 relative"
       ref={sectionRef}
       style={{
-        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.png)',
+        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center 40%',
         width: '100vw',
@@ -754,7 +754,7 @@ export default function TechniciansPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.png)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',

@@ -44,7 +44,7 @@ const phases = [
     color: 'electric',
     title: 'Pinpoint the Problem',
     titleAccent: 'AI FAST!',
-    bgImage: '/technician-diagnosing.png',
+    bgImage: '/technician-diagnosing.jpg',
     description: 'Describe the symptoms and ONRAMP helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
     details: [
       "References TSBs & Recalls ('95 - Today), and known failures",
@@ -79,7 +79,7 @@ const phases = [
     icon: Wrench,
     color: 'green',
     title: 'Voice-Guided Repairs',
-    bgImage: '/technician-working.png',
+    bgImage: '/technician-working.jpg',
     description: 'Work with your hands while ONRAMP coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
       "AI delivers step details, torque specs and 'heads-up' guidance live as you need it!",
@@ -1098,7 +1098,7 @@ export default function HowItWorksPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.png)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',
