@@ -143,3 +143,4 @@ input[type="range"]::-moz-range-thumb {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-carbon-500);
 }
+
