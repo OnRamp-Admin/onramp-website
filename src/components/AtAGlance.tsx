@@ -275,7 +275,7 @@ const mockups: Record<string, React.FC> = {
 
 export default function AtAGlance() {
   return (
-    <section className="py-24 px-4 relative">
+    <section className="pt-24 pb-0 px-4 relative">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
         <motion.div
@@ -318,13 +318,13 @@ export default function AtAGlance() {
                     }}
                   >
                     <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-14 px-4 md:px-8 py-12 md:py-16 lg:py-20">
-                      {/* Left — Dashboard mockup (smaller) + CTA */}
+                      {/* Left on desktop, below text on mobile — Dashboard mockup + CTA */}
                       <motion.div
                         initial={{ opacity: 0, x: -40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={mobileViewport}
                         transition={{ duration: 0.7 }}
-                        className="w-full lg:w-1/2 flex flex-col items-center"
+                        className="w-full lg:w-1/2 flex flex-col items-center order-2 lg:order-1"
                       >
                         <div className="relative w-full max-w-md">
                           <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[80px] scale-75 opacity-30`} />
@@ -341,13 +341,13 @@ export default function AtAGlance() {
                         </Link>
                       </motion.div>
 
-                      {/* Right — Text */}
+                      {/* Right on desktop, above mockup on mobile — Text */}
                       <motion.div
                         initial={{ opacity: 0, x: 40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={mobileViewport}
                         transition={{ duration: 0.7, delay: 0.1 }}
-                        className="w-full lg:w-1/2"
+                        className="w-full lg:w-1/2 order-1 lg:order-2"
                       >
                         <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
                           <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />

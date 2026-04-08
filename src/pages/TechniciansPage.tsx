@@ -326,17 +326,23 @@ function TerminateWastedTimeSection() {
 
   return (
     <section
-      className="py-20 px-4 relative"
+      className="py-20 px-4 relative overflow-hidden"
       ref={sectionRef}
       style={{
-        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 40%',
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
       }}
     >
-      <div className="max-w-5xl mx-auto">
+      {/* Fixed background — doesn't resize when content changes */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 40%',
+        }}
+      />
+      <div className="max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -375,7 +381,7 @@ function TerminateWastedTimeSection() {
           </div>
 
           {/* Right column: One phase at a time, left edge at page center */}
-          <div className="w-full min-h-[280px]">
+          <div className="w-full min-h-[420px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${cycle}-phase-${activePhase}`}

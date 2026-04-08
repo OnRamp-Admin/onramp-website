@@ -107,12 +107,16 @@ export default function Hero() {
   return (
     <section
       className="relative min-h-screen flex flex-col justify-center items-center px-4 py-20 overflow-hidden"
-      style={{
-        backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: '70% 50%',
-      }}
     >
+      {/* Fixed background image — doesn't resize when content expands */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: '70% 50%',
+        }}
+      />
       {/* Background Gradient Orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-electric-500/20 rounded-full blur-[128px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-safety-500/15 rounded-full blur-[128px]" />
