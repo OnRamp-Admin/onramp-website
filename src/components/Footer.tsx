@@ -9,9 +9,9 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 py-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4">
               <img src="/Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" className="h-10" />
-            </div>
+            </Link>
             <p className="text-carbon-300 max-w-sm mb-6">
               Voice-first AI for service center technicians.
             </p>

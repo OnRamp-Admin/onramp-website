@@ -115,7 +115,7 @@ function PhoneMockup() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % phoneScreenshots.length);
-    }, 7000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 

@@ -265,7 +265,7 @@ const timeSaverPhases: TimeSaverPhase[] = [
   },
 ];
 
-const TOTAL_ANIMATION_MS = 60000; // 60 seconds for all bullets
+const TOTAL_ANIMATION_MS = 30000; // 30 seconds for all bullets
 const RESTART_DELAY_MS = 5000;
 // Total items across all phases — time per bullet is TOTAL / count
 const ALL_ITEMS_COUNT = timeSaverPhases.reduce((s, p) => s + p.items.length, 0);
