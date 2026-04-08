@@ -143,7 +143,9 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mb-6"
-          onMouseLeave={() => setActivePhase(null)}
+          onMouseLeave={() => {
+            if (window.matchMedia('(hover: hover)').matches) setActivePhase(null);
+          }}
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {phases.map((phase, index) => {
@@ -155,7 +157,10 @@ export default function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
                   whileHover={{ y: -4 }}
-                  onMouseEnter={() => setActivePhase(index)}
+                  onMouseEnter={() => {
+                    // Only use hover on devices with a mouse (not touch)
+                    if (window.matchMedia('(hover: hover)').matches) setActivePhase(index);
+                  }}
                   onClick={() => setActivePhase(isActive ? null : index)}
                   className={`relative p-4 md:p-5 rounded-2xl ${phase.bgColor} border-2 backdrop-blur-sm cursor-pointer transition-all duration-200 ${
                     isActive ? `${phase.borderActive}` : phase.borderColor

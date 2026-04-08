@@ -374,7 +374,7 @@ function ManagerPhaseCards() {
   const [activePhase, setActivePhase] = useState<number | null>(null);
 
   return (
-    <div onMouseLeave={() => setActivePhase(null)}>
+    <div onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setActivePhase(null); }}>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {managerPhases.map((phase, index) => {
           const isActive = activePhase === index;
@@ -386,7 +386,7 @@ function ManagerPhaseCards() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -4 }}
-              onMouseEnter={() => setActivePhase(index)}
+              onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setActivePhase(index); }}
               onClick={() => setActivePhase(isActive ? null : index)}
               className={`relative p-4 md:p-5 rounded-2xl ${phase.bg} border-2 backdrop-blur-sm cursor-pointer transition-all duration-200 ${
                 isActive ? phase.borderActive : phase.border

@@ -1432,7 +1432,7 @@ function IndividualPricing() {
             })}
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-16" onMouseLeave={() => setHoveredTier(null)}>
+          <div className="grid md:grid-cols-3 gap-6 mb-16" onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredTier(null); }}>
             {tierConfigs.map((tier, index) => {
               // Show active styling for hovered tier, or selected tier if nothing hovered
               const activeTier = hoveredTier || selectedTier;
@@ -1447,7 +1447,7 @@ function IndividualPricing() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => setSelectedTier(tier.key)}
-                  onMouseEnter={() => setHoveredTier(tier.key)}
+                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredTier(tier.key); }}
                   className={`relative p-8 rounded-2xl transition-all duration-300 cursor-pointer ${selectedTier === tier.key ? 'block' : 'hidden md:block'} ${
                     isActive
                       ? `bg-gradient-to-b ${tc.gradient} to-carbon-800/80 border-2 ${tc.borderCard} scale-[1.02]`

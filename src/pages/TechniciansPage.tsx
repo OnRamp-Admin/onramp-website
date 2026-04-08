@@ -528,7 +528,7 @@ export default function TechniciansPage() {
           </motion.div>
 
           {/* Phase stack — full width, expand on hover */}
-          <div className="space-y-3 max-w-4xl mx-auto" onMouseLeave={() => setHoveredPhase(null)}>
+          <div className="space-y-3 max-w-4xl mx-auto" onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredPhase(null); }}>
             {phases.map((phase, i) => {
               const c = phaseColors[phase.color];
               const isHovered = hoveredPhase === i;
@@ -540,7 +540,7 @@ export default function TechniciansPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  onMouseEnter={() => setHoveredPhase(i)}
+                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredPhase(i); }}
                   onClick={() => setHoveredPhase(isHovered ? null : i)}
                   className={`rounded-2xl border cursor-default transition-all duration-400 overflow-hidden ${
                     isHovered
