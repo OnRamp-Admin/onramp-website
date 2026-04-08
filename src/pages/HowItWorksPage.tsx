@@ -204,6 +204,7 @@ function useAudioPlayer(src: string) {
       }
 
       audioRef.current.currentTime = 0;
+      audioRef.current.playbackRate = 1.1;
       const playPromise = audioRef.current.play();
       if (playPromise) {
         playPromise.then(() => {
