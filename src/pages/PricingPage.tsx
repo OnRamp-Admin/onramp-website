@@ -2354,13 +2354,16 @@ export default function PricingPage() {
                 Plan
               </span>
             </h2>
-            <a
-              href="#plan-selector"
-              className={`group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r ${tab === 'individual' ? 'from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 glow-electric' : 'from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 glow-safety'} text-white font-semibold rounded-xl transition-all duration-300`}
+            <button
+              onClick={() => {
+                const el = document.getElementById('plan-selector');
+                if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+              }}
+              className={`group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r ${tab === 'individual' ? 'from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 glow-electric' : 'from-safety-500 to-safety-600 hover:from-safety-400 hover:to-safety-500 glow-safety'} text-white font-semibold rounded-xl transition-all duration-300 cursor-pointer`}
             >
               Choose Your Plan
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </section>

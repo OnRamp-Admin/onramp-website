@@ -25,8 +25,14 @@ const COMING_SOON = false;
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Immediate scroll to prevent flash of wrong position
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    // Also scroll after a brief delay to catch any post-render layout shifts
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    }, 50);
     trackPageView(pathname);
+    return () => clearTimeout(timer);
   }, [pathname]);
   return null;
 }

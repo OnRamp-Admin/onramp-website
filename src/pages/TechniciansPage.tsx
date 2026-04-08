@@ -483,13 +483,16 @@ export default function TechniciansPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <a
-              href="#roi-calculator"
-              className="group px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric flex items-center gap-2"
+            <button
+              onClick={() => {
+                const el = document.getElementById('roi-calculator');
+                if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+              }}
+              className="group px-8 py-4 bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-semibold rounded-xl transition-all duration-300 glow-electric flex items-center gap-2 cursor-pointer"
             >
               See What You Could Earn
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </button>
             <Link
               to="/how-it-works"
               className="px-8 py-4 bg-carbon-800/50 hover:bg-carbon-700/50 text-carbon-100 font-semibold rounded-xl border border-carbon-600/50 hover:border-carbon-500/50 transition-all duration-300"
@@ -797,7 +800,7 @@ export default function TechniciansPage() {
       </section>
 
       {/* ── ROI Calculator (PRESERVED — DO NOT MODIFY) ───────────────── */}
-      <section id="roi-calculator" className="py-20 px-4 carbon-fiber-bg relative overflow-hidden">
+      <section id="roi-calculator" className="py-20 px-4 carbon-fiber-bg relative overflow-hidden scroll-mt-20">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-electric-500/10 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-safety-500/10 rounded-full blur-[150px]" />
         <div className="max-w-5xl mx-auto relative">
