@@ -6,7 +6,7 @@ import {
   Check, Zap, Crown, Infinity as InfinityIcon, ArrowRight, Clock, Users, Building2, User, TrendingUp,
   Minus, Plus, MousePointerClick, HelpCircle, X, CheckCircle2, Loader2, Search,
 } from 'lucide-react';
-import { trackPricingTabSwitch, trackPricingConfigured } from '../lib/analytics';
+import { trackPricingTabSwitch, trackPricingConfigured, trackContactFormSubmit } from '../lib/analytics';
 
 /* ------------------------------------------------------------------ */
 /*  Google Form Configuration                                          */
@@ -1138,6 +1138,11 @@ function SignupModal({
       });
 
       setSubmitted(true);
+      trackContactFormSubmit({
+        role: role,
+        hasPhone: getPhoneDigits(phone).length >= 10,
+        hasShopName: shopName.trim().length > 0,
+      });
     } catch (err) {
       console.error('[SignupModal] Submission error:', err);
       setError('Something went wrong. Please try again.');
