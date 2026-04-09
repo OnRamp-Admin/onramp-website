@@ -175,6 +175,22 @@ export function trackBlogIndexViewed() {
   posthog.capture('blog_index_viewed');
 }
 
+/** Blog share button clicked — LinkedIn, Twitter/X, or copy-link */
+export function trackBlogShareClicked(data: {
+  slug: string;
+  channel: 'linkedin' | 'twitter' | 'copy_link';
+}) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_share_clicked', data);
+}
+
+/** Inline blog lead form successfully submitted — fires alongside the generic
+ *  contact_form_submitted event so we can build blog-specific funnels later */
+export function trackBlogLeadCaptured(data: { slug: string; role: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_lead_captured', data);
+}
+
 /** Set blog entry point — tags the user's session with their blog entry so we can
  *  track blog → site navigation in funnels and user paths */
 export function setBlogEntryPoint(slug: string) {

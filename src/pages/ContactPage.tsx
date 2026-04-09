@@ -5,20 +5,7 @@ import { Mail, MapPin, CheckCircle2, Building2, X, Search } from 'lucide-react';
 import { trackContactFormSubmit } from '../lib/analytics';
 import { trackConversion } from '../lib/marketing-pixels';
 import { useSEO } from '../hooks/useSEO';
-
-// ─── Google Form Configuration ───────────────────────────────────────────────
-const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSecRS6mfq1RZqVOEZ4KLTmogrF_4aSZ2fwg25YMO07ap88RmQ/formResponse';
-const GOOGLE_FORM_FIELDS = {
-  source: 'entry.1894016444',
-  usageLevel: 'entry.1525145917',
-  seats: 'entry.1446346906',
-  name: 'entry.502216171',
-  email: 'entry.1760694518',
-  phone: 'entry.1441318369',
-  shopName: 'entry.417059025',
-  role: 'entry.2032741101',
-  message: 'entry.1443923466',
-};
+import { submitToGoogleForm } from '../lib/google-form';
 
 // ─── Phone Formatting ────────────────────────────────────────────────────────
 function formatPhoneNumber(value: string): string {
@@ -52,40 +39,6 @@ interface PlaceSuggestion {
   name: string;
   formattedAddress: string;
   placeId?: string;
-}
-
-// ─── Google Forms Submission ─────────────────────────────────────────────────
-async function submitToGoogleForm(data: {
-  name: string;
-  email: string;
-  phone: string;
-  shopName: string;
-  role: string;
-  message: string;
-}): Promise<boolean> {
-  try {
-    const formData = new URLSearchParams();
-    formData.append(GOOGLE_FORM_FIELDS.source, 'Contact Form');
-    formData.append(GOOGLE_FORM_FIELDS.name, data.name);
-    formData.append(GOOGLE_FORM_FIELDS.email, data.email);
-    formData.append(GOOGLE_FORM_FIELDS.phone, data.phone);
-    formData.append(GOOGLE_FORM_FIELDS.shopName, data.shopName);
-    formData.append(GOOGLE_FORM_FIELDS.role, data.role);
-    formData.append(GOOGLE_FORM_FIELDS.message, data.message);
-
-    // Google Forms doesn't return CORS-friendly responses, so we use no-cors mode.
-    // This means we can't read the response, but the data still gets submitted.
-    await fetch(GOOGLE_FORM_ACTION, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString(),
-    });
-    return true;
-  } catch (err) {
-    console.error('[ContactForm] Google Form submission error:', err);
-    return false;
-  }
 }
 
 // ─── Google Places Autocomplete ──────────────────────────────────────────────
@@ -310,6 +263,7 @@ export default function ContactPage() {
 
     // Submit to Google Forms
     await submitToGoogleForm({
+      source: 'Contact Form',
       name: formData.name,
       email: formData.email,
       phone: formData.phone,

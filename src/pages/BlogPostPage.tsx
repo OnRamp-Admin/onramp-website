@@ -8,6 +8,9 @@ import { getBlogPost } from '../content/blog/posts';
 import type { Components } from 'react-markdown';
 import { useSEO } from '../hooks/useSEO';
 import BlogAudioPlayer from '../components/BlogAudioPlayer';
+import ShareBar from '../components/blog/ShareBar';
+import ScrollCTA from '../components/blog/ScrollCTA';
+import InlineBlogLeadForm from '../components/blog/InlineBlogLeadForm';
 import {
   trackBlogPostViewed,
   setBlogEntryPoint,
@@ -21,6 +24,13 @@ export default function BlogPostPage() {
   useSEO({
     title: post ? `${post.title} | OnRamp Blog` : 'Blog | OnRamp',
     description: post?.description || 'Read the latest from the OnRamp team.',
+    // Use the post's image (if set) for LinkedIn / X / Facebook share previews.
+    // Relative paths get resolved against the site root by the OG spec consumers.
+    ogImage: post?.image
+      ? post.image.startsWith('http')
+        ? post.image
+        : `https://getonramp.io${post.image.startsWith('/') ? '' : '/'}${post.image}`
+      : undefined,
   });
 
   useEffect(() => {
@@ -244,6 +254,10 @@ export default function BlogPostPage() {
           </motion.div>
         )}
 
+        {/* Share buttons — sit above the content so readers can share without
+            scrolling to the end. LinkedIn first (highest-value B2B channel). */}
+        <ShareBar slug={post.slug} title={post.title} />
+
         {/* Content */}
         <motion.article
           initial={{ opacity: 0, y: 20 }}
@@ -258,34 +272,14 @@ export default function BlogPostPage() {
           </ReactMarkdown>
         </motion.article>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mt-16 bg-carbon-800/50 border border-carbon-700/50 rounded-2xl p-8 text-center"
-        >
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Ready to see ONRAMP in action?
-          </h2>
-          <p className="text-carbon-200 mb-6">
-            See how voice-first AI keeps technicians in the zone and off the
-            terminal.
-          </p>
-          <Link
-            to="/how-it-works"
-            onClick={() =>
-              trackBlogCTAClicked({
-                slug: post.slug,
-                destination: '/how-it-works',
-              })
-            }
-            className="inline-flex items-center gap-2 px-6 py-3 bg-electric-500 hover:bg-electric-600 text-white font-semibold rounded-xl transition-colors"
-          >
-            See How It Works
-          </Link>
-        </motion.div>
+        {/* Quiet mid-scroll CTA — fades in once the reader nears the end of
+            the article. Lower-friction next step than the lead form below. */}
+        <ScrollCTA slug={post.slug} />
+
+        {/* Bottom-of-post lead capture — replaces the old static CTA box.
+            Submits to the same Google Form pipeline as ContactPage with a
+            blog-specific source label. */}
+        <InlineBlogLeadForm slug={post.slug} />
       </div>
     </div>
   );
