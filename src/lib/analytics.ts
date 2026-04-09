@@ -156,3 +156,31 @@ export function trackPricingTierSelected(data: { tier: string }) {
   if (!POSTHOG_KEY) return;
   posthog.capture('pricing_tier_selected', data);
 }
+
+/** Blog post viewed — fires when a blog post page loads */
+export function trackBlogPostViewed(data: { slug: string; title: string; tags: string[]; readTime: number }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_post_viewed', data);
+}
+
+/** Blog CTA clicked — fires when reader clicks a CTA link within a blog post */
+export function trackBlogCTAClicked(data: { slug: string; destination: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_cta_clicked', data);
+}
+
+/** Blog index viewed */
+export function trackBlogIndexViewed() {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_index_viewed');
+}
+
+/** Set blog entry point — tags the user's session with their blog entry so we can
+ *  track blog → site navigation in funnels and user paths */
+export function setBlogEntryPoint(slug: string) {
+  if (!POSTHOG_KEY) return;
+  // Set a person property so we can filter/segment users who entered via blog
+  posthog.people.set({ last_blog_entry: slug, entered_via_blog: true });
+  // Also set a session-level super property
+  posthog.register({ blog_entry_slug: slug });
+}

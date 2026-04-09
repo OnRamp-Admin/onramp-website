@@ -31,6 +31,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getonramp.io/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://getonramp.io/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -54,5 +59,11 @@
     <loc>https://getonramp.io/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://getonramp.io/blog/how-ai-is-fixing-the-service-bay-bottleneck</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
