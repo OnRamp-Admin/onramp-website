@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, Loader2, Headphones, Zap, X } from 'lucide-react';
+import { Play, Pause, Loader2, Headphones, Zap, X, FileText, Gauge } from 'lucide-react';
 import {
   useBlogAudioPlayer,
   type UseBlogAudioPlayerReturn,
@@ -19,7 +19,11 @@ interface BlogAudioPlayerProps {
   audioUrl: string;
   durationSec?: number;
   variant: BlogAudioFormat;
+  /** Optional transcript text. When provided, a "Show transcript" toggle appears below the player. Rendered in DOM (inside <details>) so Google indexes it even when collapsed. */
+  transcript?: string;
 }
+
+const PLAYBACK_RATE_OPTIONS = [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0] as const;
 
 interface VariantConfig {
   label: string;
@@ -80,6 +84,7 @@ export default function BlogAudioPlayer({
   audioUrl,
   durationSec,
   variant,
+  transcript,
 }: BlogAudioPlayerProps) {
   const config = VARIANT_CONFIG[variant];
 
@@ -140,6 +145,7 @@ export default function BlogAudioPlayer({
         player={player}
         title={title}
         config={config}
+        transcript={transcript}
       />
       <AnimatePresence>
         {showMini && (
@@ -161,17 +167,39 @@ interface InlineVariantProps {
   player: UseBlogAudioPlayerReturn;
   title: string;
   config: VariantConfig;
+  transcript?: string;
 }
 
 const InlineVariant = forwardRef<HTMLDivElement, InlineVariantProps>(
-  function InlineVariant({ player, title, config }, ref) {
-    const { state, currentTime, duration, progress, toggle, seekToPercent } = player;
+  function InlineVariant({ player, title, config, transcript }, ref) {
+    const { state, currentTime, duration, progress, toggle, seekToPercent, playbackRate, setPlaybackRate } = player;
     const isPlaying = state === 'playing';
     const isLoading = state === 'loading';
     const hasNeverPlayed = state === 'idle';
     const Icon = config.Icon;
 
     const progressBarRef = useRef<HTMLDivElement>(null);
+    const speedMenuRef = useRef<HTMLDivElement>(null);
+    const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
+
+    // Close the speed menu when clicking outside or pressing Escape.
+    useEffect(() => {
+      if (!speedMenuOpen) return;
+      const onClick = (e: MouseEvent) => {
+        if (speedMenuRef.current && !speedMenuRef.current.contains(e.target as Node)) {
+          setSpeedMenuOpen(false);
+        }
+      };
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setSpeedMenuOpen(false);
+      };
+      document.addEventListener('mousedown', onClick);
+      document.addEventListener('keydown', onKey);
+      return () => {
+        document.removeEventListener('mousedown', onClick);
+        document.removeEventListener('keydown', onKey);
+      };
+    }, [speedMenuOpen]);
 
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
       const bar = progressBarRef.current;
@@ -268,14 +296,82 @@ const InlineVariant = forwardRef<HTMLDivElement, InlineVariantProps>(
               />
             </div>
 
-            <div className="flex justify-between mt-2 text-xs text-carbon-400 font-mono">
+            {/* Time row + speed selector inline */}
+            <div className="flex items-center justify-between gap-2 mt-2 text-xs text-carbon-400 font-mono">
               <span>{formatTime(currentTime)}</span>
-              <span>
-                {config.subtitlePrefix} • {formatTime(duration)}
-              </span>
+              <div className="flex items-center gap-3">
+                {/* Speed selector dropdown */}
+                <div ref={speedMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setSpeedMenuOpen((v) => !v)}
+                    aria-haspopup="listbox"
+                    aria-expanded={speedMenuOpen}
+                    aria-label={`Playback speed: ${playbackRate}x. Click to change.`}
+                    className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-carbon-200 bg-carbon-700/50 hover:bg-carbon-700 hover:text-white transition-colors"
+                  >
+                    <Gauge className="w-3 h-3" />
+                    {playbackRate.toFixed(1)}x
+                  </button>
+                  <AnimatePresence>
+                    {speedMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        transition={{ duration: 0.12 }}
+                        role="listbox"
+                        aria-label="Playback speed options"
+                        className="absolute bottom-full right-0 mb-2 z-10 bg-carbon-900 border border-carbon-700 rounded-xl shadow-xl shadow-black/50 py-1 min-w-[72px] max-h-[280px] overflow-y-auto"
+                      >
+                        {PLAYBACK_RATE_OPTIONS.map((rate) => {
+                          const isSelected = Math.abs(rate - playbackRate) < 0.05;
+                          return (
+                            <button
+                              key={rate}
+                              type="button"
+                              role="option"
+                              aria-selected={isSelected}
+                              onClick={() => {
+                                setPlaybackRate(rate);
+                                setSpeedMenuOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-1 text-xs font-mono transition-colors ${
+                                isSelected
+                                  ? `${config.iconColorClass} bg-carbon-800 font-semibold`
+                                  : 'text-carbon-300 hover:bg-carbon-800 hover:text-white'
+                              }`}
+                            >
+                              {rate.toFixed(1)}x
+                            </button>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <span>{formatTime(duration)}</span>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Transcript: full-width <details> at the bottom of the card.
+            Native HTML <details> means the transcript text is in the
+            rendered DOM even when collapsed — Google indexes it for SEO,
+            and accessibility tools can reach it. */}
+        {transcript && (
+          <details className="group/t mt-4">
+            <summary className="flex items-center gap-1.5 cursor-pointer list-none px-3 py-2 rounded-lg text-xs font-medium text-carbon-300 bg-carbon-700/40 hover:bg-carbon-700/70 hover:text-white transition-colors select-none w-fit">
+              <FileText className="w-3.5 h-3.5" />
+              <span className="group-open/t:hidden">Show transcript</span>
+              <span className="hidden group-open/t:inline">Hide transcript</span>
+            </summary>
+            <div className="mt-4 pt-4 border-t border-carbon-700/40 text-carbon-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+              {transcript}
+            </div>
+          </details>
+        )}
       </section>
     );
   }

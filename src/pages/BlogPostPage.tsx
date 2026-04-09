@@ -228,6 +228,7 @@ export default function BlogPostPage() {
                 audioUrl={post.briefAudioUrl}
                 durationSec={post.briefDurationSec}
                 variant="brief"
+                transcript={post.briefTranscript}
               />
             )}
             {post.podcastAudioUrl && (
@@ -237,6 +238,7 @@ export default function BlogPostPage() {
                 audioUrl={post.podcastAudioUrl}
                 durationSec={post.podcastDurationSec}
                 variant="podcast"
+                transcript={post.podcastTranscript}
               />
             )}
           </motion.div>

@@ -40,6 +40,9 @@ export interface UseBlogAudioPlayerReturn {
    * multiple BlogAudioPlayer instances are on the same page.
    */
   isActive: boolean;
+  /** Current playback rate (1.0 = normal). Persisted across the site via localStorage. */
+  playbackRate: number;
+  setPlaybackRate: (rate: number) => void;
   play: () => void;
   pause: () => void;
   toggle: () => void;
@@ -48,6 +51,32 @@ export interface UseBlogAudioPlayerReturn {
 }
 
 const SEEK_THRESHOLD_SEC = 5;
+const PLAYBACK_RATE_STORAGE_KEY = 'onramp-blog-audio-speed';
+const DEFAULT_PLAYBACK_RATE = 1.0;
+const MIN_PLAYBACK_RATE = 1.0;
+const MAX_PLAYBACK_RATE = 2.0;
+
+function readStoredPlaybackRate(): number {
+  if (typeof window === 'undefined') return DEFAULT_PLAYBACK_RATE;
+  try {
+    const raw = window.localStorage.getItem(PLAYBACK_RATE_STORAGE_KEY);
+    if (!raw) return DEFAULT_PLAYBACK_RATE;
+    const parsed = parseFloat(raw);
+    if (!Number.isFinite(parsed)) return DEFAULT_PLAYBACK_RATE;
+    return Math.max(MIN_PLAYBACK_RATE, Math.min(MAX_PLAYBACK_RATE, parsed));
+  } catch {
+    return DEFAULT_PLAYBACK_RATE;
+  }
+}
+
+// In-module pub/sub so multiple player instances on the same page stay in
+// sync when one of them changes the playback rate. The native `storage`
+// event only fires in OTHER tabs, not the same window — so we need our own
+// notification mechanism for same-tab cross-instance sync.
+const playbackRateListeners = new Set<(rate: number) => void>();
+function notifyPlaybackRateChange(rate: number) {
+  playbackRateListeners.forEach((fn) => fn(rate));
+}
 
 export function useBlogAudioPlayer(
   options: UseBlogAudioPlayerOptions
@@ -58,6 +87,7 @@ export function useBlogAudioPlayer(
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(initialDurationSec ?? 0);
   const [isActive, setIsActive] = useState(false);
+  const [playbackRate, setPlaybackRateState] = useState<number>(readStoredPlaybackRate);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -122,6 +152,7 @@ export function useBlogAudioPlayer(
     audio.preload = 'metadata';
     audio.crossOrigin = 'anonymous';
     audio.src = src;
+    audio.playbackRate = playbackRate;
 
     audio.addEventListener('loadedmetadata', () => {
       if (Number.isFinite(audio.duration)) {
@@ -243,6 +274,53 @@ export function useBlogAudioPlayer(
     [seekTo]
   );
 
+  const setPlaybackRate = useCallback((rate: number) => {
+    const clamped = Math.max(MIN_PLAYBACK_RATE, Math.min(MAX_PLAYBACK_RATE, rate));
+    // Round to 1 decimal place to avoid floating-point drift like 1.2000000001.
+    const rounded = Math.round(clamped * 10) / 10;
+    setPlaybackRateState(rounded);
+    try {
+      window.localStorage.setItem(PLAYBACK_RATE_STORAGE_KEY, String(rounded));
+    } catch {
+      /* ignore storage errors (private mode, quota, etc.) */
+    }
+    notifyPlaybackRateChange(rounded);
+  }, []);
+
+  // Apply playback rate to the underlying audio element whenever it changes.
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  // Cross-instance playback rate sync. When one player on the page changes
+  // the rate, all other players update their local state too.
+  useEffect(() => {
+    const listener = (rate: number) => {
+      setPlaybackRateState(rate);
+    };
+    playbackRateListeners.add(listener);
+    return () => {
+      playbackRateListeners.delete(listener);
+    };
+  }, []);
+
+  // Cross-tab sync via the native `storage` event (fires in OTHER tabs).
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== PLAYBACK_RATE_STORAGE_KEY || e.newValue == null) return;
+      const parsed = parseFloat(e.newValue);
+      if (Number.isFinite(parsed)) {
+        setPlaybackRateState(
+          Math.max(MIN_PLAYBACK_RATE, Math.min(MAX_PLAYBACK_RATE, parsed))
+        );
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   // Subscribe to the audio bus so this player pauses + becomes inactive when
   // something else takes over playback site-wide.
   useEffect(() => {
@@ -286,6 +364,8 @@ export function useBlogAudioPlayer(
     duration: safeDuration,
     progress,
     isActive,
+    playbackRate,
+    setPlaybackRate,
     play,
     pause,
     toggle,
