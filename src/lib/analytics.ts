@@ -120,3 +120,39 @@ export function trackFeatureGridViewed() {
   if (!POSTHOG_KEY) return;
   posthog.capture('feature_grid_viewed');
 }
+
+/** Audio sample played (phase samples, AI stack sample) */
+export function trackAudioPlayed(data: { sample: string; page: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('audio_sample_played', data);
+}
+
+/** Voice explorer opened */
+export function trackVoiceExplorerOpened() {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('voice_explorer_opened');
+}
+
+/** Individual voice sample played */
+export function trackVoiceSamplePlayed(data: { voice: string; gender: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('voice_sample_played', data);
+}
+
+/** FAQ question expanded */
+export function trackFAQExpanded(data: { question: string; category: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('faq_expanded', data);
+}
+
+/** Signup/waitlist modal opened */
+export function trackSignupModalOpened(data: { mode: string; plan: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('signup_modal_opened', data);
+}
+
+/** Pricing tier selected (Individual cards) */
+export function trackPricingTierSelected(data: { tier: string }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('pricing_tier_selected', data);
+}

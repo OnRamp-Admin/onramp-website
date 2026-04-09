@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { mobileViewport } from '../lib/motion';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { trackFAQExpanded } from '../lib/analytics';
 
 // ─── FAQ Data ────────────────────────────────────────────────────────────────
 
@@ -335,7 +336,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   return (
     <div className="border-b border-carbon-800/50">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => { if (!isOpen) trackFAQExpanded({ question: question.substring(0, 80), category: '' }); setIsOpen(!isOpen); }}
         className="w-full flex items-start justify-between gap-4 py-5 text-left group"
       >
         <span className="text-white font-medium group-hover:text-electric-400 transition-colors">

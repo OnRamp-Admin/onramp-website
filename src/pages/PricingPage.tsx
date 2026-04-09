@@ -6,7 +6,7 @@ import {
   Check, Zap, Crown, Infinity as InfinityIcon, ArrowRight, Clock, Users, Building2, User, TrendingUp,
   Minus, Plus, MousePointerClick, HelpCircle, X, CheckCircle2, Loader2, Search,
 } from 'lucide-react';
-import { trackPricingTabSwitch, trackPricingConfigured, trackContactFormSubmit } from '../lib/analytics';
+import { trackPricingTabSwitch, trackPricingConfigured, trackContactFormSubmit, trackSignupModalOpened, trackPricingTierSelected } from '../lib/analytics';
 
 /* ------------------------------------------------------------------ */
 /*  Google Form Configuration                                          */
@@ -1425,7 +1425,7 @@ function IndividualPricing() {
               return (
                 <button
                   key={tier.key}
-                  onClick={() => setSelectedTier(tier.key)}
+                  onClick={() => { setSelectedTier(tier.key); trackPricingTierSelected({ tier: tier.key }); }}
                   className={`flex-1 py-3 px-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
                     isActive
                       ? `bg-gradient-to-r ${tc.btnGradient} text-white shadow-lg ${tc.shadow}`
@@ -1452,7 +1452,7 @@ function IndividualPricing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={mobileViewport}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => setSelectedTier(tier.key)}
+                  onClick={() => { setSelectedTier(tier.key); trackPricingTierSelected({ tier: tier.key }); }}
                   onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHoveredTier(tier.key); }}
                   className={`relative p-8 rounded-2xl transition-all duration-300 cursor-pointer ${selectedTier === tier.key ? 'block' : 'hidden md:block'} ${
                     isActive
@@ -1582,7 +1582,7 @@ function IndividualPricing() {
                   </div>
 
                   <button
-                    onClick={() => { setSignupPlan(tier.key as 'basic' | 'pro' | 'unlimited'); setSignupModalOpen(true); }}
+                    onClick={() => { setSignupPlan(tier.key as 'basic' | 'pro' | 'unlimited'); setSignupModalOpen(true); trackSignupModalOpened({ mode: 'individual', plan: tier.key }); }}
                     className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer ${
                       isActive
                         ? `bg-gradient-to-r ${tc.btnGradient} ${tc.btnHover} text-white shadow-lg ${tc.shadow}`
@@ -2227,7 +2227,7 @@ function ServiceCenterPricing() {
 
                 <div className="mt-auto">
                   <button
-                    onClick={() => setSignupModalOpen(true)}
+                    onClick={() => { setSignupModalOpen(true); trackSignupModalOpened({ mode: 'service-center', plan: selectedTier }); }}
                     className={`group flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${c.btnGradient} ${c.btnHover} text-white font-semibold rounded-xl transition-all duration-300 shadow-lg ${c.shadow} cursor-pointer`}
                   >
                     Contact Sales

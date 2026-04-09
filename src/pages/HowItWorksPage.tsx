@@ -9,6 +9,7 @@ import {
   MessageCircle, SlidersHorizontal, Sparkles, X, Headphones,
 } from 'lucide-react';
 import QuickStartDemo from '../components/QuickStartDemo';
+import { trackAudioPlayed, trackVoiceExplorerOpened, trackVoiceSamplePlayed } from '../lib/analytics';
 
 const workflowSteps = [
   {
@@ -137,7 +138,7 @@ let currentAudio: HTMLAudioElement | null = null;
 // Listeners that get called when currentAudio changes (so other instances can reset)
 const audioChangeListeners = new Set<() => void>();
 
-function useAudioPlayer(src: string) {
+function useAudioPlayer(src: string, onPlay?: () => void) {
   const [state, setState] = useState<'idle' | 'playing' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -214,6 +215,7 @@ function useAudioPlayer(src: string) {
           currentAudio = audioRef.current;
           audioChangeListeners.forEach(fn => fn());
           rafRef.current = requestAnimationFrame(updateProgress);
+          onPlay?.();
         }).catch(() => {
           setState('error');
         });
@@ -221,7 +223,7 @@ function useAudioPlayer(src: string) {
     } catch {
       setState('error');
     }
-  }, [state, src, updateProgress, stopTracking]);
+  }, [state, src, updateProgress, stopTracking, onPlay]);
 
   useEffect(() => {
     return () => {
@@ -365,7 +367,7 @@ const colorMap: Record<string, { badge: string; check: string; text: string; bor
 };
 
 function AIStackCard() {
-  const { state, toggle } = useAudioPlayer('/audio/diagnose-audio-sample.wav');
+  const { state, toggle } = useAudioPlayer('/audio/diagnose-audio-sample.wav', () => trackAudioPlayed({ sample: 'ai-stack-demo', page: 'how-it-works' }));
 
   const items = [
     { icon: Zap, title: 'Low-Latency Voice AI', desc: 'Real-time conversational responses with no awkward pauses. It feels like talking to a person, not waiting for a computer.' },
@@ -465,6 +467,8 @@ function VoiceExplorerModal({ open, onClose }: { open: boolean; onClose: () => v
     audio.play();
     audioRef.current = audio;
     setPlayingFile(file);
+    const voice = voiceSamples.find(v => v.file === file);
+    if (voice) trackVoiceSamplePlayed({ voice: voice.name, gender: voice.gender });
   };
 
   // Cleanup on close
@@ -603,7 +607,7 @@ function PersonalizationCard() {
               <div className="text-white font-semibold mb-1">25+ Voice Options</div>
               <p className="text-carbon-200 text-sm leading-relaxed">Choose from over 25 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
               <button
-                onClick={() => setVoiceModalOpen(true)}
+                onClick={() => { setVoiceModalOpen(true); trackVoiceExplorerOpened(); }}
                 className="inline-flex items-center gap-1.5 mt-2 text-safety-400 hover:text-safety-300 text-sm font-medium transition-colors cursor-pointer"
               >
                 <Headphones size={14} />
@@ -742,7 +746,7 @@ function NoScreenshotModal({ open, onClose }: { open: boolean; onClose: () => vo
 function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: number }) {
   const colors = colorMap[phase.color];
   const textOnRight = index % 2 === 1 || index === 3;
-  const { state, progress, toggle } = useAudioPlayer(phase.audio);
+  const { state, progress, toggle } = useAudioPlayer(phase.audio, () => trackAudioPlayed({ sample: phase.name, page: 'how-it-works' }));
   const [screenshotModalOpen, setScreenshotModalOpen] = useState(false);
 
   return (
