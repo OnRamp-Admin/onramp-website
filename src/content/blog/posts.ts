@@ -6,6 +6,14 @@ export interface BlogPost {
   description: string;
   tags: string[];
   image?: string;
+  /** Long-form podcast audio (NotebookLM Audio Overview, ~10–25 min). HTTPS URL to MP3. */
+  podcastAudioUrl?: string;
+  /** Long-form podcast duration in seconds — lets the player render correct total before audio metadata loads. */
+  podcastDurationSec?: number;
+  /** Short AI-generated summary audio (~30s–2min). HTTPS URL to MP3. */
+  briefAudioUrl?: string;
+  /** Brief audio duration in seconds. */
+  briefDurationSec?: number;
   content: string;
   readTime: number;
 }
@@ -23,6 +31,10 @@ const postData: Omit<BlogPost, 'readTime'>[] = [
     description:
       `The real problem in your bays isn't the repair itself. It's the friction of everything around it. Here's how terminal time is quietly draining your shop's profitability — and what AI can do about it.`,
     tags: ['ai', 'service-center', 'productivity', 'fixed-ops'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-brief.m4a',
+    briefDurationSec: 111,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-podcast.m4a',
+    podcastDurationSec: 1330,
     content: `
 
 The real problem in your bays isn't the repair itself. It's the friction of everything around it.
@@ -100,6 +112,10 @@ The shops that deploy this first won't just recover tens of thousands of dollars
     description:
       `It's 10:15 on a Tuesday morning, and you've got a three-car backlog already building. Here's why 'terminal time' is quietly destroying your shop's profitability.`,
     tags: ['productivity', 'service-center', 'fixed-ops', 'roi'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-true-cost-of-terminal-time-brief.m4a',
+    briefDurationSec: 96,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-true-cost-of-terminal-time-podcast.m4a',
+    podcastDurationSec: 592,
     content: `
 It's 10:15 on a Tuesday morning, and you've got a three-car backlog already building. You glance across the shop and do a quick headcount. Out of six techs on the clock, three of them aren't at their vehicles. One is at his bay computer scrolling through AllData for a wiring diagram. Another is on his phone, swiping through a TSB database trying to find a match. A third is at his workstation typing up RO notes from the last job before the details fade.
 
@@ -190,6 +206,10 @@ When you're ready to see those hours come back, [book a demo with OnRamp](https:
     description:
       `The auto repair industry's AI investment has gone to the front desk — phone answering, scheduling, chatbots. But what good is booking more appointments if the bay can't keep up?`,
     tags: ['ai', 'service-center', 'fixed-ops', 'strategy'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/beyond-the-front-desk-ai-in-the-service-bay-brief.m4a',
+    briefDurationSec: 106,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/beyond-the-front-desk-ai-in-the-service-bay-podcast.m4a',
+    podcastDurationSec: 927,
     content: `
 
 The auto repair industry has been hearing about AI for a couple of years now. And if you've been paying attention, you've probably noticed where most of that AI investment has gone: the front desk.
@@ -284,6 +304,10 @@ Technician AI is that next wave. And it's not coming — it's here.
     description:
       `The technician shortage isn't a forecast anymore — it's the daily reality. Here's why the shops winning the talent war in 2026 aren't just paying more. They're investing in smarter tools.`,
     tags: ['technicians', 'retention', 'recruiting', 'service-center'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/attract-and-retain-top-automotive-technicians-2026-brief.m4a',
+    briefDurationSec: 94,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/attract-and-retain-top-automotive-technicians-2026-podcast.m4a',
+    podcastDurationSec: 1104,
     content: `
 
 You already know the numbers. The technician shortage isn't a forecast anymore — it's the daily reality of trying to staff a service department. The Bureau of Labor Statistics has been projecting tens of thousands of unfilled auto tech positions for years, and the situation has only gotten worse. Vocational programs are producing fewer graduates. Experienced techs are aging out. And the ones in their prime are getting recruited hard.
@@ -394,6 +418,10 @@ That means modern tools. That means less time wasted on outdated processes. That
     description:
       `Your master tech is three hours into a transmission rebuild when a B-level tech taps them on the shoulder with a 'quick question.' Here's how that interruption is silently killing your profitability.`,
     tags: ['technicians', 'training', 'productivity', 'service-center'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/empower-b-level-techs-to-work-like-master-techs-brief.m4a',
+    briefDurationSec: 112,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/empower-b-level-techs-to-work-like-master-techs-podcast.m4a',
+    podcastDurationSec: 1295,
     content: `
 
 Your master tech is three hours into a transmission rebuild on a late-model Silverado. He's in the zone — the kind of focused, high-dollar work that only he can do. And then it happens.
@@ -504,6 +532,10 @@ When you're ready to give your B-levels the support they need — and give your 
     description:
       `Pull up any random repair order from last week and read the tech notes. If your shop is like most, you'll find three sentences for a two-and-a-half-hour job. Here's why — and how to fix it.`,
     tags: ['documentation', 'warranty', 'ai', 'productivity'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automating-ro-documentation-with-ai-brief.m4a',
+    briefDurationSec: 104,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automating-ro-documentation-with-ai-podcast.m4a',
+    podcastDurationSec: 1130,
     content: `
 
 Pull up any random repair order from last week and read the tech notes. Go ahead. We'll wait.
@@ -625,6 +657,10 @@ When you're ready to stop losing money to paperwork, [see how OnRamp turns every
     description:
       `Every decade, a tool comes along that changes how technicians work. OBD readers. Scan tools. Digital service info. The next one isn't something you plug in — it's something you talk to.`,
     tags: ['ai', 'diagnostics', 'voice-ai', 'technicians'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-activated-diagnostics-the-new-must-have-tool-brief.m4a',
+    briefDurationSec: 92,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-activated-diagnostics-the-new-must-have-tool-podcast.m4a',
+    podcastDurationSec: 1378,
     content: `
 
 Every decade or so, a tool comes along that changes the fundamental way technicians work. Not a minor upgrade — a category shift.
@@ -752,6 +788,10 @@ Every shop has a scan tool. Every shop has AllData or Mitchell1. Someday, every 
     description:
       `Not every shop is ready for AI. But if you're running multiple bays with multiple techs and a steady stream of work, here are five signs the inefficiencies AI solves are already costing you real money.`,
     tags: ['ai', 'service-center', 'fixed-ops', 'strategy'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/five-signs-your-shop-is-ready-for-ai-brief.m4a',
+    briefDurationSec: 97,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/five-signs-your-shop-is-ready-for-ai-podcast.m4a',
+    podcastDurationSec: 1112,
     content: `
 Not every shop is ready for AI. Some are still figuring out whether to switch from paper ROs to a digital system. Others are running lean operations where the owner is also the service advisor, the bookkeeper, and the guy who mops the floor at closing. AI isn't their next move — and that's fine.
 
@@ -866,6 +906,10 @@ If those numbers bother you, you're ready.
     description:
       `This is a math post. If you run your service department by the numbers, buckle up — because the numbers on what 15 wasted minutes per RO costs your operation are going to be uncomfortable.`,
     tags: ['productivity', 'roi', 'fixed-ops', 'service-center'],
+    briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/maximizing-bay-throughput-saving-15-minutes-per-ro-brief.m4a',
+    briefDurationSec: 109,
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/maximizing-bay-throughput-saving-15-minutes-per-ro-podcast.m4a',
+    podcastDurationSec: 1271,
     content: `
 
 This is a math post. If you're the kind of manager who makes decisions based on feelings, skip this one. But if you run your service department by the numbers — if you know your effective labor rate, your hours-per-RO, and your daily car count off the top of your head — then buckle up. Because the numbers we're about to walk through are going to be uncomfortable.
@@ -1018,6 +1062,8 @@ Then look at OnRamp's pricing — $99/seat/month at the Pro level, with volume d
     description:
       `Every service manager has a graveyard of software they've paid for and nobody uses. Here's why the problem was never that technicians resist technology — the technology resisted the technician.`,
     tags: ['technicians', 'adoption', 'service-center', 'strategy'],
+    podcastAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/overcoming-the-my-techs-wont-use-new-tech-myth-podcast.m4a',
+    podcastDurationSec: 1315,
     content: `
 Every service manager has a graveyard of software they've paid for and nobody uses.
 

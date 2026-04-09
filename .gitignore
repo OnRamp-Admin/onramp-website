@@ -15,6 +15,9 @@ dist-ssr
 .env.local
 .env.production
 
+# Local-only blog audio files (production audio is hosted in GCS, not in the repo)
+public/audio/blog/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

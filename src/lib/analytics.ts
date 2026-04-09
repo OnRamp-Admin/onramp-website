@@ -184,3 +184,47 @@ export function setBlogEntryPoint(slug: string) {
   // Also set a session-level super property
   posthog.register({ blog_entry_slug: slug });
 }
+
+/** Audio format on a blog post: long-form podcast or short AI brief summary. */
+export type BlogAudioFormat = 'podcast' | 'brief';
+
+/** Blog audio — first play of a session (per format). Filter on `format` in PostHog to slice the funnel. */
+export function trackBlogAudioStarted(data: {
+  slug: string;
+  title: string;
+  format: BlogAudioFormat;
+}) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_audio_started', data);
+}
+
+/** Blog audio — listener crossed a 25/50/75% milestone (fires once per page load per format) */
+export function trackBlogAudioProgress(data: {
+  slug: string;
+  format: BlogAudioFormat;
+  milestone: 25 | 50 | 75;
+}) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_audio_progress', data);
+}
+
+/** Blog audio — listener reached the end */
+export function trackBlogAudioCompleted(data: {
+  slug: string;
+  format: BlogAudioFormat;
+  totalListenTimeSeconds: number;
+}) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_audio_completed', data);
+}
+
+/** Blog audio — listener scrubbed by more than 5 seconds (debounces accidental clicks) */
+export function trackBlogAudioSeeked(data: {
+  slug: string;
+  format: BlogAudioFormat;
+  fromPercent: number;
+  toPercent: number;
+}) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('blog_audio_seeked', data);
+}

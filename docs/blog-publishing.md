@@ -92,6 +92,182 @@ bullet lists, [links](/internal-or-external), tables, code blocks, etc.]
 
 ---
 
+## Audio Players (Optional)
+
+Each blog post can optionally include up to **two AI-generated audio versions**, each rendered as its own custom player above the article body:
+
+| Format | Field prefix | Visual | Length | Purpose |
+|---|---|---|---|---|
+| **AI Brief Summary** | `briefAudioUrl`, `briefDurationSec` | Safety orange + Zap icon | ~30s–2 min | Quick overview for skimmers |
+| **Listen to the Podcast** | `podcastAudioUrl`, `podcastDurationSec` | Electric blue + Headphones icon | ~10–25 min | Deep-dive NotebookLM audio overview |
+
+Each player has a pulsing inline CTA when not yet played, a sticky floating mini-player that appears when the user scrolls past the inline player, and full PostHog analytics (started, 25/50/75% milestones, completed, seek events). Both formats fire the same set of events but with a `format: 'brief' | 'podcast'` field so you can slice the funnel by format in PostHog.
+
+If a post has only one of the two URLs set, only that player renders. If both are set, both render stacked (brief on top, then podcast). When the user plays one, the other auto-pauses, and only one mini-player can be visible at a time.
+
+### How it works
+
+- Audio files are hosted in **Google Cloud Storage**, NOT in this repo. This keeps deploys fast and the codebase small.
+- Each post has up to four new optional fields: `briefAudioUrl` + `briefDurationSec` and `podcastAudioUrl` + `podcastDurationSec`. The duration fields let the player show the correct total time before audio metadata loads (avoiding a "0:00 / —:—" flicker).
+- **Updating audio doesn't require a website deploy.** Replace the file in GCS and (subject to the 30-day cache header) it just works.
+
+### One-time GCS bucket setup
+
+Only needs to be done once. Run from `gcloud` CLI authenticated to the OnRamp GCP project.
+
+```bash
+# 1. Create the bucket
+gsutil mb -p YOUR-GCP-PROJECT-ID -l us-central1 -c STANDARD gs://onramp-public-media
+
+# 2. Make it publicly readable
+gsutil iam ch allUsers:objectViewer gs://onramp-public-media
+
+# 3. Apply CORS so HTML5 audio + scrubbing work from getonramp.io
+cat > /tmp/cors.json <<'EOF'
+[{
+  "origin": ["https://getonramp.io", "https://www.getonramp.io", "http://localhost:5173", "http://localhost:4173"],
+  "method": ["GET", "HEAD"],
+  "responseHeader": ["Content-Type", "Range", "Accept-Ranges", "Content-Length", "Content-Range"],
+  "maxAgeSeconds": 3600
+}]
+EOF
+gsutil cors set /tmp/cors.json gs://onramp-public-media
+```
+
+The `Range` headers in the CORS config are required — without them, the player can't scrub (browsers use byte-range requests when seeking inside an audio file).
+
+### Per-post audio workflow
+
+For each audio file you want to add to a post:
+
+#### 1. Generate the audio
+
+- **Brief Summary**: generate a short script and run it through your chosen TTS (or use NotebookLM's "Briefing Document" feature, then read it through TTS). Aim for 30 seconds to 2 minutes.
+- **Podcast**: open the post in NotebookLM, generate the "Audio Overview", download the resulting WAV file (~100 MB for ~12 minutes of dialogue).
+
+#### 2. Compress to MP3 with ffmpeg
+
+The same compression command works for both formats:
+
+```bash
+ffmpeg -i input.wav \
+  -c:a libmp3lame \
+  -q:a 5 \
+  -ac 1 \
+  -ar 22050 \
+  -metadata title="Post Title Here" \
+  -metadata artist="OnRamp" \
+  -metadata album="OnRamp Blog" \
+  output.mp3
+```
+
+What these flags do:
+- `-q:a 5` — VBR averaging ~130 kbps. NotebookLM podcasts have two distinct hosts in conversation, so 64 kbps mono (typical for spoken word) sounds noticeably degraded. 130 kbps mono is the right floor for both formats.
+- `-ac 1` — mono (halves file size, no perceptual loss for spoken word).
+- `-ar 22050` — 22 kHz sample rate (voice has nothing useful above 11 kHz Nyquist; saves another ~30%).
+
+Verify the resulting file size:
+- A 12-minute podcast should be roughly 8-12 MB
+- A 1-minute brief should be roughly 1 MB
+
+If a podcast is >12 MB, drop to `-q:a 6`. If a brief is so short the size doesn't matter, you can leave it at the default settings.
+
+#### 3. Get the duration in seconds
+
+```bash
+ffprobe -i output.mp3 2>&1 | grep Duration
+```
+
+Output looks like `Duration: 00:12:34.56, ...`. Convert to total seconds: `(12 * 60) + 34 = 754`. For a brief: `Duration: 00:01:32.10` → `92`.
+
+#### 4. Upload to GCS
+
+Use a path that distinguishes the format from the slug:
+
+```bash
+# Podcast
+gsutil -h "Cache-Control:public, max-age=2592000" \
+  cp podcast.mp3 \
+  gs://onramp-public-media/blog/SLUG-HERE-podcast.mp3
+
+# Brief
+gsutil -h "Cache-Control:public, max-age=2592000" \
+  cp brief.mp3 \
+  gs://onramp-public-media/blog/SLUG-HERE-brief.mp3
+```
+
+The `Cache-Control` header gives a 30-day cache. Use the post's exact `slug` from `posts.ts` followed by `-podcast` or `-brief`.
+
+The public URLs are then:
+- `https://storage.googleapis.com/onramp-public-media/blog/SLUG-HERE-podcast.mp3`
+- `https://storage.googleapis.com/onramp-public-media/blog/SLUG-HERE-brief.mp3`
+
+#### 5. Add to the post
+
+In `src/content/blog/posts.ts`, add the relevant fields to the post entry. You can include just one format, or both:
+
+```ts
+{
+  slug: 'how-ai-is-fixing-the-service-bay-bottleneck',
+  title: '...',
+  // ...other fields...
+  briefAudioUrl: 'https://storage.googleapis.com/onramp-public-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-brief.mp3',
+  briefDurationSec: 92,
+  podcastAudioUrl: 'https://storage.googleapis.com/onramp-public-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-podcast.mp3',
+  podcastDurationSec: 754,
+  content: `...`,
+}
+```
+
+#### 6. Commit and push
+
+The next deploy will render the players for that post.
+
+### To remove an audio version from a post
+
+Delete the relevant `*AudioUrl` and `*DurationSec` fields. The player simply won't render. Optionally delete the file from GCS to save storage (it's pennies, so don't worry about cleanup).
+
+### To replace an audio file
+
+Re-upload to the same GCS path. **No website deploy needed** — but the 30-day Cache-Control means existing listeners may hear the old version for up to 30 days. If you need an immediate cutover, upload to a new path (e.g., `slug-podcast-v2.mp3`) and update the URL in `posts.ts`.
+
+### Hosting cost
+
+At OnRamp's scale this is effectively free. GCS Standard storage is $0.02/GB/month — 50 posts × 2 audio files × ~10 MB average = ~1 GB = $0.02/month. Egress is $0.12/GB after the 1 GB free monthly tier — so you can serve roughly 8,000 listens/month before paying anything noticeable.
+
+### Analytics events fired by the player
+
+All sent to PostHog. Each event has a `format: 'brief' | 'podcast'` field so you can slice the funnel by format:
+- `blog_audio_started` — `{ slug, title, format }` — fires once per page load on first play (per format)
+- `blog_audio_progress` — `{ slug, format, milestone: 25 | 50 | 75 }` — fires once per milestone per page load (will not re-fire if user seeks backward and re-listens)
+- `blog_audio_completed` — `{ slug, format, totalListenTimeSeconds }` — fires when audio reaches the end; the seconds value is actual listen time, excluding any seeks
+- `blog_audio_seeked` — `{ slug, format, fromPercent, toPercent }` — fires only for jumps >5 seconds (debounces accidental clicks on the progress bar)
+
+To build a funnel in PostHog: `started → progress(25) → progress(50) → progress(75) → completed`. Filter by `format` to compare brief vs podcast engagement.
+
+### Local testing without uploading to GCS
+
+If you want to validate the player visually before doing the upload dance:
+
+1. Drop your audio files anywhere under `public/audio/blog/` — the entire `public/audio/blog/` directory is gitignored so nothing accidentally gets committed.
+2. **Any browser-supported format works** — MP3, WAV, M4A. Don't bother compressing for local testing; that's only for production hosting.
+3. Get the durations:
+   ```bash
+   ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 path/to/file.m4a
+   ```
+4. Set the URLs to local paths in `posts.ts`:
+   ```ts
+   briefAudioUrl: '/audio/blog/your-folder/brief.m4a',
+   briefDurationSec: 92,
+   podcastAudioUrl: '/audio/blog/your-folder/podcast.m4a',
+   podcastDurationSec: 754,
+   ```
+5. Run `npm run dev` and visit `http://localhost:5173/blog/SLUG`
+
+Vite will serve the files from the dev server. Once you've validated the layout, swap the URLs to GCS production URLs and remove the local files (or just leave them — they're gitignored).
+
+---
+
 ## How to Schedule a Post for Future Release
 
 Just set the `date` field to a future date. That's literally all you need to do.

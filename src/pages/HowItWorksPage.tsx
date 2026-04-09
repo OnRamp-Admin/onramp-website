@@ -11,6 +11,7 @@ import {
 import QuickStartDemo from '../components/QuickStartDemo';
 import { trackAudioPlayed, trackVoiceExplorerOpened, trackVoiceSamplePlayed } from '../lib/analytics';
 import { useSEO } from '../hooks/useSEO';
+import { getCurrentAudio, setCurrentAudio, notifyAudioChanged, subscribeToAudioChanges } from '../lib/audioBus';
 
 const workflowSteps = [
   {
@@ -134,11 +135,6 @@ const hardware = [
   },
 ];
 
-// Shared audio ref so only one sample plays at a time
-let currentAudio: HTMLAudioElement | null = null;
-// Listeners that get called when currentAudio changes (so other instances can reset)
-const audioChangeListeners = new Set<() => void>();
-
 function useAudioPlayer(src: string, onPlay?: () => void) {
   const [state, setState] = useState<'idle' | 'playing' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
@@ -162,14 +158,13 @@ function useAudioPlayer(src: string, onPlay?: () => void) {
   // Listen for other instances taking over playback
   useEffect(() => {
     const onAudioChange = () => {
-      if (currentAudio !== audioRef.current && state === 'playing') {
+      if (getCurrentAudio() !== audioRef.current && state === 'playing') {
         setState('idle');
         setProgress(0);
         stopTracking();
       }
     };
-    audioChangeListeners.add(onAudioChange);
-    return () => { audioChangeListeners.delete(onAudioChange); };
+    return subscribeToAudioChanges(onAudioChange);
   }, [state, stopTracking]);
 
   const toggle = useCallback(() => {
@@ -179,17 +174,17 @@ function useAudioPlayer(src: string, onPlay?: () => void) {
       audioRef.current.pause();
       setState('idle');
       stopTracking();
-      currentAudio = null;
+      setCurrentAudio(null);
       return;
     }
 
     // Stop any other playing audio
-    if (currentAudio && currentAudio !== audioRef.current) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-      // Notify other instances
-      audioChangeListeners.forEach(fn => fn());
+    const existing = getCurrentAudio();
+    if (existing && existing !== audioRef.current) {
+      existing.pause();
+      existing.currentTime = 0;
+      setCurrentAudio(null);
+      notifyAudioChanged();
     }
 
     try {
@@ -199,7 +194,7 @@ function useAudioPlayer(src: string, onPlay?: () => void) {
           setState('idle');
           setProgress(0);
           stopTracking();
-          currentAudio = null;
+          setCurrentAudio(null);
         });
         audioRef.current.addEventListener('error', () => {
           setState('error');
@@ -213,8 +208,8 @@ function useAudioPlayer(src: string, onPlay?: () => void) {
       if (playPromise) {
         playPromise.then(() => {
           setState('playing');
-          currentAudio = audioRef.current;
-          audioChangeListeners.forEach(fn => fn());
+          setCurrentAudio(audioRef.current);
+          notifyAudioChanged();
           rafRef.current = requestAnimationFrame(updateProgress);
           onPlay?.();
         }).catch(() => {
@@ -230,7 +225,7 @@ function useAudioPlayer(src: string, onPlay?: () => void) {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
-        if (currentAudio === audioRef.current) currentAudio = null;
+        if (getCurrentAudio() === audioRef.current) setCurrentAudio(null);
       }
       stopTracking();
     };

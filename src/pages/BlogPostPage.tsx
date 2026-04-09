@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, Clock, User } from 'lucide-react';
 import { getBlogPost } from '../content/blog/posts';
 import type { Components } from 'react-markdown';
 import { useSEO } from '../hooks/useSEO';
+import BlogAudioPlayer from '../components/BlogAudioPlayer';
 import {
   trackBlogPostViewed,
   setBlogEntryPoint,
@@ -209,6 +210,37 @@ export default function BlogPostPage() {
             </span>
           </div>
         </motion.header>
+
+        {/* Audio players (optional, only render if their URL is set on the post).
+            Brief comes first because it's the lower-commitment "give it a try"
+            option; podcast follows for readers who want the deep dive. */}
+        {(post.briefAudioUrl || post.podcastAudioUrl) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-10 space-y-4"
+          >
+            {post.briefAudioUrl && (
+              <BlogAudioPlayer
+                slug={post.slug}
+                title={post.title}
+                audioUrl={post.briefAudioUrl}
+                durationSec={post.briefDurationSec}
+                variant="brief"
+              />
+            )}
+            {post.podcastAudioUrl && (
+              <BlogAudioPlayer
+                slug={post.slug}
+                title={post.title}
+                audioUrl={post.podcastAudioUrl}
+                durationSec={post.podcastDurationSec}
+                variant="podcast"
+              />
+            )}
+          </motion.div>
+        )}
 
         {/* Content */}
         <motion.article
