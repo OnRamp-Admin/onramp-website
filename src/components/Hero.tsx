@@ -112,7 +112,7 @@ export default function Hero() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.webp)',
           backgroundSize: 'cover',
           backgroundPosition: '70% 50%',
         }}

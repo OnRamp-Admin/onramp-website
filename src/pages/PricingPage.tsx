@@ -7,6 +7,7 @@ import {
   Minus, Plus, MousePointerClick, HelpCircle, X, CheckCircle2, Loader2, Search,
 } from 'lucide-react';
 import { trackPricingTabSwitch, trackPricingConfigured, trackContactFormSubmit, trackSignupModalOpened, trackPricingTierSelected } from '../lib/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 /* ------------------------------------------------------------------ */
 /*  Google Form Configuration                                          */
@@ -518,12 +519,12 @@ function FeatureGrid() {
           <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">
             What's Included
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mt-4 mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mt-4 mb-4">
             Everything in{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
               Every Plan
             </span>
-          </h2>
+          </h1>
           <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             No feature gates, no upsells. Every plan gets the full ONRAMP platform.
           </p>
@@ -2263,6 +2264,10 @@ function ServiceCenterPricing() {
 /* ------------------------------------------------------------------ */
 
 export default function PricingPage() {
+  useSEO({
+    title: 'Pricing - Plans for Technicians & Service Centers | OnRamp',
+    description: 'Flexible pricing for individual technicians and full service centers. Calculate your ROI and find the right OnRamp plan.',
+  });
   const location = useLocation();
   const [tab, setTab] = useState<'individual' | 'service-center'>(() => {
     // Default to service-center; allow #individual hash to override

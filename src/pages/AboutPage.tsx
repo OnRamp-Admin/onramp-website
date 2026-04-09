@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { mobileViewport } from '../lib/motion';
 import { Link } from 'react-router-dom';
 import { Wrench, Sparkles, User, Shield, ArrowRight } from 'lucide-react';
+import { useSEO } from '../hooks/useSEO';
 
 // Cycle: start with nothing (TECH SAVVY), then alternate NOLOGY / NICIAN
 const suffixes = ['', 'NOLOGY', 'NICIAN'];
@@ -31,6 +32,10 @@ const values = [
 ];
 
 export default function AboutPage() {
+  useSEO({
+    title: 'About OnRamp - Our Mission & Story',
+    description: 'Meet the team behind OnRamp. Building voice-first AI tools to help automotive technicians work smarter and faster.',
+  });
   const [suffixIndex, setSuffixIndex] = useState(0); // starts with '' (TECH SAVVY.)
 
   useEffect(() => {
@@ -158,9 +163,12 @@ export default function AboutPage() {
                   <div className="relative w-full max-w-sm">
                     <div className="absolute inset-0 bg-electric-500/15 rounded-2xl blur-[60px] scale-90" />
                     <img
-                      src="/AlexShop.png"
+                      src="/AlexShop.webp"
                       alt="Alex Littlewood, Founder of ONRAMP"
                       className="relative rounded-2xl w-full h-full object-cover shadow-2xl"
+                      loading="lazy"
+                      width={400}
+                      height={500}
                       style={{ filter: 'drop-shadow(0 0 20px rgba(26,160,255,0.15))' }}
                     />
                   </div>

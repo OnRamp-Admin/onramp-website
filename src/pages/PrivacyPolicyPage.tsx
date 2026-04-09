@@ -1,8 +1,14 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 
 export default function PrivacyPolicyPage() {
+  useSEO({
+    title: 'Privacy Policy | OnRamp',
+    description: 'OnRamp privacy policy. Learn how we collect, use, and protect your data.',
+  });
+
   return (
     <div className="min-h-screen bg-carbon-950">
       <motion.div

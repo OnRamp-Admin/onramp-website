@@ -10,6 +10,7 @@ import {
   Zap, Rocket, Smartphone, UserCog, CircleDot,
 } from 'lucide-react';
 import { trackCalculatorValues } from '../lib/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 // Manager ROI constants
 const HOURS_PER_WEEK = 40;
@@ -464,6 +465,10 @@ function ManagerPhaseCards() {
 }
 
 export default function ManagersPage() {
+  useSEO({
+    title: 'For Service Managers - AI-Powered Shop Efficiency | OnRamp',
+    description: 'Increase bay throughput, improve warranty approval rates, and give your techs AI-powered tools. See what OnRamp does for your service center.',
+  });
   const [efficiencyGain, setEfficiencyGain] = useState(12);
   const [warrantyBump, setWarrantyBump] = useState(4);
   const [numTechnicians, setNumTechnicians] = useState(10);
@@ -576,7 +581,7 @@ export default function ManagersPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/30-bay-shop-aerial.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',
@@ -593,12 +598,12 @@ export default function ManagersPage() {
             <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
               The Business Case
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-4">
               Three Levers.<br className="md:hidden" />{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-safety-600">
                 One Tool.
               </span>
-            </h2>
+            </h1>
             <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               ONRAMP drives profit from three directions simultaneously — efficiency, warranty recovery, and talent development.
             </p>
@@ -673,7 +678,7 @@ export default function ManagersPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',

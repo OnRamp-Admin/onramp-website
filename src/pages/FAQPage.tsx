@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mobileViewport } from '../lib/motion';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { trackFAQExpanded } from '../lib/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 // ─── FAQ Data ────────────────────────────────────────────────────────────────
 
@@ -393,7 +394,48 @@ function FAQCategory({ category, items }: { category: string; items: { q: string
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
+// Plain-text versions of rich answers for schema.org structured data
+const plainTextAnswers: Record<string, string> = {
+  BULLET_REPAIR_PROCEDURES: 'In some cases, ONRAMP\'s knowledge base generates reliable repair steps on its own. For complex repairs or OEM procedures, upload the technical repair manual and ONRAMP\'s AI extracts structured repair steps, parts lists, torque specs, and tool requirements automatically. PDF is the primary format — drag and drop into the job.',
+  PRICING_LINK: 'ONRAMP\'s pricing is structured around voice AI hours. Plans are based on the number of voice AI hours shared across your shop, with volume discounts as you add more technicians. Visit our pricing page at getonramp.io/pricing to map out your costs.',
+  BULLET_GOOGLE_DIFF: 'Three things: (1) It\'s hands-free — you talk, it guides, you never touch a screen mid-repair. (2) It\'s contextual — it knows your exact vehicle, procedure, and where you are in the job. (3) It\'s documenting while you work — every step, measurement, and note gets captured into a warranty-grade RO report automatically. Google gives you a forum post. ONRAMP gives you a guided workflow with built-in documentation.',
+  BULLET_FOUR_PHASES: 'Every job flows through four phases: Diagnose (AI helps pinpoint the problem, cross-references TSBs), Prepare (reviews procedure, confirms tools and parts), Repair (step-by-step voice coaching), and Close Out (auto-generates RO report with 3C+V documentation).',
+  BULLET_VOICE_CONTROL: 'Put on your headphones and activate voice mode from your screen or Brain Button. Talk naturally: "Next step", "What\'s the torque spec?", "Take a note — found corrosion on the connector", "I need to take a photo". Get stuck? Ask for more info and ONRAMP\'s Deep Research Mode gathers in-depth information without you leaving the bay.',
+  BULLET_USAGE_IMBALANCE: 'The pool of AI hours is shared between all technicians. Some techs use it heavily, others less — the shared pool limits waste as usage naturally balances out. For techs not using it as much, ONRAMP proactively nudges them to maximize performance. When their performance rate goes up, they take home more money and the dealership makes more money.',
+};
+
 export default function FAQPage() {
+  useSEO({
+    title: 'FAQ - Frequently Asked Questions | OnRamp',
+    description: 'Everything technicians and service managers need to know about OnRamp — voice AI, pricing, security, integration, and getting started.',
+  });
+
+  useEffect(() => {
+    const scriptId = 'faq-schema';
+    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqCategories.flatMap((cat) =>
+        cat.items.map((item) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: plainTextAnswers[item.a] || item.a,
+          },
+        }))
+      ),
+    });
+    return () => { script?.remove(); };
+  }, []);
+
   return (
     <div className="pt-24 pb-20 px-4">
       <div className="max-w-4xl mx-auto">

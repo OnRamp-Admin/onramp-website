@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { mobileViewport } from '../lib/motion';
 import { Mic, Smartphone, Wifi, Shield, Zap, Radio, HandMetal, BatteryFull } from 'lucide-react';
 import BrainButtonPrompts from '../components/BrainButtonPrompts';
+import { useSEO } from '../hooks/useSEO';
 
 // Inline SVG for App Store badge
 function AppStoreBadge() {
@@ -246,6 +247,11 @@ const features = [
 ];
 
 export default function MobileAppPage() {
+  useSEO({
+    title: 'Mobile App - iOS & Android | OnRamp',
+    description: 'Download the OnRamp mobile app. Voice-first AI repair guidance, anywhere in the bay.',
+  });
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -407,6 +413,7 @@ export default function MobileAppPage() {
                     src="/BrainButton.png"
                     alt="Brain Button"
                     className="w-48 md:w-56 h-auto relative"
+                    loading="lazy"
                     style={{ filter: "drop-shadow(0 0 14px rgba(26,160,255,0.2))" }}
                   />
                 </div>

@@ -9,6 +9,7 @@ import {
   Smartphone, Radio, Rocket, UserCog,
 } from 'lucide-react';
 import { trackCalculatorValues } from '../lib/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 // Technician ROI constants
 const FLAT_RATE_DEFAULT = 35;
@@ -337,7 +338,7 @@ function TerminateWastedTimeSection() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.7), rgba(6,6,13,0.65)), url(/techs-at-terminals.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 40%',
         }}
@@ -349,12 +350,12 @@ function TerminateWastedTimeSection() {
           viewport={mobileViewport}
           className="text-center mb-14"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
             <span className="block md:inline text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">
               Terminate Wasted Time
             </span>
             <span className="block md:inline">{' '}at the Terminal!</span>
-          </h2>
+          </h1>
           <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
             Every trip away from the bay costs a few minutes! Minutes turn into hours, and hours turn into a bigger paycheck. ONRAMP keeps you <span className="text-white font-bold">ON TASK</span>.
           </p>
@@ -420,6 +421,10 @@ function TerminateWastedTimeSection() {
 }
 
 export default function TechniciansPage() {
+  useSEO({
+    title: 'For Technicians - AI Voice Assistant for Auto Repair | OnRamp',
+    description: 'Work faster, flag more hours, and skip the terminal. OnRamp is the hands-free AI voice assistant built for automotive technicians.',
+  });
   const [hoveredPhase, setHoveredPhase] = useState<number | null>(null);
   const [mobileExpandedPhases, setMobileExpandedPhases] = useState<Set<number>>(new Set());
   const [terminalVisits, setTerminalVisits] = useState(15);
@@ -760,7 +765,7 @@ export default function TechniciansPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',
@@ -852,6 +857,7 @@ export default function TechniciansPage() {
                     src={item.image}
                     alt={item.name}
                     className={`absolute right-4 object-contain ${item.image.includes('airpods') ? 'w-[86px] h-[86px]' : 'w-18 h-18'}`}
+                    loading="lazy"
                     style={{ top: 48, transform: 'translateY(-50%)', filter: 'drop-shadow(0 0 8px rgba(74,144,217,0.2))' }}
                   />
                 ) : item.name === 'Mobile App' && (

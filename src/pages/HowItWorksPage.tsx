@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import QuickStartDemo from '../components/QuickStartDemo';
 import { trackAudioPlayed, trackVoiceExplorerOpened, trackVoiceSamplePlayed } from '../lib/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 const workflowSteps = [
   {
@@ -45,7 +46,7 @@ const phases = [
     color: 'electric',
     title: 'Pinpoint the Problem',
     titleAccent: 'AI FAST!',
-    bgImage: '/technician-diagnosing.jpg',
+    bgImage: '/technician-diagnosing.webp',
     description: 'Describe the symptoms and ONRAMP helps you work through a structured diagnostic process. The AI cross-references TSBs, known failures, and common causes for your specific vehicle — narrowing the problem before you start tearing anything apart.',
     details: [
       "References TSBs & Recalls ('95 - Today), and known failures",
@@ -80,7 +81,7 @@ const phases = [
     icon: Wrench,
     color: 'green',
     title: 'Voice-Guided Repairs',
-    bgImage: '/technician-working.jpg',
+    bgImage: '/technician-working.webp',
     description: 'Work with your hands while ONRAMP coaches you through each step. Ask questions, report findings, and document your work—all by voice. The AI tracks your progress and adjusts guidance in real-time.',
     details: [
       "AI delivers step details, torque specs and 'heads-up' guidance live as you need it!",
@@ -713,6 +714,7 @@ function NoScreenshotModal({ open, onClose }: { open: boolean; onClose: () => vo
                     src="/apple-iphone-17-pro-max-2025-medium.png"
                     alt=""
                     className="relative z-10 w-full h-auto drop-shadow-2xl"
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -838,6 +840,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
             src="/apple-iphone-17-pro-max-2025-medium.png"
             alt=""
             className="relative z-10 w-full h-auto drop-shadow-2xl pointer-events-none"
+            loading="lazy"
           />
         </div>
         <button
@@ -853,6 +856,10 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
 }
 
 export default function HowItWorksPage() {
+  useSEO({
+    title: 'How It Works - Voice AI Repair Workflow | OnRamp',
+    description: 'See how OnRamp\'s voice AI guides technicians from diagnosis through repair with step-by-step instructions and automatic documentation.',
+  });
   const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -908,10 +915,10 @@ export default function HowItWorksPage() {
               className="w-full lg:w-1/2 text-center lg:text-left"
             >
               <span className="text-electric-400 text-sm font-semibold tracking-wider uppercase">Quick Start</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-8 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-8 leading-tight">
                 15 Seconds to<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">Start a Repair.</span>
-              </h2>
+              </h1>
 
               <ol className="space-y-4 text-left max-w-lg mx-auto lg:mx-0 mb-8">
                 {[
@@ -955,12 +962,14 @@ export default function HowItWorksPage() {
                     src="/BrainButton.png"
                     alt="Brain Button"
                     className="w-22 md:w-28 h-auto"
+                    loading="lazy"
                     style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}
                   />
                   <img
                     src="/airpods.png"
                     alt="AirPods"
                     className="w-32 md:w-40 h-auto drop-shadow-xl"
+                    loading="lazy"
                   />
                 </div>
               </motion.div>
@@ -1102,7 +1111,7 @@ export default function HowItWorksPage() {
       <section
         className="py-20 px-4 relative"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.jpg)',
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/3-bay-close-up.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 50%',
           width: '100vw',
@@ -1135,6 +1144,7 @@ export default function HowItWorksPage() {
                     src={item.image}
                     alt={item.name}
                     className={`absolute right-4 object-contain ${item.image.includes('airpods') ? 'w-[86px] h-[86px]' : 'w-18 h-18'}`}
+                    loading="lazy"
                     style={{ top: 48, transform: 'translateY(-50%)', filter: 'drop-shadow(0 0 8px rgba(74,144,217,0.2))' }}
                   />
                 ) : item.name === 'Mobile App' && (

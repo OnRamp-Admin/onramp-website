@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Mail, MapPin, CheckCircle2, Building2, X, Search } from 'lucide-react';
 import { trackContactFormSubmit } from '../lib/analytics';
 import { trackConversion } from '../lib/marketing-pixels';
+import { useSEO } from '../hooks/useSEO';
 
 // ─── Google Form Configuration ───────────────────────────────────────────────
 const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSecRS6mfq1RZqVOEZ4KLTmogrF_4aSZ2fwg25YMO07ap88RmQ/formResponse';
@@ -178,6 +179,10 @@ async function searchPlaces(
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function ContactPage() {
+  useSEO({
+    title: 'Contact Us | OnRamp',
+    description: 'Get in touch with the OnRamp team. Schedule a demo, ask questions, or learn how voice AI can transform your service center.',
+  });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({

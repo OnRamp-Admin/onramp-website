@@ -1,8 +1,14 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 
 export default function TermsPage() {
+  useSEO({
+    title: 'Terms of Service | OnRamp',
+    description: 'OnRamp terms of service. Review the terms governing your use of the OnRamp platform.',
+  });
+
   return (
     <div className="min-h-screen bg-carbon-950">
       <motion.div
