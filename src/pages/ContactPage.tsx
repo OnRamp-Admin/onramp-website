@@ -255,6 +255,7 @@ export default function ContactPage() {
 
     // Fire tracking events (don't block on these)
     trackContactFormSubmit({
+      form_location: 'contact_page',
       role: formData.role,
       hasPhone: !!formData.phone,
       hasShopName: !!formData.shopName,

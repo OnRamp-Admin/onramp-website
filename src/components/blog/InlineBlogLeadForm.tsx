@@ -71,6 +71,7 @@ export default function InlineBlogLeadForm({ slug }: InlineBlogLeadFormProps) {
     // The existing `contact_form_submitted` event powers the Blog → Signup
     // funnel tile in PostHog dashboard 1446007 — no dashboard edit needed.
     trackContactFormSubmit({
+      form_location: 'blog_inline',
       role,
       hasPhone: false,
       hasShopName: false,

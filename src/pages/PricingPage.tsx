@@ -7,6 +7,7 @@ import {
   Minus, Plus, MousePointerClick, HelpCircle, X, CheckCircle2, Loader2, Search,
 } from 'lucide-react';
 import { trackPricingTabSwitch, trackPricingConfigured, trackContactFormSubmit, trackSignupModalOpened, trackPricingTierSelected } from '../lib/analytics';
+import { trackConversion } from '../lib/marketing-pixels';
 import { useSEO } from '../hooks/useSEO';
 
 /* ------------------------------------------------------------------ */
@@ -1140,10 +1141,12 @@ function SignupModal({
 
       setSubmitted(true);
       trackContactFormSubmit({
+        form_location: 'pricing_modal',
         role: role,
         hasPhone: getPhoneDigits(phone).length >= 10,
         hasShopName: shopName.trim().length > 0,
       });
+      trackConversion('lead');
     } catch (err) {
       console.error('[SignupModal] Submission error:', err);
       setError('Something went wrong. Please try again.');

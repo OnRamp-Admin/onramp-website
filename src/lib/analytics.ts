@@ -62,8 +62,10 @@ export function trackPageView(path: string) {
 
 // ─── Custom Events ───────────────────────────────────────────────────────────
 
-/** Contact form submitted */
+/** Contact form submitted — fires from any of the three lead forms on the site.
+ *  `form_location` distinguishes them so we can slice the same event by source. */
 export function trackContactFormSubmit(data: {
+  form_location: 'contact_page' | 'blog_inline' | 'pricing_modal';
   role: string;
   hasPhone: boolean;
   hasShopName: boolean;
