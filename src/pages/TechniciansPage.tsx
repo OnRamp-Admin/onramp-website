@@ -1097,7 +1097,14 @@ export default function TechniciansPage() {
       {/* ── END ROI Calculator ───────────────────────────────────────── */}
 
       {/* ── Getting Started ─────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-carbon-900/30">
+      <section
+        className="py-20 px-4 relative overflow-hidden"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/technician-working.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1145,7 +1152,7 @@ export default function TechniciansPage() {
                 </div>
 
                 {/* Content card */}
-                <div className={`flex-1 p-3 md:p-5 rounded-2xl bg-carbon-800/50 border transition-all duration-300 ${
+                <div className={`flex-1 p-3 md:p-5 rounded-2xl bg-carbon-800/50 backdrop-blur-md border transition-all duration-300 ${
                   item.last
                     ? 'border-green-500/30 shadow-[0_0_30px_rgba(74,222,128,0.1)]'
                     : 'border-carbon-700/50'
