@@ -1030,7 +1030,14 @@ export default function HowItWorksPage() {
       </section>
 
       {/* The Voice Loop */}
-      <section className="py-20 px-4 bg-carbon-900/50">
+      <section
+        className="py-20 px-4 relative overflow-hidden"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.75), rgba(6,6,13,0.75)), url(/ElectricLandscape.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={mobileViewport} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">

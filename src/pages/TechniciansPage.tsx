@@ -702,7 +702,14 @@ export default function TechniciansPage() {
       </section>
 
       {/* ── Time Wasters → ONRAMP (hover-reveal) ───────────────────── */}
-      <section className="py-20 px-4 bg-carbon-900/30">
+      <section
+        className="py-20 px-4 relative overflow-hidden"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.75), rgba(6,6,13,0.75)), url(/ElectricBrain.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -711,10 +718,10 @@ export default function TechniciansPage() {
             className="text-center mb-14"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              What Changes When You Have{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600">
                 ONRAMP
-              </span>
+              </span>{' '}
+              is the tool you talk to... and it responds.
             </h2>
             <p className="text-carbon-200 text-lg max-w-2xl mx-auto">
               It's like having a master technician riding shotgun on every job — helping you diagnose faster, prepare better, work more efficiently, and writing your reports so you can keep turning wrenches.
@@ -754,10 +761,6 @@ export default function TechniciansPage() {
               </motion.div>
             ))}
           </div>
-
-          <p className="text-carbon-200 text-sm text-center mt-6 hidden md:block">
-            Hover over each item to see the ONRAMP difference
-          </p>
         </div>
       </section>
 

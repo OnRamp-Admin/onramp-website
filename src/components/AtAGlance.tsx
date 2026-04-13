@@ -29,10 +29,10 @@ const blocks = [
     subtext:
       'ONRAMP lives on your phone — but the help is right in your ears when you need it. No terminal trips, no desktop logins. Just tap-to-talk, and your AI assistant is ready to help you with every job, hands-free.',
     bullets: [
-      { icon: Rocket, text: 'Start jobs in 15 seconds with just the RO number and VIN' },
-      { icon: Headphones, text: 'Voice-first interface — works with any Bluetooth headset' },
+      { icon: Rocket, text: 'Start jobs in 15 seconds with just the RO# & VIN' },
+      { icon: Headphones, text: 'Voice-first interface — works with any headphones' },
       { icon: Mic, text: 'Speak naturally with ONRAMP AI to diagnose, document, and navigate repairs' },
-      { icon: FileCheck, text: 'Wrap up jobs in seconds — AI writes your RO Reports instantly' },
+      { icon: FileCheck, text: 'Wrap up jobs in seconds — AI writes your RO Reports' },
       { icon: FileText, text: 'All your jobs, notes, and RO reports in one place' },
     ],
     bulletColor: 'electric',
@@ -384,28 +384,98 @@ export default function AtAGlance() {
                       </motion.div>
                     </div>
                   </div>
-                ) : (
-                  /* Phone + Flic use side-by-side zig-zag */
+                ) : block.id === 'mobile-app' ? (
+                  /* Mobile App — full-width Electric Brain background */
                   <div
-                    className={`flex flex-col ${block.imageLeft ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-16`}
+                    className="relative overflow-hidden"
+                    style={{
+                      backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.75), rgba(6,6,13,0.75)), url(/ElectricBrain.webp)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      width: '100vw',
+                      marginLeft: 'calc(-50vw + 50%)',
+                    }}
+                  >
+                    <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 px-4 md:px-8 py-12 md:py-16 lg:py-20">
+                      {/* Visual */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={mobileViewport}
+                        transition={{ duration: 0.7 }}
+                        className="w-full lg:w-1/2 flex flex-col items-center"
+                      >
+                        <div className="relative">
+                          <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[80px] scale-75 opacity-50`} />
+                          <div className="relative">
+                            <Mockup />
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Text */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={mobileViewport}
+                        transition={{ duration: 0.7, delay: 0.1 }}
+                        className="w-full lg:w-1/2"
+                      >
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
+                          <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
+                          <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
+                            The App
+                          </span>
+                        </div>
+
+                        <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight whitespace-pre-line">
+                          {block.headline}
+                        </h3>
+
+                        <p className="text-carbon-200 text-base md:text-lg mb-8 leading-relaxed">
+                          {block.subtext}
+                        </p>
+
+                        <ul className="space-y-4">
+                          {block.bullets.map((bullet, i) => (
+                            <motion.li
+                              key={bullet.text}
+                              initial={{ opacity: 0, y: 10 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={mobileViewport}
+                              transition={{ delay: 0.3 + i * 0.1 }}
+                              className="flex items-start gap-3"
+                            >
+                              <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center mt-0.5`}>
+                                <bullet.icon className={`w-4 h-4 ${colors.icon}`} />
+                              </div>
+                              <span className="text-carbon-200 text-base md:text-lg">{bullet.text}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Flic — side-by-side zig-zag (no background image) */
+                  <div
+                    className={`flex flex-col lg:flex-row-reverse items-center gap-12 lg:gap-16`}
                   >
                     {/* Visual */}
                     <motion.div
-                      initial={{ opacity: 0, x: block.imageLeft ? -40 : 40 }}
+                      initial={{ opacity: 0, x: 40 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={mobileViewport}
                       transition={{ duration: 0.7 }}
                       className="w-full lg:w-1/2 flex flex-col items-center"
                     >
                       {/* Badge centered above image on mobile for Brain Button */}
-                      {block.id === 'flic-button' && (
-                        <div className={`lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-4`}>
-                          <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
-                          <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
-                            The Brain Button
-                          </span>
-                        </div>
-                      )}
+                      <div className={`lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-4`}>
+                        <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
+                        <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
+                          The Brain Button
+                        </span>
+                      </div>
                       <div className="relative">
                         <div className={`absolute inset-0 ${colors.glow} rounded-full blur-[80px] scale-75 opacity-50`} />
                         <div className="relative">
@@ -416,17 +486,16 @@ export default function AtAGlance() {
 
                     {/* Text */}
                     <motion.div
-                      initial={{ opacity: 0, x: block.imageLeft ? 40 : -40 }}
+                      initial={{ opacity: 0, x: -40 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={mobileViewport}
                       transition={{ duration: 0.7, delay: 0.1 }}
                       className="w-full lg:w-1/2"
                     >
-                      {/* Badge — hidden on mobile for flic-button (shown above image instead) */}
-                      <div className={`${block.id === 'flic-button' ? 'hidden lg:inline-flex' : 'inline-flex'} items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
+                      <div className={`hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.bg} border ${colors.border} mb-6`}>
                         <block.visual.icon className={`w-4 h-4 ${colors.icon}`} />
                         <span className={`${colors.icon} text-xs font-semibold tracking-wider uppercase`}>
-                          {block.id === 'mobile-app' ? 'The App' : 'The Brain Button'}
+                          The Brain Button
                         </span>
                       </div>
 
