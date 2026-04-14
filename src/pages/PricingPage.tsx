@@ -476,7 +476,7 @@ const featureCategories = [
       'Voice-controlled step navigation',
       'Real-time voice Q&A — torque specs, wiring, fluid capacities',
       'Deep Research Mode for complex steps',
-      '25+ voice options — male and female styles',
+      '40+ voice options — male and female styles',
       'Adjustable speech speed',
       'Name your AI — personalized voice assistant',
       'Automated sleep mode to preserve usage hours',

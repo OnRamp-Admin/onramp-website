@@ -413,33 +413,49 @@ function AIStackCard() {
 
 // ─── Voice Sample Data ──────────────────────────────────────────────────────
 const voiceSamples: { name: string; gender: 'male' | 'female'; label: string; file: string }[] = [
-  { name: 'Achird', gender: 'male', label: 'Male Voice 1', file: '/audio/voices/achird.wav' },
-  { name: 'Algenib', gender: 'male', label: 'Male Voice 2', file: '/audio/voices/algenib.wav' },
-  { name: 'Algieba', gender: 'male', label: 'Male Voice 3', file: '/audio/voices/algieba.wav' },
-  { name: 'Alnilam', gender: 'male', label: 'Male Voice 4', file: '/audio/voices/alnilam.wav' },
-  { name: 'Charon', gender: 'male', label: 'Male Voice 5', file: '/audio/voices/charon.wav' },
-  { name: 'Enceladus', gender: 'male', label: 'Male Voice 6', file: '/audio/voices/enceladus.wav' },
-  { name: 'Iapetus', gender: 'male', label: 'Male Voice 7', file: '/audio/voices/iapetus.wav' },
-  { name: 'Orus', gender: 'male', label: 'Male Voice 8', file: '/audio/voices/orus.wav' },
-  { name: 'Rasalgethi', gender: 'male', label: 'Male Voice 9', file: '/audio/voices/rasalgethi.wav' },
-  { name: 'Sadachbia', gender: 'male', label: 'Male Voice 10', file: '/audio/voices/sadachbia.wav' },
-  { name: 'Sadaltager', gender: 'male', label: 'Male Voice 11', file: '/audio/voices/sadaltager.wav' },
-  { name: 'Schedar', gender: 'male', label: 'Male Voice 12', file: '/audio/voices/schedar.wav' },
-  { name: 'Zubenelgenubi', gender: 'male', label: 'Male Voice 13', file: '/audio/voices/zubenelgenubi.wav' },
-  { name: 'Achernar', gender: 'female', label: 'Female Voice 1', file: '/audio/voices/achernar.wav' },
-  { name: 'Aoede', gender: 'female', label: 'Female Voice 2', file: '/audio/voices/aoede.wav' },
-  { name: 'Autonoe', gender: 'female', label: 'Female Voice 3', file: '/audio/voices/autonoe.wav' },
-  { name: 'Callirrhoe', gender: 'female', label: 'Female Voice 4', file: '/audio/voices/callirrhoe.wav' },
-  { name: 'Despina', gender: 'female', label: 'Female Voice 5', file: '/audio/voices/despina.wav' },
-  { name: 'Erinome', gender: 'female', label: 'Female Voice 6', file: '/audio/voices/erinome.wav' },
-  { name: 'Gacrux', gender: 'female', label: 'Female Voice 7', file: '/audio/voices/gacrux.wav' },
-  { name: 'Kore', gender: 'female', label: 'Female Voice 8', file: '/audio/voices/kore.wav' },
-  { name: 'Laomedeia', gender: 'female', label: 'Female Voice 9', file: '/audio/voices/laomedeia.wav' },
-  { name: 'Leda', gender: 'female', label: 'Female Voice 10', file: '/audio/voices/leda.wav' },
-  { name: 'Pulcherrima', gender: 'female', label: 'Female Voice 11', file: '/audio/voices/pulcherrima.wav' },
-  { name: 'Sulafat', gender: 'female', label: 'Female Voice 12', file: '/audio/voices/sulafat.wav' },
-  { name: 'Vindemiatrix', gender: 'female', label: 'Female Voice 13', file: '/audio/voices/vindemiatrix.wav' },
-  { name: 'Zephyr', gender: 'female', label: 'Female Voice 14', file: '/audio/voices/zephyr.wav' },
+  // Male voices (15)
+  { name: 'Apollo', gender: 'male', label: 'Apollo', file: '/audio/voices/apollo-job.wav' },
+  { name: 'Arcas', gender: 'male', label: 'Arcas', file: '/audio/voices/arcas-job.wav' },
+  { name: 'Aries', gender: 'male', label: 'Aries', file: '/audio/voices/aries-job.wav' },
+  { name: 'Atlas', gender: 'male', label: 'Atlas', file: '/audio/voices/atlas-job.wav' },
+  { name: 'Draco', gender: 'male', label: 'Draco', file: '/audio/voices/draco-job.wav' },
+  { name: 'Hermes', gender: 'male', label: 'Hermes', file: '/audio/voices/hermes-job.wav' },
+  { name: 'Hyperion', gender: 'male', label: 'Hyperion', file: '/audio/voices/hyperion-job.wav' },
+  { name: 'Jupiter', gender: 'male', label: 'Jupiter', file: '/audio/voices/jupiter-job.wav' },
+  { name: 'Mars', gender: 'male', label: 'Mars', file: '/audio/voices/mars-job.wav' },
+  { name: 'Neptune', gender: 'male', label: 'Neptune', file: '/audio/voices/neptune-job.wav' },
+  { name: 'Odysseus', gender: 'male', label: 'Odysseus', file: '/audio/voices/odysseus-job.wav' },
+  { name: 'Orion', gender: 'male', label: 'Orion', file: '/audio/voices/orion-job.wav' },
+  { name: 'Orpheus', gender: 'male', label: 'Orpheus', file: '/audio/voices/orpheus-job.wav' },
+  { name: 'Pluto', gender: 'male', label: 'Pluto', file: '/audio/voices/pluto-job.wav' },
+  { name: 'Saturn', gender: 'male', label: 'Saturn', file: '/audio/voices/saturn-job.wav' },
+  { name: 'Zeus', gender: 'male', label: 'Zeus', file: '/audio/voices/zeus-job.wav' },
+  // Female voices (25)
+  { name: 'Amalthea', gender: 'female', label: 'Amalthea', file: '/audio/voices/amalthea-job.wav' },
+  { name: 'Andromeda', gender: 'female', label: 'Andromeda', file: '/audio/voices/andromeda-job.wav' },
+  { name: 'Asteria', gender: 'female', label: 'Asteria', file: '/audio/voices/asteria-job.wav' },
+  { name: 'Athena', gender: 'female', label: 'Athena', file: '/audio/voices/athena-job.wav' },
+  { name: 'Aurora', gender: 'female', label: 'Aurora', file: '/audio/voices/aurora-job.wav' },
+  { name: 'Callista', gender: 'female', label: 'Callista', file: '/audio/voices/callista-job.wav' },
+  { name: 'Cora', gender: 'female', label: 'Cora', file: '/audio/voices/cora-job.wav' },
+  { name: 'Cordelia', gender: 'female', label: 'Cordelia', file: '/audio/voices/cordelia-job.wav' },
+  { name: 'Delia', gender: 'female', label: 'Delia', file: '/audio/voices/delia-job.wav' },
+  { name: 'Electra', gender: 'female', label: 'Electra', file: '/audio/voices/electra-job.wav' },
+  { name: 'Harmonia', gender: 'female', label: 'Harmonia', file: '/audio/voices/harmonia-job.wav' },
+  { name: 'Helena', gender: 'female', label: 'Helena', file: '/audio/voices/helena-job.wav' },
+  { name: 'Hera', gender: 'female', label: 'Hera', file: '/audio/voices/hera-job.wav' },
+  { name: 'Iris', gender: 'female', label: 'Iris', file: '/audio/voices/iris-job.wav' },
+  { name: 'Janus', gender: 'female', label: 'Janus', file: '/audio/voices/janus-job.wav' },
+  { name: 'Juno', gender: 'female', label: 'Juno', file: '/audio/voices/juno-job.wav' },
+  { name: 'Luna', gender: 'female', label: 'Luna', file: '/audio/voices/luna-job.wav' },
+  { name: 'Minerva', gender: 'female', label: 'Minerva', file: '/audio/voices/minerva-job.wav' },
+  { name: 'Ophelia', gender: 'female', label: 'Ophelia', file: '/audio/voices/ophelia-job.wav' },
+  { name: 'Pandora', gender: 'female', label: 'Pandora', file: '/audio/voices/pandora-job.wav' },
+  { name: 'Phoebe', gender: 'female', label: 'Phoebe', file: '/audio/voices/phoebe-job.wav' },
+  { name: 'Selene', gender: 'female', label: 'Selene', file: '/audio/voices/selene-job.wav' },
+  { name: 'Thalia', gender: 'female', label: 'Thalia', file: '/audio/voices/thalia-job.wav' },
+  { name: 'Theia', gender: 'female', label: 'Theia', file: '/audio/voices/theia-job.wav' },
+  { name: 'Vesta', gender: 'female', label: 'Vesta', file: '/audio/voices/vesta-job.wav' },
 ];
 
 // ─── Voice Explorer Modal ───────────────────────────────────────────────────
@@ -594,14 +610,14 @@ function PersonalizationCard() {
           <h3 className="text-white font-bold text-xl">Make It Yours</h3>
         </div>
         <div className="space-y-5">
-          {/* 25+ Voice Options — with explore button */}
+          {/* 40+ Voice Options — with explore button */}
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 p-2 rounded-lg bg-safety-500/10 mt-0.5">
               <MessageCircle className="w-4 h-4 text-safety-400" />
             </div>
             <div>
-              <div className="text-white font-semibold mb-1">25+ Voice Options</div>
-              <p className="text-carbon-200 text-sm leading-relaxed">Choose from over 25 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
+              <div className="text-white font-semibold mb-1">40+ Voice Options</div>
+              <p className="text-carbon-200 text-sm leading-relaxed">Choose from over 40 voices — male, female, different styles and accents. Find the one that feels right for you.</p>
               <button
                 onClick={() => { setVoiceModalOpen(true); trackVoiceExplorerOpened(); }}
                 className="inline-flex items-center gap-1.5 mt-2 text-safety-400 hover:text-safety-300 text-sm font-medium transition-colors cursor-pointer"
