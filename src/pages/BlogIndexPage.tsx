@@ -27,8 +27,8 @@ export default function BlogIndexPage() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            ONRAMP Blog
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-safety-400">ONRAMP</span> <span className="text-white">Blog</span>
           </h1>
           <p className="text-lg text-carbon-200 max-w-2xl mx-auto">
             Perspectives on AI, automotive repair, and the technology reshaping
