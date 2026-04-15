@@ -1,0 +1,45 @@
+# OnRamp
+
+> OnRamp is a voice-first AI assistant built for automotive technicians. It provides hands-free diagnostic support, step-by-step repair guidance, and automated warranty-grade Repair Order (RO) report writing — all controlled by voice and a Bluetooth "Brain Button" so techs never have to stop working to tap a screen or type notes.
+
+OnRamp is developed by OnRamp Innovations, Inc. (San Diego, CA), founded in 2025 by Alex Littlewood. The product is deployed as a native iOS app (via Capacitor) and a web app, with an Android build in development.
+
+The core workflow follows three voice-guided phases:
+
+- **Diagnose** — An AI diagnostic partner helps the technician identify root cause. It suggests theories, recommends specific tests, checks NHTSA Technical Service Bulletins (TSBs) and Safety Recalls automatically, and maintains a running diagnosis scratchpad that persists across sessions.
+- **Prepare** — Ingests OEM service documents (PDFs) and surfaces the information the technician needs before starting the repair — tools, torque specs, known gotchas.
+- **Perform** — Walks the technician through the repair step-by-step, hands-free. Listens for completion cues, captures photos/videos by voice command, and logs the work as it happens.
+
+The voice system is powered by a Gemini-based AI orchestrated through a finite state machine, with Deepgram Flux for turn detection and Cartesia Sonic for low-latency TTS. OnRamp captures real-time audio, photo, and video evidence and writes the final RO report automatically — saving technicians 30–60 minutes of documentation time per job.
+
+## Product pages
+
+- [Home](https://getonramp.io/): Overview of OnRamp, the Brain Button, and the three-phase voice workflow.
+- [For Technicians](https://getonramp.io/technicians): How OnRamp helps individual techs diagnose faster, repair smarter, and get paid for the work they actually do.
+- [For Managers](https://getonramp.io/managers): How shop owners and service managers use OnRamp to increase bay throughput, standardize quality, and generate warranty-grade documentation.
+- [How It Works](https://getonramp.io/how-it-works): The three phases (Diagnose, Prepare, Perform), the Brain Button hardware, and the voice AI architecture.
+- [Pricing](https://getonramp.io/pricing): Individual and Shop plans. Individual starts at $39/month; Shop plans scale with seats and include Basic and Pro tiers.
+- [Mobile App](https://getonramp.io/mobileapp): iOS app details, TestFlight access, and Android roadmap.
+
+## Company
+
+- [About](https://getonramp.io/about): Company background, mission, and the team behind OnRamp.
+- [Contact](https://getonramp.io/contact): Sales and support contact. Email: support@getonramp.io
+- [FAQ](https://getonramp.io/faq): Common questions about pricing, hardware, data privacy, and supported vehicles.
+
+## Blog
+
+- [How AI Is Fixing the Service Bay Bottleneck](https://getonramp.io/blog/how-ai-is-fixing-the-service-bay-bottleneck): Why documentation — not wrenching — is the throughput constraint in modern service centers.
+- [Essential Automotive Service Center Software Features for 2026](https://getonramp.io/blog/essential-automotive-service-center-software-features-for-2026): What to look for in shop management software in 2026.
+- [Automotive Service Scheduling Software in 2026](https://getonramp.io/blog/automotive-service-scheduling-software-in-2026-a-new-standard-for-efficiency): A new standard for scheduling efficiency in service centers.
+- [Automotive Parts Management Software in 2026](https://getonramp.io/blog/automotive-parts-management-software-in-2026-moving-beyond-spreadsheets): Moving parts management beyond spreadsheets.
+- [Digital Vehicle Inspection Software 2026](https://getonramp.io/blog/digital-vehicle-inspection-software-2026-the-new-standard-for-service-centers): DVI software as the new baseline for service centers.
+
+## Legal
+
+- [Privacy Policy](https://getonramp.io/privacy)
+- [Terms of Service](https://getonramp.io/terms)
+
+## Optional
+
+- [Sitemap](https://getonramp.io/sitemap.xml): Full XML sitemap of all indexed pages.

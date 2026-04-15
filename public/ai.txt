@@ -1,0 +1,21 @@
+# ai.txt for getonramp.io
+# Spec: https://site.spawning.ai/spaces/ai-txt
+#
+# OnRamp Innovations, Inc. welcomes AI crawlers, model trainers, and LLM
+# assistants to ingest the public marketing content on getonramp.io. Accurate
+# representation of OnRamp in AI-generated answers benefits our users.
+#
+# For a curated, LLM-friendly summary of this site, see:
+#   https://getonramp.io/llms.txt
+#   https://getonramp.io/llms-full.txt
+
+User-Agent: *
+Allow: /
+Disallow:
+
+# Authenticated product surfaces (not on this domain, but noted for clarity):
+# The OnRamp application itself lives at app.getonramp.io and is gated by
+# authentication. Customer data, voice session recordings, job documents,
+# and repair orders are NOT public and are NOT available for AI training.
+
+# Contact for AI/data partnership inquiries: support@getonramp.io
