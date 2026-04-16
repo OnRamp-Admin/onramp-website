@@ -98,9 +98,10 @@ async function prerender() {
 
   // Capture the raw Vite-built index.html as our SPA shell BEFORE we start
   // overwriting routes. Used for in-memory SPA fallback during the prerender
-  // pass AND written to disk as 200.html for the production SPA fallback.
+  // pass. Written to disk as 404.html so Render serves it for URLs that don't
+  // match any prerendered file (genuine 404s — React Router renders NotFoundPage).
   spaShellHtml = readFileSync(join(DIST_DIR, 'index.html'), 'utf-8');
-  writeFileSync(join(DIST_DIR, '200.html'), spaShellHtml);
+  writeFileSync(join(DIST_DIR, '404.html'), spaShellHtml);
 
   // Beasties (Google's critical-CSS extractor) — processes each page's HTML
   // to inline the CSS rules that match above-the-fold elements. The external
