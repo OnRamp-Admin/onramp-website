@@ -1,1 +1,7 @@
-/*    /index.html   200
+# SPA fallback. Prerendered routes (e.g. /pricing → dist/pricing/index.html)
+# are served directly by the static host; this rule only fires for routes
+# that weren't prerendered. It points at 200.html — the un-prerendered SPA
+# shell written by scripts/prerender.mjs — so those routes get an empty
+# React root to mount into, avoiding a hydration mismatch with prerendered
+# homepage HTML.
+/*    /200.html   200
