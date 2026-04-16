@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 const SITE_URL = 'https://getonramp.io';
 const DEFAULT_TITLE = 'OnRamp | Voice-First AI for Automotive Technicians';
 const DEFAULT_DESCRIPTION =
-  'ONRAMP is the hands-free AI voice agent for automotive technicians. Get step-by-step repair guidance, automatic documentation, and voice-controlled workflow — no screen, no terminal, no interruptions.';
+  'OnRamp is the AI voice assistant for auto technicians. Hands-free repair guidance, instant diagnostics, and automated RO documentation.';
 
 interface SEOOptions {
   title: string;

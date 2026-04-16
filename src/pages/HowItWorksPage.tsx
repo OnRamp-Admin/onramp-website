@@ -849,7 +849,7 @@ function PhaseSection({ phase, index }: { phase: typeof phases[number]; index: n
           {/* Frame image — pointer-events-none so clicks pass through to screen content */}
           <img
             src="/apple-iphone-17-pro-max-2025-medium.png"
-            alt=""
+            alt="OnRamp mobile app interface on iPhone"
             className="relative z-10 w-full h-auto drop-shadow-2xl pointer-events-none"
             loading="lazy"
           />

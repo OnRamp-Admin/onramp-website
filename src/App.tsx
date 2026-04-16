@@ -62,7 +62,7 @@ function ComingSoonPage() {
 function HomePage() {
   useSEO({
     title: 'OnRamp | Voice-First AI for Automotive Technicians',
-    description: 'ONRAMP is the hands-free AI voice agent for automotive technicians. Get step-by-step repair guidance, automatic documentation, and voice-controlled workflow — no screen, no terminal, no interruptions.',
+    description: 'OnRamp is the AI voice assistant for auto technicians. Hands-free repair guidance, instant diagnostics, and automated RO documentation.',
   });
 
   return (

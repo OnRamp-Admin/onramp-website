@@ -517,7 +517,7 @@ export default function QuickStartDemo() {
       {/* iPhone frame on top */}
       <img
         src="/apple-iphone-17-pro-max-2025-medium.png"
-        alt=""
+        alt="OnRamp mobile app interface on iPhone"
         className="relative z-10 w-full h-auto drop-shadow-2xl"
       />
     </div>

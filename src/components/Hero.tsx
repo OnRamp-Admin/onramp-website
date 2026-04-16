@@ -115,7 +115,7 @@ export default function Hero() {
         src="/Busy-Shop-aisle.webp"
         srcSet="/Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
         sizes="100vw"
-        alt=""
+        alt="Automotive service center bay with technicians working on vehicles"
         fetchPriority="high"
         loading="eager"
         decoding="async"
