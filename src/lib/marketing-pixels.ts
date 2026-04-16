@@ -173,11 +173,14 @@ export function trackConversion(event: 'lead' | 'contact') {
     window.fbq('track', 'Lead');
   }
 
-  // Google Ads: Conversion event
-  // Note: For specific conversion tracking, you'll need a conversion label
-  // from Google Ads (format: AW-XXXXXXXXX/XXXXXXXXXXXX). For now we fire
-  // a generic conversion. Update VITE_GOOGLE_ADS_CONVERSION_LABEL when available.
   if (typeof window.gtag === 'function') {
+    // GA4: recommended "generate_lead" event — shows up natively in GA4 conversion reports
+    window.gtag('event', 'generate_lead', {
+      event_category: 'engagement',
+      event_label: event,
+    });
+
+    // Google Ads: conversion event (only fires if a specific label is configured)
     const adsId = import.meta.env.VITE_GOOGLE_ADS_ID;
     const conversionLabel = import.meta.env.VITE_GOOGLE_ADS_CONVERSION_LABEL;
     if (adsId && conversionLabel) {

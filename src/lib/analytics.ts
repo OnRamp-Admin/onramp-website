@@ -54,10 +54,24 @@ export function initAnalytics() {
 /**
  * Track SPA page view — call on route change.
  * PostHog autocapture handles initial load, but SPA navigations need manual $pageview.
+ * Also forwards to GA4 / Google Ads gtag.js (loaded in index.html) so SPA routes
+ * show up in Google Analytics reports.
  */
 export function trackPageView(path: string) {
-  if (!POSTHOG_KEY) return;
-  posthog.capture('$pageview', { $current_url: window.location.origin + path });
+  const fullUrl = window.location.origin + path;
+
+  if (POSTHOG_KEY) {
+    posthog.capture('$pageview', { $current_url: fullUrl });
+  }
+
+  // Forward to GA4 — gtag is loaded in index.html and shared with Google Ads
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'page_view', {
+      page_path: path,
+      page_location: fullUrl,
+      page_title: document.title,
+    });
+  }
 }
 
 // ─── Custom Events ───────────────────────────────────────────────────────────
@@ -80,8 +94,19 @@ export function trackCTAClick(data: {
   cta_text: string;
   destination?: string;
 }) {
-  if (!POSTHOG_KEY) return;
-  posthog.capture('cta_clicked', data);
+  if (POSTHOG_KEY) {
+    posthog.capture('cta_clicked', data);
+  }
+
+  // Forward to GA4 — useful signal for Google Ads audience building / conversion optimization
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'cta_click', {
+      event_category: 'engagement',
+      event_label: data.cta_location,
+      cta_text: data.cta_text,
+      destination: data.destination,
+    });
+  }
 }
 
 /** ROI calculator tab switched */
