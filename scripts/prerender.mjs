@@ -24,6 +24,7 @@ import { resolve, dirname, join, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import puppeteer from 'puppeteer';
+import Beasties from 'beasties';
 import { getAllRoutes } from './site-routes.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -101,6 +102,26 @@ async function prerender() {
   spaShellHtml = readFileSync(join(DIST_DIR, 'index.html'), 'utf-8');
   writeFileSync(join(DIST_DIR, '200.html'), spaShellHtml);
 
+  // Beasties (Google's critical-CSS extractor) — processes each page's HTML
+  // to inline the CSS rules that match above-the-fold elements. The external
+  // <link rel="stylesheet"> is converted to a <link rel="preload" as="style">
+  // with a JS-based onload swap, so the full stylesheet still loads but doesn't
+  // block initial paint.
+  const beasties = new Beasties({
+    path: DIST_DIR,
+    publicPath: '/',
+    // "swap" keeps the original <link> but converts it to preload + onload,
+    // plus adds a <noscript> fallback so CSS still works without JS.
+    preload: 'swap',
+    // Inline any font-face rules used above the fold — avoids FOIT.
+    inlineFonts: true,
+    // Don't prune the source CSS file from dist/ — it's needed for
+    // below-the-fold content after async load.
+    pruneSource: false,
+    // Log level: only errors (skip info about inlined bytes per page).
+    logLevel: 'error',
+  });
+
   const server = createServer(handleRequest);
   await new Promise((r) => server.listen(PORT, r));
 
@@ -140,7 +161,18 @@ async function prerender() {
           { timeout: 30_000 }
         );
 
-        const html = await page.content();
+        let html = await page.content();
+
+        // Inline critical above-the-fold CSS for this specific page.
+        // Beasties reads the referenced CSS file from dist/, matches selectors
+        // against the HTML, and inlines only the matching rules as <style> in
+        // <head>. The external stylesheet becomes a preload that applies after
+        // paint, so first contentful paint doesn't wait for the network.
+        try {
+          html = await beasties.process(html);
+        } catch (critErr) {
+          console.warn(`  [beasties]: ${critErr.message}`);
+        }
 
         const outputDir =
           route.path === '/' ? DIST_DIR : join(DIST_DIR, route.path);
