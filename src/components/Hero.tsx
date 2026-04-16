@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Wrench, FileCheck, ArrowRight, Search, List, CheckCircle2 } from 'lucide-react';
+import { skipInitialAnimations } from '../lib/hydration';
 
 const phases = [
   {
@@ -103,6 +104,7 @@ const richDescriptions: Record<string, React.ReactNode> = {
 
 export default function Hero() {
   const [activePhase, setActivePhase] = useState<number | null>(null);
+  const skip = skipInitialAnimations;
 
   return (
     <section
@@ -113,9 +115,11 @@ export default function Hero() {
           is the LCP element on mobile; any mistake here balloons LCP. */}
       <img
         src="/Busy-Shop-aisle.webp"
-        srcSet="/Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
+        srcSet="/Busy-Shop-aisle-sm.webp 480w, /Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
         sizes="100vw"
         alt="Automotive service center bay with technicians working on vehicles"
+        width={1920}
+        height={1071}
         fetchPriority="high"
         loading="eager"
         decoding="async"
@@ -139,7 +143,7 @@ export default function Hero() {
       <div className="relative z-10 max-w-6xl w-full mx-auto text-center">
         {/* Main Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={skip ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mt-12 md:mt-16 mb-6 leading-tight"
@@ -152,7 +156,7 @@ export default function Hero() {
 
         {/* Subheadline */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={skip ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-base md:text-xl text-carbon-200 mb-12 max-w-3xl mx-auto"
@@ -164,7 +168,7 @@ export default function Hero() {
 
         {/* Phase Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={skip ? false : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mb-6"
@@ -178,7 +182,7 @@ export default function Hero() {
               return (
                 <motion.div
                   key={phase.label}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={skip ? false : { opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
                   whileHover={{ y: -4 }}
@@ -195,9 +199,9 @@ export default function Hero() {
                   <div className={`inline-flex p-2.5 rounded-xl ${phase.bgColor} mb-3`}>
                     <phase.icon className={`w-5 h-5 ${phase.color}`} />
                   </div>
-                  <h3 className={`text-sm md:text-base font-bold ${phase.color} mb-1.5 tracking-wider`}>
+                  <h2 className={`text-sm md:text-base font-bold ${phase.color} mb-1.5 tracking-wider`}>
                     {phase.label}
-                  </h3>
+                  </h2>
                   <p className="text-carbon-200 text-xs md:text-sm">{phase.description}</p>
 
                   {/* Connection Line */}
@@ -268,7 +272,7 @@ export default function Hero() {
 
         {/* CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={skip ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6"
@@ -285,7 +289,7 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={skip ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.5 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"

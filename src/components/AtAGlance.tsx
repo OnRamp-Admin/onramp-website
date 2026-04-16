@@ -164,7 +164,7 @@ function FlicMockup() {
         <div className="absolute w-56 h-56 bg-electric-500/15 rounded-full blur-[80px]" />
         <div className="relative">
           <img
-            src="/BrainButton.png"
+            src="/BrainButton.webp"
             alt="Brain Button"
             className="w-48 md:w-56 h-auto"
             style={{ filter: "drop-shadow(0 0 14px rgba(26,160,255,0.2))" }}

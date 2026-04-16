@@ -612,7 +612,7 @@ function FlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void }
           <div className="p-5 md:p-10">
             <div className="flex flex-col items-center text-center mb-6">
               <img
-                src="/BrainButton.png"
+                src="/BrainButton.webp"
                 alt="Brain Button"
                 className="w-28 h-28 object-contain mb-5"
                 style={{ filter: "drop-shadow(0 0 12px rgba(26,160,255,0.2))" }}
@@ -696,7 +696,7 @@ function SCFlicInfoModal({ open, onClose }: { open: boolean; onClose: () => void
           <div className="p-5 md:p-10">
             <div className="flex flex-col items-center text-center mb-6">
               <img
-                src="/BrainButton.png"
+                src="/BrainButton.webp"
                 alt="Brain Button"
                 className="w-28 h-28 object-contain mb-5"
                 style={{ filter: "drop-shadow(0 0 12px rgba(26,160,255,0.2))" }}
@@ -1559,7 +1559,7 @@ function IndividualPricing() {
                     </button>
                     <div className="flex items-center gap-4">
                       <img
-                        src="/BrainButton.png"
+                        src="/BrainButton.webp"
                         alt="Brain Button"
                         className="w-16 h-16 object-contain flex-shrink-0"
                         style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}
@@ -1919,7 +1919,7 @@ function ServiceCenterPricing() {
                   {/* Flic image */}
                   <div className="flex-shrink-0">
                     <img
-                      src="/BrainButton.png"
+                      src="/BrainButton.webp"
                       alt="Brain Button"
                       className="w-16 h-16 md:w-20 md:h-20 object-contain"
                       style={{ filter: "drop-shadow(0 0 10px rgba(26,160,255,0.2))" }}

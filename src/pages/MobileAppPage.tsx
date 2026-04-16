@@ -410,7 +410,7 @@ export default function MobileAppPage() {
                 <div className="relative w-[280px] md:w-[320px] flex flex-col items-center py-8">
                   <div className="absolute inset-0 bg-electric-500/15 rounded-full blur-[80px] scale-75 opacity-50" />
                   <img
-                    src="/BrainButton.png"
+                    src="/BrainButton.webp"
                     alt="Brain Button"
                     className="w-48 md:w-56 h-auto relative"
                     loading="lazy"

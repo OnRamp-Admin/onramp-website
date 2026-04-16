@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { trackPageView } from './lib/analytics';
+import { setSkipInitialAnimations } from './lib/hydration';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
@@ -76,6 +77,8 @@ function HomePage() {
 }
 
 function App() {
+  useEffect(() => { setSkipInitialAnimations(false); }, []);
+
   if (COMING_SOON) {
     return (
       <div className="min-h-screen bg-carbon-950 text-carbon-100 overflow-x-hidden">

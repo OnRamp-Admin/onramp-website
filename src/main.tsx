@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import { initAnalytics } from './lib/analytics'
 import { initMarketingPixels } from './lib/marketing-pixels'
+import { setSkipInitialAnimations } from './lib/hydration'
 import App from './App.tsx'
 
 // Defer PostHog + marketing pixels (Meta, LinkedIn, RB2B, Apollo) until the
@@ -49,6 +50,12 @@ const tree = (
 // When #root has prerendered children (scripts/prerender.mjs), hydrate on top
 // of them. When it's an empty SPA shell (dev, or unknown-route fallback),
 // render from scratch.
+// Skip framer-motion entrance animations during prerender (captures final
+// state) and hydration (prevents mismatch with prerendered DOM).
+if (rootEl.hasChildNodes() || isPrerender) {
+  setSkipInitialAnimations(true);
+}
+
 if (rootEl.hasChildNodes()) {
   hydrateRoot(rootEl, tree);
 } else {

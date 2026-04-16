@@ -44,6 +44,7 @@ export default function Navigation() {
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
           className="md:hidden p-2 rounded-lg text-carbon-300 hover:text-white hover:bg-carbon-800/50 transition-colors"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

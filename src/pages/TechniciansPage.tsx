@@ -833,7 +833,7 @@ export default function TechniciansPage() {
                 icon: CircleDot,
                 name: 'Brain Button',
                 description: "ONRAMP's Brain Button is a wireless Bluetooth button that clips to your shirt or belt. Tap-to-talk activates your AI voice wingman. Tap-to-pause. All hands-free and voice controlled. No greasy phone screens!",
-                image: '/BrainButton.png',
+                image: '/BrainButton.webp',
               },
               {
                 icon: Smartphone,

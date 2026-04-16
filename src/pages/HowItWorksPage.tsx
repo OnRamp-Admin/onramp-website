@@ -120,7 +120,7 @@ const hardware = [
     icon: CircleDot,
     name: 'Brain Button',
     description: "ONRAMP's Brain Button is a wireless Bluetooth button that clips to your shirt or belt. Tap-to-talk activates your AI voice wingman. Tap-to-pause. All hands-free and voice controlled. No greasy phone screens!",
-    image: '/BrainButton.png',
+    image: '/BrainButton.webp',
   },
   {
     icon: Smartphone,
@@ -970,7 +970,7 @@ export default function HowItWorksPage() {
                 {/* Flic + AirPods centered together */}
                 <div className="flex items-center gap-1 lg:translate-x-8">
                   <img
-                    src="/BrainButton.png"
+                    src="/BrainButton.webp"
                     alt="Brain Button"
                     className="w-22 md:w-28 h-auto"
                     loading="lazy"

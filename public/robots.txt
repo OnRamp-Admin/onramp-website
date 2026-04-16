@@ -11,4 +11,7 @@ Disallow: /og-image.html
 Sitemap: https://getonramp.io/sitemap.xml
 
 # LLM-friendly site summary (https://llmstxt.org)
-Llms-Txt: https://getonramp.io/llms.txt
+# Note: "Llms-Txt:" is not a standard robots.txt directive — Google's validator
+# flags it as an error. AI crawlers discover /llms.txt via the well-known path
+# convention (llmstxt.org), so no directive is needed here.
+# See: https://getonramp.io/llms.txt
