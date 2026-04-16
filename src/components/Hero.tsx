@@ -108,14 +108,28 @@ export default function Hero() {
     <section
       className="relative min-h-screen flex flex-col justify-center items-center px-4 py-20 overflow-hidden"
     >
-      {/* Fixed background image — doesn't resize when content expands */}
+      {/* Hero background — real <img> (not CSS background) so the browser can
+          honor fetchpriority/loading and the preload hint in index.html. This
+          is the LCP element on mobile; any mistake here balloons LCP. */}
+      <img
+        src="/Busy-Shop-aisle.webp"
+        srcSet="/Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
+        sizes="100vw"
+        alt=""
+        fetchPriority="high"
+        loading="eager"
+        decoding="async"
+        className="absolute inset-0 z-0 w-full h-full object-cover"
+        style={{ objectPosition: '70% 50%' }}
+      />
+      {/* Dark overlay gradient — matches the old linear-gradient in the CSS bg. */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8)), url(/Busy-Shop-aisle.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: '70% 50%',
+          background:
+            'linear-gradient(to bottom, rgba(6,6,13,0.85), rgba(6,6,13,0.8))',
         }}
+        aria-hidden="true"
       />
       {/* Background Gradient Orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-electric-500/20 rounded-full blur-[128px]" />

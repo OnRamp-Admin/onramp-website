@@ -653,11 +653,11 @@ function PersonalizationCard() {
 
 // ─── "No App Screenshot?" Modal ──────────────────────────────────────────────
 const phoneScreenshots = [
-  '/diagnose-screen.PNG',
-  '/prepare-screen.PNG',
-  '/workflow-screen.PNG',
-  '/step-screen-1.PNG',
-  '/step-screen-2.PNG',
+  '/diagnose-screen.webp',
+  '/prepare-screen.webp',
+  '/workflow-screen.webp',
+  '/step-screen-1.webp',
+  '/step-screen-2.webp',
 ];
 
 function NoScreenshotModal({ open, onClose }: { open: boolean; onClose: () => void }) {

@@ -24,6 +24,17 @@
     <meta name="twitter:description" content="The hands-free AI voice agent that helps automotive technicians diagnose faster, repair smarter, and generate perfect RO reports — all by voice." />
     <meta name="twitter:image" content="https://getonramp.io/og-image.png" />
 
+    <!-- Preload homepage hero image — LCP element. Responsive srcset picks the
+         mobile variant on small screens, desktop on large. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/Busy-Shop-aisle.webp"
+      imagesrcset="/Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

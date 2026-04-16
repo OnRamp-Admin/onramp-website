@@ -102,11 +102,11 @@ const colorMap: Record<string, { icon: string; bg: string; border: string; glow:
 };
 
 const phoneScreenshots = [
-  '/diagnose-screen.PNG',
-  '/prepare-screen.PNG',
-  '/workflow-screen.PNG',
-  '/step-screen-1.PNG',
-  '/step-screen-2.PNG',
+  '/diagnose-screen.webp',
+  '/prepare-screen.webp',
+  '/workflow-screen.webp',
+  '/step-screen-1.webp',
+  '/step-screen-2.webp',
 ];
 
 function PhoneMockup() {
