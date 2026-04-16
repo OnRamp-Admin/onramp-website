@@ -1,6 +1,13 @@
+# robots.txt for https://getonramp.io
+# Allow all crawlers full access to public content.
+
 User-agent: *
 Allow: /
 
+# Exclude the Open Graph image template (helper file, not a real page)
+Disallow: /og-image.html
+
+# Sitemap
 Sitemap: https://getonramp.io/sitemap.xml
 
 # LLM-friendly site summary (https://llmstxt.org)
