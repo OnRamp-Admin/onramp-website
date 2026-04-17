@@ -921,7 +921,7 @@ export default function ManagersPage() {
               <div className="mb-8">
                 <div className="flex justify-between items-start gap-4 mb-3">
                   <label className="text-carbon-200 font-medium text-sm md:text-base">
-                    Warranty recovery from improved documentation
+                    How many more warranty claims might get approved if the documentation was right the first time?
                     <span className="block text-carbon-200 text-sm font-normal">
                       (Approval rate improvement)
                     </span>
