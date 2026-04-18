@@ -1,7 +1,7 @@
 /**
  * Marketing Pixels & Retargeting Tags for OnRamp Marketing Website
  *
- * Initializes: Meta Pixel, Google Ads Tag, LinkedIn Insight Tag, RB2B, Apollo
+ * Initializes: Meta Pixel, Google Ads Tag, LinkedIn Insight Tag, Apollo
  * Each pixel gracefully no-ops if its env var is not set.
  *
  * ## When adding a new pixel:
@@ -104,27 +104,6 @@ function initLinkedIn() {
   console.debug(`[Marketing] LinkedIn Insight Tag initialized: ${partnerId}`);
 }
 
-// ─── RB2B Visitor Identification ────────────────────────────────────────────
-
-function initRB2B() {
-  const siteId = import.meta.env.VITE_RB2B_SITE_ID;
-  if (!siteId) {
-    console.debug('[Marketing] RB2B: VITE_RB2B_SITE_ID not set — skipped');
-    return;
-  }
-
-  // RB2B standard install snippet (matches their official embed code)
-  if ((window as any).reb2b) return; // Already loaded
-  (window as any).reb2b = { loaded: true };
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://ddwl4m2hdecbv.cloudfront.net/b/${siteId}/${siteId}.js.gz`;
-  const firstScript = document.getElementsByTagName('script')[0];
-  firstScript?.parentNode?.insertBefore(script, firstScript);
-
-  console.debug(`[Marketing] RB2B initialized: ${siteId}`);
-}
-
 // ─── Apollo Website Tracker ─────────────────────────────────────────────────
 
 function initApollo() {
@@ -157,7 +136,6 @@ export function initMarketingPixels() {
   initMetaPixel();
   initGoogleAds();
   initLinkedIn();
-  initRB2B();
   initApollo();
 }
 

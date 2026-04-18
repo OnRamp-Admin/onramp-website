@@ -7,7 +7,7 @@ import { initMarketingPixels } from './lib/marketing-pixels'
 import { setSkipInitialAnimations } from './lib/hydration'
 import App from './App.tsx'
 
-// Defer PostHog + marketing pixels (Meta, LinkedIn, RB2B, Apollo) until the
+// Defer PostHog + marketing pixels (Meta, LinkedIn, Apollo) until the
 // browser is idle. Each of these pulls a ~30-140KB script that contends with
 // the LCP image and critical JS bundle on mobile. requestIdleCallback fires
 // as soon as the main thread is free; the 1500ms timeout is a hard ceiling

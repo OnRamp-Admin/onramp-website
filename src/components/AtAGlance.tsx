@@ -102,11 +102,11 @@ const colorMap: Record<string, { icon: string; bg: string; border: string; glow:
 };
 
 const phoneScreenshots = [
-  '/diagnose-screen.webp',
-  '/prepare-screen.webp',
-  '/workflow-screen.webp',
-  '/step-screen-1.webp',
-  '/step-screen-2.webp',
+  { sm: '/diagnose-screen-sm.webp', full: '/diagnose-screen.webp' },
+  { sm: '/prepare-screen-sm.webp', full: '/prepare-screen.webp' },
+  { sm: '/workflow-screen-sm.webp', full: '/workflow-screen.webp' },
+  { sm: '/step-screen-1-sm.webp', full: '/step-screen-1.webp' },
+  { sm: '/step-screen-2-sm.webp', full: '/step-screen-2.webp' },
 ];
 
 function PhoneMockup() {
@@ -135,7 +135,9 @@ function PhoneMockup() {
         <AnimatePresence mode="popLayout">
           <motion.img
             key={currentIndex}
-            src={phoneScreenshots[currentIndex]}
+            srcSet={`${phoneScreenshots[currentIndex].sm} 480w, ${phoneScreenshots[currentIndex].full} 1206w`}
+            sizes="300px"
+            src={phoneScreenshots[currentIndex].sm}
             alt="ONRAMP mobile app"
             className="w-full h-full object-cover object-top absolute inset-0"
             initial={{ y: '100%', opacity: 0 }}
