@@ -24,6 +24,11 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// Dev-only: cover-image review tool. The import is gated by `import.meta.env.DEV`
+// so the production bundle never pulls this page in.
+const CoverReviewPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/admin/CoverReviewPage'))
+  : null;
 
 // Set to false to disable the coming soon redirect and show the full site
 const COMING_SOON = false;
@@ -92,7 +97,10 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-carbon-950 text-carbon-100 overflow-x-hidden">
+    // overflow-x-clip (not -hidden) keeps horizontal overflow contained
+    // without creating a scroll container, so `position: sticky` inside the
+    // app continues to work relative to the viewport.
+    <div className="min-h-screen bg-carbon-950 text-carbon-100 overflow-x-clip">
       <Navigation />
       <ScrollToTop />
       <main>
@@ -111,6 +119,9 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
+            {CoverReviewPage && (
+              <Route path="/admin/cover-review" element={<CoverReviewPage />} />
+            )}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

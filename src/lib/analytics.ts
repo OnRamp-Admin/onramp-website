@@ -228,8 +228,8 @@ export function setBlogEntryPoint(slug: string) {
   posthog.register({ blog_entry_slug: slug });
 }
 
-/** Audio format on a blog post: long-form podcast or short AI brief summary. */
-export type BlogAudioFormat = 'podcast' | 'brief';
+/** Audio format on a blog post: long-form podcast, short AI brief summary, or verbatim article read. */
+export type BlogAudioFormat = 'podcast' | 'brief' | 'article';
 
 /** Blog audio — first play of a session (per format). Filter on `format` in PostHog to slice the funnel. */
 export function trackBlogAudioStarted(data: {

@@ -18,6 +18,12 @@ export interface BlogPost {
   briefDurationSec?: number;
   /** Short AI-generated summary transcript. */
   briefTranscript?: string;
+  /** Verbatim article read-aloud (Gemini TTS of the post body). HTTPS URL. */
+  articleAudioUrl?: string;
+  /** Verbatim article audio duration in seconds. */
+  articleDurationSec?: number;
+  /** Cleaned plain-text version of the article body used as the TTS source. */
+  articleTranscript?: string;
   content: string;
   readTime: number;
 }
@@ -34,6 +40,7 @@ const postData: Omit<BlogPost, 'readTime'>[] = [
     author: 'Alex Littlewood',
     description:
       `The real problem in your bays isn't the repair itself. It's the friction of everything around it. Here's how terminal time is quietly draining your shop's profitability — and what AI can do about it.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-cover.png?v=1761000000',
     tags: ['ai', 'service-center', 'productivity', 'fixed-ops'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-brief.m4a',
     briefDurationSec: 111,
@@ -263,6 +270,76 @@ Speaker B: So it's getting smarter every single day.
 Speaker A: Exactly. Given that accelerating curve of knowledge, how long until the AI is the one fundamentally diagnosing the vehicle the exact second it rolls into the shop? Oh, man. And when the AI possesses that level of absolute diagnostic certainty, does the highly skilled human mechanic eventually transition into simply being the physical analog hands of the AI?
 Speaker B: That is, wow. From the surgeon stepping away from the operating table to check a textbook, to the AI eventually running the entire diagnostic operation from the cloud.
 Speaker A: It's a huge shift. The evolution of the service bay is moving faster than anyone realized. That is definitely something to think about next time you take your car in for a repair. Thanks for joining us on this deep dive.`,
+    articleAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-is-fixing-the-service-bay-bottleneck-article.m4a?v=1776626567289',
+    articleDurationSec: 410,
+    articleTranscript: `How AI is Fixing the Service Bay Bottleneck
+
+The real problem in your bays isn't the repair itself. It's the friction of everything around it. Here's how terminal time is quietly draining your shop's profitability — and what AI can do about it.
+
+The real problem in your bays isn't the repair itself. It's the friction of everything around it.
+
+Ask any experienced technician what slows them down, and they won't say "the bolt was too tight." They'll tell you about the constant back-and-forth to the bay terminal. The modern auto repair workflow relies heavily on data — OEM procedures, TSBs, and electrical schematics — but the way techs access that data hasn't evolved in twenty years.
+
+It's a broken system of stepping away from the lift, taking off gloves, waking up a laptop, and clicking through menus to find a single detail. And it is quietly draining your shop's profitability.
+
+The Financial Drain of the Bay Computer.
+
+Here is a number that should bother every Service Manager and Fixed Ops Director: the average technician loses roughly one hour of billable time every single day just stepping away from the vehicle to interact with a keyboard and screen.
+
+Let's do the math on a standard shop:
+The Setup: 10 technicians
+The Shop Rate: $170/hour
+The Lost Time: 1 hour per tech, per day
+
+That is 10 hours of zero billable labor every day. In a standard 22-day work month, your shop is burning over $37,400 a month in lost bay throughput. That isn't an abstract efficiency metric; that is direct revenue evaporating because your highly paid technicians are acting as data-entry clerks.
+
+Where Are Those Hours Actually Going?.
+
+The time isn't lost all at once. It bleeds out in five- and ten-minute increments throughout the day. Every time a tech wipes their hands and turns their back on the vehicle, they break their flow and lose momentum.
+
+Here is exactly what is driving that $37,000 monthly burn:
+
+Looking up baseline information: Digging through Mitchell1 or AllData just to find the right wiring diagram or verify a TSB before turning a single wrench.
+
+Hunting for torque specifications: Stopping a heavy line repair dead in its tracks, stripping off gloves, and typing at the terminal just to verify if a bolt needs 85 Nm or 95 Nm.
+
+Getting the next step: Losing the mental thread during a complex teardown and having to re-orient at the computer screen to figure out the exact sequence.
+
+Figuring out the diagnosis: Wasting time cross-referencing diagnostic trouble codes (DTCs) against known failure patterns on clunky databases.
+
+Making mid-repair notes: Stopping work to type a vague note on a tablet so they don't forget a detail later.
+
+Writing reports at the end of the day: The dreaded 4:45 PM paperwork crunch. Translating memory into warranty-compliant ROs, resulting in incomplete write-ups, rejected claims, and unbilled diagnostic labor.
+
+The Solution: AI in the Bay.
+
+You cannot skip these steps. Modern cars demand exact specs and flawless documentation. But you can change how your technicians interact with the data.
+
+The fix isn't putting faster laptops on their toolboxes. The fix is removing the screen entirely.
+
+Imagine a workflow where an AI assistant already knows the vehicle, the complaint, and the procedure. When the tech needs a spec, they don't step away. They just ask out loud: "What's the torque on the caliper bracket?" and get an instant answer. When they notice a worn component, they dictate the finding verbally, and the AI logs it instantly.
+
+How ONRAMP Recovers Your Billable Hours.
+
+We built ONRAMP because we saw this massive financial leak firsthand. ONRAMP is a voice-activated AI assistant built specifically for the reality of the automotive service bay.
+
+It handles the exact friction points that burn your techs' time:
+
+Diagnostic Assistance: Techs describe the customer complaint and the symptoms they're seeing, and ONRAMP helps narrow the cause — surfacing relevant diagnostic trouble codes, checking applicable TSBs and known-failure patterns for that specific vehicle, and walking through a targeted diagnostic path instead of trial-and-error.
+
+Job Preparation: Before the first bolt comes off, ONRAMP briefs the tech on the repair — required parts, special tools, sub-procedures, labor time, and any known gotchas for this exact make/model/complaint. Techs walk to the bay already oriented, with the parts staged, instead of discovering halfway through that they need to run to the counter.
+
+Contextual Guidance: ONRAMP understands the exact step of the repair and can guide a B-level tech through a procedure without pulling your Master Tech off their own job.
+
+Instant Spec Retrieval: Techs ask for torque specs, fluid capacities, or wiring diagrams verbally, keeping their hands on the car.
+
+Automated RO Documentation: Techs dictate their notes as they work. ONRAMP instantly transcribes and formats professional, warranty-ready repair notes.
+
+The technology to solve the bay bottleneck finally exists. It requires zero typing, works in loud shop environments, and runs on the mobile hardware your techs already have.
+
+The shops that deploy this first won't just recover tens of thousands of dollars a month in lost throughput — they'll become the shops where the most efficient technicians actually want to work.
+
+We hope you found this article helpful. ONRAMP is here to help your technicians work at the speed of AI. If you'd like to learn more, please schedule a demo with us. We'd love to share how your shop can drive profitability using ONRAMP.`,
     content: `
 
 The real problem in your bays isn't the repair itself. It's the friction of everything around it.
@@ -315,9 +392,13 @@ We built [ONRAMP](/) because we saw this massive financial leak firsthand. ONRAM
 
 It handles the exact friction points that burn your techs' time:
 
-**Instant Spec Retrieval:** Techs ask for torque specs, fluid capacities, or wiring diagrams verbally, keeping their hands on the car.
+**Diagnostic Assistance:** Techs describe the customer complaint and the symptoms they're seeing, and ONRAMP helps narrow the cause — surfacing relevant diagnostic trouble codes, checking applicable TSBs and known-failure patterns for that specific vehicle, and walking through a targeted diagnostic path instead of trial-and-error.
+
+**Job Preparation:** Before the first bolt comes off, ONRAMP briefs the tech on the repair — required parts, special tools, sub-procedures, labor time, and any known gotchas for this exact make/model/complaint. Techs walk to the bay already oriented, with the parts staged, instead of discovering halfway through that they need to run to the counter.
 
 **Contextual Guidance:** ONRAMP understands the exact step of the repair and can guide a B-level tech through a procedure without pulling your Master Tech off their own job.
+
+**Instant Spec Retrieval:** Techs ask for torque specs, fluid capacities, or wiring diagrams verbally, keeping their hands on the car.
 
 **Automated RO Documentation:** Techs dictate their notes as they work. ONRAMP instantly transcribes and formats professional, warranty-ready repair notes.
 
@@ -339,6 +420,7 @@ The shops that deploy this first won't just recover tens of thousands of dollars
     author: 'Alex Littlewood',
     description:
       `It's 10:15 on a Tuesday morning, and you've got a three-car backlog already building. Here's why 'terminal time' is quietly destroying your shop's profitability.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-true-cost-of-terminal-time-cover.png?v=1776587352272',
     tags: ['productivity', 'service-center', 'fixed-ops', 'roi'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-true-cost-of-terminal-time-brief.m4a',
     briefDurationSec: 96,
@@ -555,6 +637,7 @@ When you're ready to see those hours come back, [book a demo with OnRamp](https:
     author: 'Alex Littlewood',
     description:
       `The auto repair industry's AI investment has gone to the front desk — phone answering, scheduling, chatbots. But what good is booking more appointments if the bay can't keep up?`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/beyond-the-front-desk-ai-in-the-service-bay-cover.png?v=1776587383060',
     tags: ['ai', 'service-center', 'fixed-ops', 'strategy'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/beyond-the-front-desk-ai-in-the-service-bay-brief.m4a',
     briefDurationSec: 106,
@@ -765,6 +848,7 @@ Technician AI is that next wave. And it's not coming — it's here. For the broa
     author: 'Alex Littlewood',
     description:
       `The technician shortage isn't a forecast anymore — it's the daily reality. Here's why the shops winning the talent war in 2026 aren't just paying more. They're investing in smarter tools.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/attract-and-retain-top-automotive-technicians-2026-cover.png?v=1776587504007',
     tags: ['technicians', 'retention', 'recruiting', 'service-center'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/attract-and-retain-top-automotive-technicians-2026-brief.m4a',
     briefDurationSec: 94,
@@ -1061,6 +1145,7 @@ That means modern tools. That means less time wasted on outdated processes. That
     author: 'Alex Littlewood',
     description:
       `Your master tech is three hours into a transmission rebuild when a B-level tech taps them on the shoulder with a 'quick question.' Here's how that interruption is silently killing your profitability.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/empower-b-level-techs-to-work-like-master-techs-cover.png?v=1776587936946',
     tags: ['technicians', 'training', 'productivity', 'service-center'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/empower-b-level-techs-to-work-like-master-techs-brief.m4a',
     briefDurationSec: 112,
@@ -1701,6 +1786,7 @@ When you're ready to give your B-levels the support they need — and give your 
     author: 'Alex Littlewood',
     description:
       `Pull up any random repair order from last week and read the tech notes. If your shop is like most, you'll find three sentences for a two-and-a-half-hour job. Here's why — and how to fix it.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/automating-ro-documentation-with-ai-cover.png?v=1776587922609',
     tags: ['documentation', 'warranty', 'ai', 'productivity'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automating-ro-documentation-with-ai-brief.m4a',
     briefDurationSec: 104,
@@ -2152,6 +2238,7 @@ When you're ready to stop losing money to paperwork, [see how OnRamp turns every
     author: 'Alex Littlewood',
     description:
       `Every decade, a tool comes along that changes how technicians work. OBD readers. Scan tools. Digital service info. The next one isn't something you plug in — it's something you talk to.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-activated-diagnostics-the-new-must-have-tool-cover.png?v=1776588401033',
     tags: ['ai', 'diagnostics', 'voice-ai', 'technicians'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-activated-diagnostics-the-new-must-have-tool-brief.m4a',
     briefDurationSec: 92,
@@ -2527,6 +2614,7 @@ Every shop has a scan tool. Every shop has AllData or Mitchell1. Someday, every 
     author: 'Alex Littlewood',
     description:
       `Not every shop is ready for AI. But if you're running multiple bays with multiple techs and a steady stream of work, here are five signs the inefficiencies AI solves are already costing you real money.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/five-signs-your-shop-is-ready-for-ai-cover.png?v=1776588463052',
     tags: ['ai', 'service-center', 'fixed-ops', 'strategy'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/five-signs-your-shop-is-ready-for-ai-brief.m4a',
     briefDurationSec: 97,
@@ -2821,6 +2909,7 @@ If those numbers bother you, you're ready.
     author: 'Alex Littlewood',
     description:
       `This is a math post. If you run your service department by the numbers, buckle up — because the numbers on what 15 wasted minutes per RO costs your operation are going to be uncomfortable.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/maximizing-bay-throughput-saving-15-minutes-per-ro-cover.png?v=1776588459082',
     tags: ['productivity', 'roi', 'fixed-ops', 'service-center'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/maximizing-bay-throughput-saving-15-minutes-per-ro-brief.m4a',
     briefDurationSec: 109,
@@ -3263,6 +3352,7 @@ Then look at OnRamp's pricing — $99/seat/month at the Pro level, with volume d
     author: 'Alex Littlewood',
     description:
       `Every service manager has a graveyard of software they've paid for and nobody uses. Here's why the problem was never that technicians resist technology — the technology resisted the technician.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/overcoming-the-my-techs-wont-use-new-tech-myth-cover.png?v=1776588478782',
     tags: ['technicians', 'adoption', 'service-center', 'strategy'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/overcoming-the-my-techs-wont-use-new-tech-myth-brief.m4a',
     briefDurationSec: 94,
@@ -3636,6 +3726,7 @@ Give them a tool that's designed for them — that works the way they work, in t
     author: 'Alex Littlewood',
     description:
       `When you hear 'AI in the service bay,' a certain image comes to mind. Maybe it's a robot arm doing an oil change. That fear is understandable. It's also wrong.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-future-of-fixed-ops-augmenting-techs-not-replacing-them-cover.png?v=1776588519293',
     tags: ['ai', 'fixed-ops', 'technicians', 'strategy'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-future-of-fixed-ops-augmenting-techs-not-replacing-them-brief.m4a',
     briefDurationSec: 101,
@@ -3893,6 +3984,7 @@ AI in the bay isn't about replacing the skilled trades. It's about honoring them
     author: 'Alex Littlewood',
     description:
       `The software stack running your service department in 2026 looks nothing like five years ago. Here's what actually moves the needle on profitability, efficiency, and retention — and who's doing it well.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/essential-automotive-service-center-software-features-for-2026-cover.png?v=1776588548674',
     tags: ['service-center', 'software', 'shop-management', 'fixed-ops'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/essential-automotive-service-center-software-features-for-2026-brief.m4a',
     briefDurationSec: 110,
@@ -4063,6 +4155,67 @@ Speaker B: And the front desk AI just texts the next three customers, "Hey, we'r
 Speaker A: That is just mind-blowing. It totally removes the chaos.
 Speaker B: It's full automation of the physical workflow.
 Speaker A: Well, that is definitely something to chew on. Incredible stuff. Thanks for joining us for this deep dive, and we'll catch you on the next one.`,
+    articleAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/essential-automotive-service-center-software-features-for-2026-article.m4a?v=1776629928399',
+    articleDurationSec: 546,
+    articleTranscript: `Essential Automotive Service Center Software Features for 2026
+
+The software stack running your service department in 2026 looks nothing like five years ago. Here's what actually moves the needle on profitability, efficiency, and retention — and who's doing it well.
+
+The software stack running your service department in 2026 looks nothing like what you were using five years ago. And if it does, that's a problem worth addressing.
+
+Vehicles are more complex. Customers expect real-time updates and digital communication. Technicians are harder to find and harder to keep. The tools that worked when your biggest challenge was keeping the scheduling board accurate now need to handle diagnostics support, predictive maintenance triggers, parts procurement, customer transparency, and documentation — all connected, all in real time.
+
+This isn't about chasing the newest shiny object. It's about understanding which software capabilities actually move the needle on profitability, efficiency, and retention in a modern service operation. Here's what matters in 2026, and who's doing it well.
+
+Cloud-Based Management: The Foundation Everything Else Sits On.
+
+If your shop management system still runs on a local server in the back office, you're building on a foundation that limits everything else you try to do. Cloud-based platforms provide real-time access from any device, automatic backups, seamless updates, and the ability to connect with other tools through APIs and integrations.
+
+More importantly, cloud architecture means your front counter, your bays, and your parts room are all working from the same live data. A repair order created at the counter immediately reflects in the tech's queue. A parts order updates inventory the moment it's placed. There's one source of truth instead of three different versions of reality.
+
+The leading platforms in this space — Tekmetric, Shop-Ware, and Shopmonkey — are all cloud-native. They were built for the browser, not retrofitted from legacy desktop software. For shops that have been running on-premise systems like older versions of Mitchell 1 Manager SE or R.O. Writer, the migration is a real project, but the operational payoff is significant. If you're evaluating a comprehensive shop management platform, our article on automotive service scheduling software covers how these platforms handle the scheduling side of the operation.
+
+Digital Vehicle Inspections: The Trust Builder.
+
+Digital vehicle inspections have gone from a nice-to-have to a baseline expectation. Customers want to see what's wrong with their vehicle, not just hear about it over the phone. And from the shop's perspective, a photo of a cracked CV boot or a video of a suspension clunk does more to earn repair approval than any verbal explanation.
+
+The best DVI tools let technicians capture photos, video, and annotations on a tablet or phone during the inspection, then deliver a professional report to the customer via text or email — often before the service advisor even picks up the phone. Approval rates climb. Average repair order values climb. Customer trust goes up because you're showing, not telling.
+
+AutoVitals has built their entire platform around DVI with a "Guided Mode" that ensures consistency across every tech. BOLT ON Technology was one of the first to market and integrates tightly with Mitchell 1. Both Tekmetric and Shop-Ware include robust DVI as part of their all-in-one platforms. For a deeper look at what to evaluate in this category, see our full breakdown of digital vehicle inspection software for 2026.
+
+Intelligent Scheduling and Workflow Management.
+
+The scheduling board has evolved from a whiteboard to a strategic tool. Modern scheduling software factors in technician skill level, bay availability, estimated job duration, and parts availability before confirming an appointment. The result is fewer bottlenecks, less dead time between jobs, and a realistic daily plan instead of an aspirational one.
+
+Customer-facing self-service booking is table stakes at this point. Automated reminders reduce no-shows. Integration with your CRM means you can trigger proactive outreach — reaching out to a customer whose vehicle is due for a timing belt or brake service based on mileage and history, not just a calendar reminder.
+
+Shopmonkey offers strong scheduling with online self-booking and multi-location support. AutoLeap pairs scheduling with an AI receptionist for after-hours calls. And Shop-Ware gives real-time bay visibility that ties scheduling directly to technician workload. For the full rundown on scheduling capabilities, see our article on automotive service scheduling software in 2026.
+
+Real-Time Parts Inventory and Procurement.
+
+Nothing kills bay productivity like waiting on a part. The best service center software in 2026 connects your parts room to your repair orders and to your suppliers in real time. When a tech adds a part to a job, inventory adjusts instantly. When stock hits a threshold, the system generates a purchase order automatically.
+
+Multi-supplier search has become a game-changer. Instead of calling three distributors to check availability and pricing, platforms like PartsTech let you search live inventory and wholesale pricing across 300+ suppliers in a single lookup. WORLDPAC's speedDIAL is the go-to for OE-quality import and domestic parts with VIN-specific lookups. And Nexpart connects over 370,000 professional buyers to 43,000+ seller locations.
+
+These tools integrate directly into the shop management platforms mentioned above, so the ordering happens inside the workflow — not in a separate tab or a phone call. For a deeper look at parts management capabilities, see our article on automotive parts management software in 2026.
+
+Automated Customer Communication.
+
+The days of calling a customer, leaving a voicemail, and waiting for them to call back are over. The shops winning on customer experience in 2026 are the ones communicating via text — automated status updates, inspection report links, repair approval requests, and pickup notifications, all delivered to the customer's phone without the front desk having to initiate each one.
+
+Two-way texting lets customers approve repairs, ask questions, or request photos without a phone call. For the shop, this means faster approvals, less front-desk congestion, and a documented communication trail for every job.
+
+Most of the major platforms — Tekmetric, Shop-Ware, Shopmonkey, AutoLeap — include built-in customer messaging. The key differentiator is how well it integrates with the rest of the workflow. The best systems send the DVI report, the estimate, and the approval link in the same message, so the customer can go from "here's what we found" to "yes, do the work" in one tap.
+
+The Missing Piece: What Happens in the Bay.
+
+Here's what's interesting about the software landscape for service centers in 2026. Every tool listed above — scheduling, DVI, parts management, customer communication, shop management — operates around the technician. They help the front desk, the service advisor, the parts manager, and the customer. They generate data that the tech is expected to produce.
+
+But almost none of them focus on helping the technician do the actual work.
+
+Think about that. The person who generates all the revenue — the one turning wrenches, diagnosing problems, executing repairs — is still looking up specs on a terminal, searching through PDF procedures, and typing RO notes on a keyboard. The entire software ecosystem serves everyone except the person doing the job.
+
+We hope you found this article helpful. ONRAMP is here to help your technicians work at the speed of AI. If you'd like to learn more, please schedule a demo with us. We'd love to share how your shop can drive profitability using ONRAMP.`,
     content: `The software stack running your service department in 2026 looks nothing like what you were using five years ago. And if it does, that's a problem worth addressing.
 
 Vehicles are more complex. Customers expect real-time updates and digital communication. Technicians are harder to find and harder to keep. The tools that worked when your biggest challenge was keeping the scheduling board accurate now need to handle diagnostics support, predictive maintenance triggers, parts procurement, customer transparency, and documentation — all connected, all in real time.
@@ -4147,6 +4300,7 @@ The shops that assemble the right software stack in 2026 won't just keep up. The
     author: 'Alex Littlewood',
     description:
       `A full parking lot and empty bays. Three techs standing around at 9 AM while six appointments are clustered at noon. Modern scheduling software has moved well beyond a digital calendar — here's what to look for.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-service-scheduling-software-in-2026-a-new-standard-for-efficiency-cover.png?v=1776588571685',
     tags: ['scheduling', 'service-center', 'workflow', 'efficiency'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-service-scheduling-software-in-2026-a-new-standard-for-efficiency-brief.m4a',
     briefDurationSec: 98,
@@ -4498,6 +4652,7 @@ The service centers that master scheduling in 2026 won't just fill bays. They'll
     author: 'Alex Littlewood',
     description:
       `A $3 missing bolt just cost you a lost labor hour, a reshuffled schedule, and an unhappy customer. Parts management is one of the biggest silent profit killers in the service industry — here's the 2026 landscape.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-parts-management-software-in-2026-moving-beyond-spreadsheets-cover.png?v=1776623476581',
     tags: ['parts', 'inventory', 'service-center', 'procurement'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-parts-management-software-in-2026-moving-beyond-spreadsheets-brief.m4a',
     briefDurationSec: 106,
@@ -4803,6 +4958,7 @@ The shops that treat parts management as a strategic function — not a clerical
     author: 'Alex Littlewood',
     description:
       `A photo of worn brake pads next to a ruler does more than any phone call. Digital vehicle inspections are no longer a competitive advantage — they're the baseline. Here's what to look for in 2026.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/digital-vehicle-inspection-software-2026-the-new-standard-for-service-centers-cover.png?v=1776623799999',
     tags: ['dvi', 'inspections', 'service-center', 'customer-trust'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/digital-vehicle-inspection-software-2026-the-new-standard-for-service-centers-brief.m4a',
     briefDurationSec: 103,
@@ -5118,6 +5274,7 @@ And if your DVI is working well but you're still losing time to manual processes
     author: 'Alex Littlewood',
     description:
       `An honest look at where AI actually stands across diagnostics, scheduling, parts, communication, and the bay — plus the one area most vendors ignore.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/ai-for-automotive-service-centers-key-developments-in-2026-cover.png?v=1776623278988',
     tags: ['ai', 'service-center', 'shop-management', 'fixed-ops'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/ai-for-automotive-service-centers-key-developments-in-2026-brief.m4a',
     briefDurationSec: 97,
@@ -5373,6 +5530,7 @@ The shops that pull ahead in 2026 won't be the ones with the most AI tools. They
     author: 'Alex Littlewood',
     description:
       `AI diagnostic tools compress the information-gathering phase of modern repair. Here's what they actually do, who leads the space, and what they don't solve.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-diagnostic-tools-are-changing-automotive-repair-in-2026-cover.png?v=1776623486200',
     tags: ['ai', 'diagnostics', 'technician', 'productivity'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/how-ai-diagnostic-tools-are-changing-automotive-repair-in-2026-brief.m4a',
     briefDurationSec: 95,
@@ -5846,6 +6004,7 @@ And be realistic about what the technology is and isn't. AI diagnostics is a pow
     author: 'Alex Littlewood',
     description:
       `Automated texts, status updates, inspection delivery, and approval workflows are redefining how service departments talk to customers in 2026 — here's what works.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/automated-customer-communication-in-the-automotive-industry-for-2026-cover.png?v=1776623550448',
     tags: ['ai', 'customer-experience', 'service-center', 'software'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automated-customer-communication-in-the-automotive-industry-for-2026-brief.m4a',
     briefDurationSec: 95,
@@ -6169,6 +6328,7 @@ And if your communication is running smoothly but your turnaround times are stil
     author: 'Alex Littlewood',
     description:
       `Predictive maintenance is real for fleets and growing for OEMs, but independent shops still have a gap. Here's what the technology actually delivers in 2026.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/predictive-maintenance-ai-in-the-2026-automotive-shop-cover.png?v=1776623311197',
     tags: ['ai', 'predictive-maintenance', 'fleet', 'service-center'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/predictive-maintenance-ai-in-the-2026-automotive-shop-brief.m4a',
     briefDurationSec: 108,
@@ -6454,6 +6614,7 @@ And stay engaged with the OEM data-sharing landscape. As connected car data beco
     author: 'Alex Littlewood',
     description:
       `The gap between software you own and software your team actually uses is the biggest determinant of ROI in 2026. Here's how to close it.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-service-software-training-will-define-your-shop-2026-cover.png?v=1776623295274',
     tags: ['training', 'software', 'service-center', 'shop-management'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/automotive-service-software-training-will-define-your-shop-2026-brief.m4a',
     briefDurationSec: 108,
@@ -6941,6 +7102,7 @@ The technology will keep evolving. Your training has to keep up.
     author: 'Alex Littlewood',
     description:
       `Voice-captured, AI-structured 3C+V documentation replaces keyboard typing entirely. Every finding, test result, and correction is captured in real time during the repair.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/hands-free-repair-documentation-is-redefining-auto-service-in-2026-cover.png?v=1776623599932',
     tags: ['documentation', 'voice-ai', 'warranty', 'productivity', 'onramp'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/hands-free-repair-documentation-is-redefining-auto-service-in-2026-brief.m4a',
     briefDurationSec: 107,
@@ -7430,6 +7592,7 @@ The keyboard was never the right tool for the bay. The tech's voice was always t
     author: 'Alex Littlewood',
     description:
       `Consumer voice assistants fail at 85 decibels. Purpose-built voice AI with noise-adaptive audio processing and automotive vocabulary works reliably in the service bay.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-ai-voice-assistant-built-for-the-noisy-auto-shop-cover.png?v=1776623849621',
     tags: ['voice-ai', 'noise', 'shop-environment', 'productivity', 'onramp'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/the-ai-voice-assistant-built-for-the-noisy-auto-shop-brief.m4a',
     briefDurationSec: 108,
@@ -8011,6 +8174,7 @@ The noisy auto shop isn't a problem to be worked around. It's the design constra
     author: 'Alex Littlewood',
     description:
       `The four-phase AI-powered repair workflow — Diagnose, Prepare, Repair, Close Out — replaces disconnected shop processes with a connected, voice-driven system.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/ai-powered-repair-workflow-2026-a-practical-shift-for-automotive-service-cover.png?v=1776623368260',
     tags: ['workflow', 'voice-ai', 'repair', 'productivity', 'onramp'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/ai-powered-repair-workflow-2026-a-practical-shift-for-automotive-service-brief.m4a',
     briefDurationSec: 105,
@@ -8359,6 +8523,7 @@ The AI-powered repair workflow isn't a technology upgrade. It's an operational u
     author: 'Alex Littlewood',
     description:
       `Voice-first AI is the most significant interface shift for the service bay since paper manuals went digital. One company is building it — and the ROI math is compelling.`,
+    image: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-first-ai-automotive-repair-arrives-in-2026-cover.png?v=1776623406958',
     tags: ['voice-ai', 'automotive-repair', 'productivity', 'documentation', 'onramp'],
     briefAudioUrl: 'https://storage.googleapis.com/onramp-marketing-media/blog/voice-first-ai-automotive-repair-arrives-in-2026-brief.m4a',
     briefDurationSec: 107,
@@ -8987,19 +9152,39 @@ For today, voice is the right interface. It matches how the technician naturally
   },
 ];
 
-// All posts with read time calculated
-const allPosts: BlogPost[] = postData.map((post) => ({
-  ...post,
-  readTime: calculateReadTime(post.content),
-}));
+// All posts with read time calculated, sorted newest → oldest by date.
+// Scheduled (future-dated) posts sort to the top in dev previews; in prod
+// they're filtered out by the dev-aware export below.
+const allPosts: BlogPost[] = postData
+  .map((post) => ({
+    ...post,
+    readTime: calculateReadTime(post.content),
+  }))
+  .sort((a, b) => b.date.localeCompare(a.date));
 
-// Published posts only — filters out future-dated posts (client-side scheduling)
-export const blogPosts: BlogPost[] = allPosts.filter((post) => {
+/**
+ * Is the post scheduled for the future (i.e. not yet published)?
+ *
+ * `import.meta.env.DEV` is true during `npm run dev` and false in
+ * production builds. In production we filter future-dated posts out
+ * entirely (client-side scheduling). In dev we keep them so the editor
+ * can preview everything, and callers use `isScheduled(post)` to render
+ * a "Scheduled" badge.
+ */
+export function isScheduled(post: BlogPost): boolean {
   const postDate = new Date(post.date + 'T00:00:00');
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return postDate <= today;
-});
+  return postDate > today;
+}
+
+// In dev: show everything (including future-dated) so the editor can review
+// upcoming posts locally before they publish. In production: filter out
+// future-dated posts — this is the crude scheduling mechanism that lets us
+// queue posts by date without redeploying.
+export const blogPosts: BlogPost[] = import.meta.env.DEV
+  ? allPosts
+  : allPosts.filter((post) => !isScheduled(post));
 
 export function getBlogPost(slug: string): BlogPost | undefined {
   return blogPosts.find((post) => post.slug === slug);

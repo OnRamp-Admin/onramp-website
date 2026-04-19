@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, Loader2, Headphones, Zap, X, FileText, Gauge } from 'lucide-react';
+import { Play, Pause, Loader2, Headphones, Zap, X, FileText, Gauge, Volume2 } from 'lucide-react';
 import {
   useBlogAudioPlayer,
   type UseBlogAudioPlayerReturn,
@@ -21,6 +21,8 @@ interface BlogAudioPlayerProps {
   variant: BlogAudioFormat;
   /** Optional transcript text. When provided, a "Show transcript" toggle appears below the player. Rendered in DOM (inside <details>) so Google indexes it even when collapsed. */
   transcript?: string;
+  /** Compact mode renders a single-row play + time pill suitable for the TOC sidebar. Skips the full card layout, progress bar, speed control, and transcript. */
+  compact?: boolean;
 }
 
 const PLAYBACK_RATE_OPTIONS = [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0] as const;
@@ -69,6 +71,20 @@ const VARIANT_CONFIG: Record<BlogAudioFormat, VariantConfig> = {
     progressGradientClass: 'from-safety-400 to-safety-500',
     miniBorderClass: 'border-safety-500/30',
   },
+  article: {
+    label: 'Listen to article',
+    subtitlePrefix: 'Verbatim article read',
+    Icon: Volume2,
+    cardBorderClass: 'border-electric-500/30',
+    cardBgClass: 'bg-carbon-800/50',
+    buttonGradientClass: 'from-electric-500 to-safety-500',
+    buttonHoverGradientClass: 'hover:from-electric-400 hover:to-safety-400',
+    buttonShadowClass: 'shadow-electric-500/40',
+    buttonGlowClass: 'glow-electric',
+    iconColorClass: 'text-electric-400',
+    progressGradientClass: 'from-electric-400 via-white/70 to-safety-400',
+    miniBorderClass: 'border-electric-500/30',
+  },
 };
 
 function formatTime(seconds: number): string {
@@ -85,6 +101,7 @@ export default function BlogAudioPlayer({
   durationSec,
   variant,
   transcript,
+  compact = false,
 }: BlogAudioPlayerProps) {
   const config = VARIANT_CONFIG[variant];
 
@@ -138,6 +155,24 @@ export default function BlogAudioPlayer({
     );
   }
 
+  if (compact) {
+    return (
+      <>
+        <CompactVariant ref={inlineRef} player={player} config={config} />
+        <AnimatePresence>
+          {showMini && (
+            <MiniVariant
+              player={player}
+              title={title}
+              config={config}
+              onDismiss={() => setMiniDismissed(true)}
+            />
+          )}
+        </AnimatePresence>
+      </>
+    );
+  }
+
   return (
     <>
       <InlineVariant
@@ -160,6 +195,110 @@ export default function BlogAudioPlayer({
     </>
   );
 }
+
+/* ---------- Compact variant (TOC sidebar) ---------- */
+
+interface CompactVariantProps {
+  player: UseBlogAudioPlayerReturn;
+  config: VariantConfig;
+}
+
+const CompactVariant = forwardRef<HTMLDivElement, CompactVariantProps>(
+  function CompactVariant({ player, config }, ref) {
+    const { state, currentTime, duration, progress, toggle, seekToPercent, seekTo } = player;
+    const isPlaying = state === 'playing';
+    const isLoading = state === 'loading';
+    const hasNeverPlayed = state === 'idle';
+    const Icon = config.Icon;
+    const displayTime = isPlaying || currentTime > 0 ? currentTime : duration;
+
+    const progressBarRef = useRef<HTMLDivElement>(null);
+
+    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      const bar = progressBarRef.current;
+      if (!bar) return;
+      const rect = bar.getBoundingClientRect();
+      const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      seekToPercent(pct);
+    };
+
+    const handleProgressKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        seekTo(currentTime - 5);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        seekTo(currentTime + 5);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        seekTo(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        seekTo(duration);
+      }
+    };
+
+    return (
+      <section
+        ref={ref}
+        aria-label={`${config.label} player`}
+        className={`rounded-xl ${config.cardBgClass} border ${config.cardBorderClass} backdrop-blur-sm overflow-hidden`}
+      >
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={isLoading}
+          aria-label={isPlaying ? `Pause ${config.label}` : `Play ${config.label}`}
+          className="w-full flex items-center gap-3 p-3 text-left hover:bg-carbon-700/30 transition-colors disabled:opacity-70"
+        >
+          <motion.span
+            className={`flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br ${config.buttonGradientClass} ${config.buttonHoverGradientClass} flex items-center justify-center shadow-md ${config.buttonShadowClass} transition-colors`}
+            animate={hasNeverPlayed ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+            transition={
+              hasNeverPlayed
+                ? { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: 0.2 }
+            }
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 text-white animate-spin" />
+            ) : isPlaying ? (
+              <Pause className="w-4 h-4 text-white" fill="currentColor" />
+            ) : (
+              <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
+            )}
+          </motion.span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-carbon-400">
+              <Icon className={`w-3 h-3 ${config.iconColorClass}`} />
+              {config.label}
+            </div>
+            <div className="text-sm font-mono text-white/90 mt-0.5">
+              {formatTime(displayTime)}
+            </div>
+          </div>
+        </button>
+        <div
+          ref={progressBarRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Audio progress"
+          aria-valuemin={0}
+          aria-valuemax={duration || 0}
+          aria-valuenow={currentTime}
+          onClick={handleProgressClick}
+          onKeyDown={handleProgressKeyDown}
+          className="group h-1.5 bg-carbon-700/70 cursor-pointer relative transition-all hover:h-2.5 focus:h-2.5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white/20"
+        >
+          <div
+            className={`h-full bg-gradient-to-r ${config.progressGradientClass} transition-[width] duration-100 pointer-events-none`}
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+      </section>
+    );
+  }
+);
 
 /* ---------- Inline variant ---------- */
 
@@ -296,82 +435,84 @@ const InlineVariant = forwardRef<HTMLDivElement, InlineVariantProps>(
               />
             </div>
 
-            {/* Time row + speed selector inline */}
+            {/* Time row — clean current/duration readout. */}
             <div className="flex items-center justify-between gap-2 mt-2 text-xs text-carbon-400 font-mono">
               <span>{formatTime(currentTime)}</span>
-              <div className="flex items-center gap-3">
-                {/* Speed selector dropdown */}
-                <div ref={speedMenuRef} className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setSpeedMenuOpen((v) => !v)}
-                    aria-haspopup="listbox"
-                    aria-expanded={speedMenuOpen}
-                    aria-label={`Playback speed: ${playbackRate}x. Click to change.`}
-                    className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-carbon-200 bg-carbon-700/50 hover:bg-carbon-700 hover:text-white transition-colors"
-                  >
-                    <Gauge className="w-3 h-3" />
-                    {playbackRate.toFixed(1)}x
-                  </button>
-                  <AnimatePresence>
-                    {speedMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 4 }}
-                        transition={{ duration: 0.12 }}
-                        role="listbox"
-                        aria-label="Playback speed options"
-                        className="absolute bottom-full right-0 mb-2 z-10 bg-carbon-900 border border-carbon-700 rounded-xl shadow-xl shadow-black/50 py-1 min-w-[72px] max-h-[280px] overflow-y-auto"
-                      >
-                        {PLAYBACK_RATE_OPTIONS.map((rate) => {
-                          const isSelected = Math.abs(rate - playbackRate) < 0.05;
-                          return (
-                            <button
-                              key={rate}
-                              type="button"
-                              role="option"
-                              aria-selected={isSelected}
-                              onClick={() => {
-                                setPlaybackRate(rate);
-                                setSpeedMenuOpen(false);
-                              }}
-                              className={`w-full text-left px-3 py-1 text-xs font-mono transition-colors ${
-                                isSelected
-                                  ? `${config.iconColorClass} bg-carbon-800 font-semibold`
-                                  : 'text-carbon-300 hover:bg-carbon-800 hover:text-white'
-                              }`}
-                            >
-                              {rate.toFixed(1)}x
-                            </button>
-                          );
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <span>{formatTime(duration)}</span>
-              </div>
+              <span>{formatTime(duration)}</span>
             </div>
           </div>
         </div>
 
-        {/* Transcript: full-width <details> at the bottom of the card.
-            Native HTML <details> means the transcript text is in the
-            rendered DOM even when collapsed — Google indexes it for SEO,
-            and accessibility tools can reach it. */}
-        {transcript && (
-          <details className="group/t mt-4">
-            <summary className="flex items-center gap-1.5 cursor-pointer list-none px-3 py-2 rounded-lg text-xs font-medium text-carbon-300 bg-carbon-700/40 hover:bg-carbon-700/70 hover:text-white transition-colors select-none w-fit">
-              <FileText className="w-3.5 h-3.5" />
-              <span className="group-open/t:hidden">Show transcript</span>
-              <span className="hidden group-open/t:inline">Hide transcript</span>
-            </summary>
-            <div className="mt-4 pt-4 border-t border-carbon-700/40 text-carbon-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">
-              {transcript}
-            </div>
-          </details>
-        )}
+        {/* Bottom row: transcript toggle on the left, speed selector on the
+            right. Both use the same pill styling so they feel like paired
+            utility controls. Native <details> keeps the transcript text in
+            the rendered DOM for SEO even when collapsed. */}
+        <div className="flex items-start justify-between gap-2 mt-4">
+          {transcript ? (
+            <details className="group/t flex-1 min-w-0">
+              <summary className="flex items-center gap-1.5 cursor-pointer list-none px-3 py-2 rounded-lg text-xs font-medium text-carbon-300 bg-carbon-700/40 hover:bg-carbon-700/70 hover:text-white transition-colors select-none w-fit">
+                <FileText className="w-3.5 h-3.5" />
+                <span className="group-open/t:hidden">Show transcript</span>
+                <span className="hidden group-open/t:inline">Hide transcript</span>
+              </summary>
+              <div className="mt-4 pt-4 border-t border-carbon-700/40 text-carbon-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+                {transcript}
+              </div>
+            </details>
+          ) : (
+            <span aria-hidden="true" />
+          )}
+
+          <div ref={speedMenuRef} className="relative flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setSpeedMenuOpen((v) => !v)}
+              aria-haspopup="listbox"
+              aria-expanded={speedMenuOpen}
+              aria-label={`Playback speed: ${playbackRate}x. Click to change.`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium font-mono text-carbon-300 bg-carbon-700/40 hover:bg-carbon-700/70 hover:text-white transition-colors"
+            >
+              <Gauge className="w-3.5 h-3.5" />
+              {playbackRate.toFixed(1)}x
+            </button>
+            <AnimatePresence>
+              {speedMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.12 }}
+                  role="listbox"
+                  aria-label="Playback speed options"
+                  className="absolute bottom-full right-0 mb-2 z-10 bg-carbon-900 border border-carbon-700 rounded-xl shadow-xl shadow-black/50 py-1 min-w-[72px] max-h-[280px] overflow-y-auto"
+                >
+                  {PLAYBACK_RATE_OPTIONS.map((rate) => {
+                    const isSelected = Math.abs(rate - playbackRate) < 0.05;
+                    return (
+                      <button
+                        key={rate}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          setPlaybackRate(rate);
+                          setSpeedMenuOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-1 text-xs font-mono transition-colors ${
+                          isSelected
+                            ? `${config.iconColorClass} bg-carbon-800 font-semibold`
+                            : 'text-carbon-300 hover:bg-carbon-800 hover:text-white'
+                        }`}
+                      >
+                        {rate.toFixed(1)}x
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </section>
     );
   }

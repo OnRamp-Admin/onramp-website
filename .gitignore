@@ -18,6 +18,9 @@ dist-ssr
 # Local-only blog audio files (production audio is hosted in GCS, not in the repo)
 public/audio/blog/
 
+# Local-only cover-image review folder (used by the dev /admin/cover-review page)
+cover-review/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

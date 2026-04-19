@@ -92,14 +92,64 @@ bullet lists, [links](/internal-or-external), tables, code blocks, etc.]
 
 ---
 
+## Cover Image (Optional but Recommended)
+
+Every post should have a `image` field pointing to a 16:9 cover illustration. If unset, the blog renders a branded fallback tile (`BlogCoverFallback`), but a real image always looks better. Covers appear in three places: the post hero, the blog index cards, and the "You may also like" related-posts grid.
+
+### Automatic cover generation
+
+The `scripts/generate-article-cover.mjs` script generates covers in the OnRamp style (angular/geometric, electric blue + safety orange, sound waves + tools + cars) via Gemini 3 Flash Image ("Nano Banana 2") on Vertex AI.
+
+```bash
+# Generate covers for all posts missing `image`, review each one interactively.
+node scripts/generate-article-cover.mjs
+
+# Target a single post.
+node scripts/generate-article-cover.mjs <slug>
+
+# Regenerate even if an image already exists.
+node scripts/generate-article-cover.mjs <slug> --force
+
+# Batch mode — skip the interactive review (use only when you trust the output).
+node scripts/generate-article-cover.mjs --yes
+```
+
+The script saves the generated PNG to a temp directory, prompts you to inspect it before upload, uploads approved images to `gs://onramp-marketing-media/blog/<slug>-cover.png`, and writes the URL back into `posts.ts` under the `image:` field.
+
+Model ID moves fast in image-gen land — if the call 404s, swap `MODEL` in the script to one of the fallbacks listed in the file header (`gemini-2.5-flash-image-preview` or `imagen-4.0-generate-preview-0509`).
+
+---
+
 ## Audio Players (Optional)
 
-Each blog post can optionally include up to **two AI-generated audio versions**, each rendered as its own custom player above the article body:
+Each blog post can optionally include up to **three AI-generated audio versions**, each rendered as its own player:
 
 | Format | Field prefix | Visual | Length | Purpose |
 |---|---|---|---|---|
+| **Listen to article** | `articleAudioUrl`, `articleDurationSec`, `articleTranscript` | Electric blue + orange gradient, pinned in sidebar | matches article length | Verbatim article read via Gemini TTS (Sadaltager voice) |
 | **AI Brief Summary** | `briefAudioUrl`, `briefDurationSec` | Safety orange + Zap icon | ~30s–2 min | Quick overview for skimmers |
 | **Listen to the Podcast** | `podcastAudioUrl`, `podcastDurationSec` | Electric blue + Headphones icon | ~10–25 min | Deep-dive NotebookLM audio overview |
+
+On desktop, the "Listen to article" player pins to the top of the left-rail table of contents. Brief + podcast stay inline. On mobile, all three stack inline above the article body.
+
+### Automatic article audio generation
+
+The `scripts/generate-article-audio.mjs` script reads each post body through Gemini TTS with the Sadaltager voice, converts the result to m4a, uploads to GCS, and writes `articleAudioUrl` + `articleDurationSec` + `articleTranscript` back into `posts.ts`. Run it before pushing a new post so day-1 readers see the player.
+
+```bash
+# Generate for all posts missing articleAudioUrl.
+node scripts/generate-article-audio.mjs
+
+# One post only.
+node scripts/generate-article-audio.mjs <slug>
+
+# Regenerate.
+node scripts/generate-article-audio.mjs <slug> --force
+```
+
+Requires `ffmpeg` + `ffprobe` + `gsutil` on PATH, and gcloud ADC (`gcloud auth application-default login`).
+
+Brief + podcast still need to be produced manually — NotebookLM has no public API, so you'll continue to generate those via the NotebookLM UI and the steps below.
 
 Each player has a pulsing inline CTA when not yet played, a sticky floating mini-player that appears when the user scrolls past the inline player, and full PostHog analytics (started, 25/50/75% milestones, completed, seek events). Both formats fire the same set of events but with a `format: 'brief' | 'podcast'` field so you can slice the funnel by format in PostHog.
 
