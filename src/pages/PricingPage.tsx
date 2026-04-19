@@ -1026,7 +1026,7 @@ function SignupModal({
   const isIndividual = mode === 'individual';
   const title = isIndividual ? 'Join the Waitlist' : 'Request Account';
   const subtitle = isIndividual
-    ? "Due to the technical requirements of onboarding new customers, ONRAMP is bringing new users on in waves. We're also awaiting a new batch of Brain Buttons, which are essential to operation. New accounts are expected to go live in early May. Please join the waitlist, and we'll be in touch to get you signed up as soon as possible."
+    ? "Due to the technical requirements of onboarding new customers, ONRAMP is bringing new users on in waves. Brain Buttons are essential to operation, and we're currently awaiting our next shipment — we're scheduling customer launch dates over the next three to four weeks. Please join the waitlist, and we'll be in touch to get you signed up as soon as possible."
     : 'Someone from our account team will be in touch to schedule a demo and get your service center signed up.';
   const submitLabel = isIndividual ? 'Join Waitlist' : 'Submit';
 
