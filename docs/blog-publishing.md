@@ -92,6 +92,52 @@ bullet lists, [links](/internal-or-external), tables, code blocks, etc.]
 
 ---
 
+## SEO Description (Required)
+
+The `description` field does triple duty — it's the Google SERP snippet (`<meta name="description">`), the LinkedIn / X / Facebook share card preview, and the dek shown below the title on both the blog index and the post page. It's also the SUMMARY read aloud in the "Listen to article" audio.
+
+Given how much it affects, treat it as real marketing copy rather than a copy-paste of the body's opening sentence.
+
+### Requirements
+
+- **130–155 characters.** Google truncates longer descriptions in SERPs; shorter ones look thin.
+- **Distinct from the body's first sentence.** A SERP snippet that matches the body's opening paragraph wastes the preview slot — Google already sees that content. Give the reader a different handle on the article.
+- **Captures the specific payoff.** "Recover billable hours" beats "scheduling software is important." Concrete promise, not topic summary.
+- **Active voice, present tense.** No filler verbs ("learn", "discover", "find out").
+- **One primary keyword**, naturally placed. No stuffing.
+
+### Write it with the review tool
+
+Run `npm run dev` and open `http://localhost:5173/admin/description-review`.
+
+- Every post is graded on the spot. Posts that are missing a description, too long (>165 chars), or just the body's opener are flagged "Needs rewrite".
+- Click **Draft** on a card — Gemini 2.5 Flash (text) writes a proposal aligned to the rules above.
+- Edit the proposal freely in the textarea. The char counter turns green between 130 and 155.
+- Use the revision-feedback box to iterate ("punchier, lead with the billable-hours number") and click **Regenerate with feedback**.
+- Click **Approve & save** to write the description into `posts.ts`.
+
+The "Draft all missing" button at the top runs Gemini sequentially against every flagged post (~30 seconds for 24).
+
+### Or use the CLI
+
+```bash
+# Show which posts need rewrite and why.
+node scripts/generate-article-description.mjs --list
+
+# Print a proposed draft for one post (does NOT write back).
+node scripts/generate-article-description.mjs <slug>
+
+# Draft + write back for a single post.
+node scripts/generate-article-description.mjs <slug> --write
+
+# Draft proposals (to stdout) for every post that fails the heuristic.
+node scripts/generate-article-description.mjs
+```
+
+Both paths require `gcloud auth application-default login`. Cost is roughly $0.00005 per description (Gemini 2.5 Flash at ~2500 input tokens).
+
+---
+
 ## Cover Image (Optional but Recommended)
 
 Every post should have a `image` field pointing to a 16:9 cover illustration. If unset, the blog renders a branded fallback tile (`BlogCoverFallback`), but a real image always looks better. Covers appear in three places: the post hero, the blog index cards, and the "You may also like" related-posts grid.

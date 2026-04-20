@@ -24,10 +24,16 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-// Dev-only: cover-image review tool. The import is gated by `import.meta.env.DEV`
-// so the production bundle never pulls this page in.
+// Dev-only: cover-image review tool (iterative Nano Banana editing). The
+// import is gated by `import.meta.env.DEV` so the production bundle never
+// pulls these admin pages in.
 const CoverReviewPage = import.meta.env.DEV
   ? lazy(() => import('./pages/admin/CoverReviewPage'))
+  : null;
+// Dev-only: unified content enrichment portal. Subsumes the old description-
+// review page and adds audio upload / TTS generation / transcript actions.
+const ContentAdminPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/admin/ContentAdminPage'))
   : null;
 
 // Set to false to disable the coming soon redirect and show the full site
@@ -121,6 +127,9 @@ function App() {
             <Route path="/terms" element={<TermsPage />} />
             {CoverReviewPage && (
               <Route path="/admin/cover-review" element={<CoverReviewPage />} />
+            )}
+            {ContentAdminPage && (
+              <Route path="/admin/content" element={<ContentAdminPage />} />
             )}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

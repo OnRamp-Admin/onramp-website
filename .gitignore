@@ -21,6 +21,9 @@ public/audio/blog/
 # Local-only cover-image review folder (used by the dev /admin/cover-review page)
 cover-review/
 
+# Local-only description review drafts (used by /admin/description-review)
+description-review/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
