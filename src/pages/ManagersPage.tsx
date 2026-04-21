@@ -264,7 +264,7 @@ function TeamVisualization() {
         {/* ONRAMP logo centered */}
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src="/Onramp-Logo-Gray Brain-White Text-SML.png"
+            src="/onramp-logo-white-sm.png"
             alt="ONRAMP"
             className="h-7 md:h-9"
           />

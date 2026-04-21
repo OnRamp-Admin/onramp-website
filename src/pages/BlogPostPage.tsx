@@ -89,7 +89,7 @@ export default function BlogPostPage() {
         publisher: {
           '@type': 'Organization',
           name: 'OnRamp Innovations, Inc.',
-          logo: { '@type': 'ImageObject', url: 'https://getonramp.io/Onramp-Logo-Pink Brain-White Text-MED.png' },
+          logo: { '@type': 'ImageObject', url: 'https://getonramp.io/onramp-logo-white-md.png' },
         },
         url: `https://getonramp.io/blog/${post.slug}`,
         keywords: post.tags.join(', '),

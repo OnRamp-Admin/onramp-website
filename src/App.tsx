@@ -58,7 +58,7 @@ function ComingSoonPage() {
   return (
     <div className="min-h-screen bg-carbon-950 flex items-center justify-center px-4">
       <div className="text-center">
-        <img src="/Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" className="h-20 mb-8" />
+        <img src="/onramp-logo-white-md.png" alt="ONRAMP" className="h-20 mb-8" />
         <h1 className="sr-only">ONRAMP</h1>
         <p className="text-xl md:text-2xl text-carbon-200 mb-2">
           Coming Soon

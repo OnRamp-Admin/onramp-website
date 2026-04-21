@@ -41,7 +41,7 @@ function AppHeader() {
       style={{ backgroundColor: '#141410', borderBottom: '1px solid #2A2A28' }}
     >
       <Menu size={14} color="#A0A0A0" />
-      <img src="/Onramp-Logo-Pink Brain-White Text-SML.png" alt="ONRAMP" style={{ height: '18px' }} />
+      <img src="/onramp-logo-white-sm.png" alt="ONRAMP" style={{ height: '18px' }} />
       <div
         className="flex items-center justify-center rounded-full"
         style={{ width: 20, height: 20, backgroundColor: '#2A2A28' }}

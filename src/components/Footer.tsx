@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src="/Onramp-Logo-Pink Brain-White Text-MED.png" alt="ONRAMP" className="h-10" />
+              <img src="/onramp-logo-white-md.png" alt="ONRAMP" className="h-10" />
             </Link>
             <p className="text-carbon-200 max-w-sm mb-6">
               Voice-first AI for service center technicians.

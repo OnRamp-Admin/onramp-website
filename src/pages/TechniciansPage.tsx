@@ -750,7 +750,7 @@ export default function TechniciansPage() {
                     </div>
                     <div className="flex items-center gap-4 md:gap-3 transition-all duration-500">
                       <div className="flex-shrink-0 w-8 h-8 md:w-auto md:h-auto flex items-center justify-center">
-                        <img src="/Onramp-Brain Bug-Pink.png" alt="" className="h-5 w-auto md:hidden" />
+                        <img src="/onramp-brain-white-sm.png" alt="" className="h-5 w-auto md:hidden" />
                         <ArrowRight className="w-4 h-4 hidden md:block text-carbon-200 md:group-hover:text-electric-400 transition-colors duration-500" />
                       </div>
                       <span className="text-electric-300 md:text-carbon-200 md:group-hover:text-electric-300 font-medium transition-colors duration-500">{item.solution}</span>

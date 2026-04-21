@@ -10,7 +10,8 @@
     "prerender": "node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "transcribe-blog-audio": "node scripts/transcribe-blog-audio.mjs"
+    "transcribe-blog-audio": "node scripts/transcribe-blog-audio.mjs",
+    "og:generate": "node scripts/generate-og-image.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

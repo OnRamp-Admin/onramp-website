@@ -126,7 +126,7 @@ function PhoneMockup() {
           <div className="flex flex-col items-center mt-8">
             {/* Logo */}
             <div className="flex items-center justify-center mb-2">
-              <img src="/Onramp-Logo-Pink Brain-White Text-SML.png" alt="ONRAMP" className="h-7" />
+              <img src="/onramp-logo-white-sm.png" alt="ONRAMP" className="h-7" />
             </div>
 
             {/* Animated voice indicator - fixed height container so it doesn't push content */}
