@@ -39,8 +39,10 @@ export function initAnalytics() {
     // Track SPA page views automatically via react-router navigation
     capture_pageview: true,
     capture_pageleave: true,
-    // Session recording — enable for understanding user journeys
-    disable_session_recording: false,
+    // Session recording disabled — loads ~48 KB of posthog-recorder.js + surveys.js
+    // that appeared in the critical-path waterfall. Re-enable only if we need
+    // replay for a specific investigation, not as default-on.
+    disable_session_recording: true,
     // Respect Do Not Track browser setting
     respect_dnt: true,
     // Mask sensitive form inputs by default

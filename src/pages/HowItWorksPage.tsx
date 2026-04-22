@@ -711,7 +711,7 @@ function NoScreenshotModal({ open, onClose }: { open: boolean; onClose: () => vo
                     <AnimatePresence mode="popLayout">
                       <motion.img
                         key={currentIndex}
-                        srcSet={`${phoneScreenshots[currentIndex].sm} 480w, ${phoneScreenshots[currentIndex].full} 1206w`}
+                        srcSet={`${phoneScreenshots[currentIndex].sm} 720w, ${phoneScreenshots[currentIndex].full} 1206w`}
                         sizes="180px"
                         src={phoneScreenshots[currentIndex].sm}
                         alt="ONRAMP app"
