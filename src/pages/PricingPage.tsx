@@ -1972,31 +1972,30 @@ function ServiceCenterPricing() {
                 {/* Flic pricing info */}
                 {(() => {
                   const fullRetail = 49.99;
+                  const seatRetailTotal = numTechs * fullRetail;
+                  const extraRetailTotal = extraFlics * fullRetail;
                   const seatSavings = numTechs * (fullRetail - flicTier.seatPrice);
                   const extraSavings = extraFlics * (fullRetail - flicTier.extraPrice);
-                  const totalFlicSavings = seatSavings + extraSavings;
 
                   return (
                     <div className="mt-5 p-4 rounded-xl bg-carbon-900/50 border border-carbon-700/30">
                       {/* Seat buttons line */}
                       <div className="flex flex-wrap justify-between items-center gap-x-2 mb-1">
                         <span className="text-carbon-200 text-sm">
-                          {numTechs} × {flicTier.seatPrice > 0 ? `$${flicTier.seatPrice}` : 'FREE'}
-                          {flicTier.seatPrice === 0 ? (
-                            <span className="ml-1 text-green-400">(100% OFF)</span>
-                          ) : flicTier.seatDiscount ? (
-                            <span className={`ml-1 ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
-                              ({flicTier.seatDiscount})
-                            </span>
-                          ) : null}
+                          {numTechs} × ${fullRetail}
                         </span>
-                        <span className={`font-semibold text-sm ${flicTier.seatPrice === 0 ? 'text-green-400' : 'text-white'}`}>
-                          {flicTier.seatPrice === 0 ? 'FREE' : `$${flicBaseCost.toFixed(2)}`}
+                        <span className="text-white font-semibold text-sm">
+                          ${seatRetailTotal.toFixed(2)}
                         </span>
                       </div>
-                      {seatSavings > 0 && (
-                        <div className="flex justify-end mb-1">
-                          <span className="text-green-400 text-xs font-semibold">Save ${seatSavings.toFixed(2)}</span>
+                      {flicTier.seatPrice < fullRetail && flicTier.seatDiscount && (
+                        <div className="flex flex-wrap justify-between items-center gap-x-2 mb-1">
+                          <span className={`text-xs font-semibold ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
+                            {flicTier.seatDiscount.toUpperCase()} on {tier.name} Plan
+                          </span>
+                          {seatSavings > 0 && (
+                            <span className="text-green-400 text-xs font-semibold">Save ${seatSavings.toFixed(2)}</span>
+                          )}
                         </div>
                       )}
                       {/* Extra / spare buttons line */}
@@ -2004,28 +2003,47 @@ function ServiceCenterPricing() {
                         <>
                           <div className="flex flex-wrap justify-between items-center gap-x-2">
                             <span className="text-carbon-200 text-sm">
-                              {extraFlics} spare × ${flicTier.extraPrice}
-                              {flicTier.extraDiscount && (
-                                <span className={`ml-1 ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
-                                  ({flicTier.extraDiscount})
-                                </span>
-                              )}
+                              {extraFlics} spare × ${fullRetail}
                             </span>
-                            <span className="text-white font-semibold text-sm">${flicExtraCost.toFixed(2)}</span>
+                            <span className="text-white font-semibold text-sm">${extraRetailTotal.toFixed(2)}</span>
                           </div>
-                          {extraSavings > 0 && (
-                            <div className="flex justify-end mb-1">
-                              <span className="text-green-400 text-xs font-semibold">Save ${extraSavings.toFixed(2)}</span>
+                          {flicTier.extraPrice < fullRetail && flicTier.extraDiscount && (
+                            <div className="flex flex-wrap justify-between items-center gap-x-2 mb-1">
+                              <span className={`text-xs font-semibold ${isUnlimited ? 'text-green-400' : 'text-safety-400'}`}>
+                                {flicTier.extraDiscount.toUpperCase()} on {tier.name} Plan
+                              </span>
+                              {extraSavings > 0 && (
+                                <span className="text-green-400 text-xs font-semibold">Save ${extraSavings.toFixed(2)}</span>
+                              )}
                             </div>
                           )}
                         </>
                       )}
-                      {totalFlicSavings > 0 && (
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mt-2 pt-2 border-t border-carbon-700/30">
-                          <span className="text-carbon-200 text-xs">vs. retail (${fullRetail} × {totalFlics})</span>
-                          <span className="text-green-400 text-sm font-bold">Total savings: ${totalFlicSavings.toFixed(2)}</span>
-                        </div>
-                      )}
+                      {/* Total + total savings */}
+                      {(() => {
+                        const retailGrandTotal = seatRetailTotal + extraRetailTotal;
+                        const savingsGrandTotal = seatSavings + extraSavings;
+                        return (
+                          <div className="mt-2 pt-2 border-t border-carbon-700/30">
+                            <div className="flex justify-between items-center">
+                              <span className="text-carbon-200 text-sm font-medium">Total</span>
+                              <div className="text-right">
+                                {savingsGrandTotal > 0 && (
+                                  <span className="text-carbon-200 text-xs line-through mr-2">${retailGrandTotal.toFixed(2)}</span>
+                                )}
+                                <span className={`text-sm font-bold ${totalFlicCost === 0 ? 'text-green-400' : 'text-white'}`}>
+                                  {totalFlicCost === 0 ? 'FREE' : `$${totalFlicCost.toFixed(2)}`}
+                                </span>
+                              </div>
+                            </div>
+                            {savingsGrandTotal > 0 && (
+                              <div className="flex justify-end mt-0.5">
+                                <span className="text-green-400 text-xs font-semibold">Save ${savingsGrandTotal.toFixed(2)}</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                       <p className="text-carbon-200 text-xs mt-2">One-time purchase — ships to your shop.</p>
                     </div>
                   );
