@@ -6,9 +6,10 @@ import {
   Mic, Brain, FileText, Volume2, ArrowRight, Camera,
   CheckCircle2, Wrench, FileCheck, Radio, Smartphone, CircleDot, Search,
   Play, Pause, AlertCircle, ListChecks, Zap, AudioLines, Gauge, UserCog,
-  MessageCircle, SlidersHorizontal, Sparkles, X, Headphones,
+  MessageCircle, SlidersHorizontal, Sparkles, X, Headphones, LayoutList,
 } from 'lucide-react';
 import QuickStartDemo from '../components/QuickStartDemo';
+import PhoneMockup from '../components/PhoneMockup';
 import { trackAudioPlayed, trackVoiceExplorerOpened, trackVoiceSamplePlayed } from '../lib/analytics';
 import { useSEO } from '../hooks/useSEO';
 import { getCurrentAudio, setCurrentAudio, notifyAudioChanged, subscribeToAudioChanges } from '../lib/audioBus';
@@ -1098,6 +1099,86 @@ export default function HowItWorksPage() {
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* Hands-Free, All The Way — phone mockup + visual bullets */}
+      <section className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-carbon-900 via-carbon-800 to-carbon-900">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={mobileViewport}
+            className="text-center mb-16"
+          >
+            <span className="text-safety-400 text-sm font-semibold tracking-wider uppercase">
+              Hands-Free, All The Way
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 mb-6 leading-tight">
+              Voice-First.{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-safety-400 to-electric-400">
+                All Your Info is One Glance Away.
+              </span>
+            </h2>
+            <p className="text-carbon-200 text-lg max-w-3xl mx-auto">
+              The examples above show how ONRAMP works while your screen is locked and hands are on the tools.
+              But of course, everything also lives in the app, there for you anytime you need it.
+            </p>
+          </motion.div>
+
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Phone mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={mobileViewport}
+              transition={{ duration: 0.7 }}
+              className="w-full lg:w-1/2 flex justify-center"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-safety-500/20 rounded-full blur-[80px] scale-75 opacity-40" />
+                <div className="relative">
+                  <PhoneMockup />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bullets */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={mobileViewport}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="w-full lg:w-1/2"
+            >
+              <ul className="space-y-5">
+                {[
+                  { icon: Search, title: 'Diagnosis Scratchpad', desc: 'Every symptom, check, and suspect cause the AI tracks mid-diagnosis — live, as you work.' },
+                  { icon: ListChecks, title: 'Job Preparation Details', desc: 'Tools, parts, torque specs, warnings — pulled from OEM procedures and organized in one place.' },
+                  { icon: LayoutList, title: 'Step Workflow', desc: 'Full procedure at a glance. Jump ahead, backtrack, or check where you are in a complex job.' },
+                  { icon: Wrench, title: 'Step Guidance Details', desc: "Drill into any step for specs, cautions, and the coaching notes the AI is ready to read to you." },
+                  { icon: FileCheck, title: 'RO Reports', desc: 'The AI drafts the repair order as you work. Review, submit, done — no typing.' },
+                ].map((item, i) => (
+                  <motion.li
+                    key={item.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={mobileViewport}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-safety-500/10 border border-safety-500/20 flex items-center justify-center mt-0.5">
+                      <item.icon className="w-5 h-5 text-safety-400" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold mb-1">{item.title}</div>
+                      <p className="text-carbon-200 text-sm leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
         </div>
       </section>
 
