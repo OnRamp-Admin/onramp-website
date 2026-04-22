@@ -36,13 +36,16 @@
     />
 
     <!-- Preload phone carousel's first frame — PageSpeed reports this as the LCP
-         candidate on mobile because the hero sits behind an 85% dark overlay and
-         the phone mockup is the brightest LCP-eligible element. Mobile-only via
-         media query so we don't waste desktop bandwidth. -->
+         candidate on mobile because the hero sits behind an 85% dark overlay.
+         imagesrcset/imagesizes must match the <img> in PhoneMockup.tsx exactly,
+         otherwise the browser won't match the preload to the img request and
+         double-fetches. Mobile-only via media query — desktop LCP is the hero. -->
     <link
       rel="preload"
       as="image"
       href="/diagnose-screen-sm.webp"
+      imagesrcset="/diagnose-screen-sm.webp 720w, /diagnose-screen.webp 1206w"
+      imagesizes="300px"
       media="(max-width: 767px)"
       fetchpriority="high"
     />
