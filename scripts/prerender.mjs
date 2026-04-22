@@ -101,7 +101,18 @@ async function prerender() {
   // pass. Written to disk as 404.html so Render serves it for URLs that don't
   // match any prerendered file (genuine 404s — React Router renders NotFoundPage).
   spaShellHtml = readFileSync(join(DIST_DIR, 'index.html'), 'utf-8');
-  writeFileSync(join(DIST_DIR, '404.html'), spaShellHtml);
+
+  // For the 404 shell, strip the home canonical and inject noindex so Google
+  // never treats an unknown-URL fallback as a duplicate of the homepage.
+  // NotFoundPage's useSEO() already sets noindex at runtime, but this protects
+  // crawlers that don't execute JS.
+  const notFoundHtml = spaShellHtml
+    .replace(/\s*<link\s+rel="canonical"[^>]*>\s*/i, '\n    ')
+    .replace(
+      /<head>/i,
+      '<head>\n    <meta name="robots" content="noindex" />'
+    );
+  writeFileSync(join(DIST_DIR, '404.html'), notFoundHtml);
 
   // Beasties (Google's critical-CSS extractor) — processes each page's HTML
   // to inline the CSS rules that match above-the-fold elements. The external
