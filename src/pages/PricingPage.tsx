@@ -2029,7 +2029,7 @@ function ServiceCenterPricing() {
                               <span className="text-carbon-200 text-sm font-medium">Total</span>
                               <div className="text-right">
                                 {savingsGrandTotal > 0 && (
-                                  <span className="text-carbon-200 text-xs line-through mr-2">${retailGrandTotal.toFixed(2)}</span>
+                                  <span className="text-carbon-200 text-sm line-through mr-2">${retailGrandTotal.toFixed(2)}</span>
                                 )}
                                 <span className={`text-sm font-bold ${totalFlicCost === 0 ? 'text-green-400' : 'text-white'}`}>
                                   {totalFlicCost === 0 ? 'FREE' : `$${totalFlicCost.toFixed(2)}`}
