@@ -5,6 +5,7 @@ import { setSkipInitialAnimations } from './lib/hydration';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
+import VideoHero from './components/VideoHero';
 import AtAGlance from './components/AtAGlance';
 import WorkflowVisualization from './components/WorkflowVisualization';
 import AudienceSplit from './components/AudienceSplit';
@@ -80,6 +81,7 @@ function HomePage() {
   return (
     <>
       <Hero />
+      <VideoHero />
       <AtAGlance />
       <WorkflowVisualization />
       <AudienceSplit />

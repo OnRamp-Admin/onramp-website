@@ -274,3 +274,39 @@ export function trackBlogAudioSeeked(data: {
   if (!POSTHOG_KEY) return;
   posthog.capture('blog_audio_seeked', data);
 }
+
+// ─── Video Events (Bunny Stream embeds) ──────────────────────────────────────
+// Mirrors the blog audio funnel: clicked → started → progress (25/50/75) → completed.
+// `video_location` distinguishes placements (e.g. 'home_hero') so the same
+// events can be sliced per video without adding new event names.
+
+interface VideoEventBase {
+  video_location: string;
+  video_id: string;
+  video_name: string;
+}
+
+/** Video poster clicked — fires before the iframe mounts (captures click intent
+ *  even if playback never starts). */
+export function trackVideoClicked(data: VideoEventBase) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('video_clicked', data);
+}
+
+/** Video began playing (player fired `play` for the first time this session) */
+export function trackVideoStarted(data: VideoEventBase) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('video_started', data);
+}
+
+/** Viewer crossed a 25/50/75% milestone (fires once per milestone per page load) */
+export function trackVideoProgress(data: VideoEventBase & { milestone: 25 | 50 | 75 }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('video_progress', data);
+}
+
+/** Viewer reached the end of the video */
+export function trackVideoCompleted(data: VideoEventBase & { total_watch_time_seconds: number }) {
+  if (!POSTHOG_KEY) return;
+  posthog.capture('video_completed', data);
+}
