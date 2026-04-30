@@ -112,20 +112,30 @@ export default function Hero() {
     >
       {/* Hero background — real <img> (not CSS background) so the browser can
           honor fetchpriority/loading and the preload hint in index.html. This
-          is the LCP element on mobile; any mistake here balloons LCP. */}
-      <img
-        src="/Busy-Shop-aisle.webp"
-        srcSet="/Busy-Shop-aisle-sm.webp 480w, /Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
-        sizes="100vw"
-        alt="Automotive service center bay with technicians working on vehicles"
-        width={1920}
-        height={1071}
-        fetchPriority="high"
-        loading="eager"
-        decoding="async"
-        className="absolute inset-0 z-0 w-full h-full object-cover"
-        style={{ objectPosition: '70% 50%' }}
-      />
+          is the LCP element on mobile; any mistake here balloons LCP.
+          The fixed-height wrapper decouples the image from the section's
+          flex-content height so it doesn't re-cover (zoom) when a phase card
+          expands on hover. 125vh bleeds below the viewport so an expanded
+          panel still has image behind it. */}
+      <div
+        className="absolute inset-x-0 top-0 z-0 overflow-hidden pointer-events-none"
+        style={{ height: '125vh' }}
+        aria-hidden="true"
+      >
+        <img
+          src="/Busy-Shop-aisle.webp"
+          srcSet="/Busy-Shop-aisle-sm.webp 480w, /Busy-Shop-aisle-mobile.webp 1024w, /Busy-Shop-aisle.webp 1920w"
+          sizes="100vw"
+          alt="Automotive service center bay with technicians working on vehicles"
+          width={1920}
+          height={1071}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: '70% 50%' }}
+        />
+      </div>
       {/* Dark overlay gradient — matches the old linear-gradient in the CSS bg. */}
       <div
         className="absolute inset-0 z-0"
